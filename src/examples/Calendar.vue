@@ -164,7 +164,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="card widget-calendar">
     <div class="p-3 pb-0 card-header">
-      <h6 class="mb-0">{{ props.title }}</h6>
+      <h6 class="mb-0">{{  }}</h6>
       <div class="d-flex">
         <div class="mb-0 text-sm p font-weight-bold widget-calendar-day">
           {{ props.day }}

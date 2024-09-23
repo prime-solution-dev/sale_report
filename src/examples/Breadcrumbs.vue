@@ -53,7 +53,7 @@ defineProps({
       class="mb-0 font-weight-bolder"
       :class="isNavFixed ? 'text-dark' : 'text-white'"
     >
-      {{ currentDirectory }}
+  
     </h6>
   </nav>
 </template>

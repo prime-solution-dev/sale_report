@@ -2,8 +2,8 @@
 import { computed } from "vue";
 import { useStore } from "vuex";
 import SidenavList from "./SidenavList.vue";
-import logo from "@/assets/img/logo-ct-dark.png";
-import logoWhite from "@/assets/img/logo-ct.png";
+import logo from "@/assets/img/logo_fd.jpeg";
+import logoWhite from "@/assets/img/logo_fd.jpeg";
 
 const store = useStore();
 const isRTL = computed(() => store.state.isRTL);
@@ -15,11 +15,11 @@ const darkMode = computed(() => store.state.darkMode);
   <div
     v-show="layout === 'default'"
     class="min-height-300 position-absolute w-100"
-    :class="`${darkMode ? 'bg-transparent' : 'bg-success'}`"
+    :class="`${darkMode ? 'bg-transparent' : ''}`"
   />
 
   <aside
-    class="my-3 overflow-auto border-0 sidenav navbar navbar-vertical navbar-expand-xs border-radius-xl"
+    class="my-3 overflow-auto border-0 sidenav navbar navbar-vertical navbar-expand-xs "
     :class="`${isRTL ? 'me-3 rotate-caret fixed-end' : 'fixed-start ms-3'}    
       ${
         layout === 'landing' ? 'bg-transparent shadow-none' : ' '
@@ -34,13 +34,13 @@ const darkMode = computed(() => store.state.darkMode);
       ></i>
 
       <router-link class="m-0 navbar-brand" to="/">
-        <img
+        &nbsp; &nbsp;   &nbsp;<img
           :src="darkMode || sidebarType === 'bg-default' ? logoWhite : logo"
-          class="navbar-brand-img h-100"
+          class="navbar-brand-img h-100 ml-10"
           alt="main_logo"
-        />
+        /> <br>
 
-        <span class="ms-2 font-weight-bold me-2">Argon Dashboard 2</span>
+        <span class="ms-2 font-weight-bold me-2">Daily Sales Report</span>
       </router-link>
     </div>
 
