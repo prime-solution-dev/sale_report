@@ -16,212 +16,180 @@ const hostapi = 'http://61.91.5.227:8099/';
   };
 
 
+  export const fetchSalesSummary = async (brandid,channelid,storetypeid,keynameid,keygroup) => {
+      
+      const url = hostapi + 'Sales/GetSummarySalesTargets';
+      const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; // แทนที่ด้วย token ของคุณ
 
-  export const fetchSalesSummaryBKUP = async () => {
-    const url = hostapi+'Sales/GetSummarySalesTargets';
-    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; // แทนที่ด้วย token ของคุณ
-
-    const body = {
-      year: 2024,
-      month: 9,
-      brands: [],
-      customers: [],
-      store_types: [],
-      channels: [],
-      account_groups: [],
-      account_names: []
-    };
-
-    try {
-      const response = await axios.post(url, body, {
-        headers: {
-          'Authorization': token,
-          'Content-Type': 'application/json',
-        }
-      });
-      return response.data; // ส่งค่ากลับ
-    } catch (error) {
-      throw error.response ? error.response.data : 'เกิดข้อผิดพลาด'; 
-    }
-  };
-
-
-  export const fetchSalesSummary = async () => {
-    const url = hostapi + 'Sales/GetSummarySalesTargets';
-    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; // แทนที่ด้วย token ของคุณ
-
-      // ประกาศค่าปีปัจจุบันและเดือนที่แล้ว
+     
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
       const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
       console.log(currentYear,previousMonth);
+
+      const v_brandid= brandid;
+      const v_channelid= channelid;
+      const v_storetypeid= storetypeid;
+      const v_keynameid= keynameid;
+      const v_keygroup= keygroup;
+     //  console.log('fetch_='+v_brandid+' 2:'+v_channelid +' 3:'+v_storetypeid + ' 4:'+v_keynameid+' 5:'+v_keygroup);
      
   
-    const body = {
-      year: 2024,
-      month: 9,
-      brands: [],
-      customers: [],
-      store_types: [],
-      channels: [],
-      account_groups: [],
-      account_names: []
-    };
+      const body = {
+        year: 2024,
+        month: 9,
+        brands: [],
+        customers: [],
+        store_types: [],
+        channels: [],
+        account_groups: [],
+        account_names: []
+      };
+      if(v_brandid) { 
+        body.brands.push(v_brandid);
+      }
+      if(v_channelid) { 
+        body.channels.push(v_channelid);
+      } 
+      if(v_storetypeid) { 
+        body.store_types.push(v_storetypeid);
+      } 
+      if(v_keynameid) { 
+        body.account_names.push(v_keynameid);
+      } 
+      if(v_keygroup) { 
+        body.account_groups.push(v_keygroup);
+      } 
+   
+    
+      try {
+        const response = await axios.post(url, body, {
+          headers: {
+            'Authorization': token,
+            'Content-Type': 'application/json',
+          }
+        });
+       // console.log(''+body);
+     
   
-    try {
-      const response = await axios.post(url, body, {
-        headers: {
-          'Authorization': token,
-          'Content-Type': 'application/json',
-        }
-      });
-
-    
-      
-    const monthNumber = response.data.current_month; 
-    const monthAbbr = getMonthAbbreviation(monthNumber); 
-    const monthAbbr_last = getMonthAbbreviation(monthNumber-1); 
-  //  console.log(monthAbbr);
-      //
-      const salesDataArray = [];
-      salesDataArray.push({
-        type: 'data',
-          last_year: response.data.last_year,
-          current_month: response.data.current_month,
-          current_year: response.data.current_year,
-          month_txt:monthAbbr,
-          month_txt_last:monthAbbr_last,
-        
-      });
-      salesDataArray.push({
-        type: 'overall',
-        saleData: {
-         
-          last_sale: response.data.sale_data.last_sale,
-          last_return: response.data.sale_data.last_return,
-          current_sale: response.data.sale_data.current_sale,
-          current_return: response.data.sale_data.current_return,
-          current_target: response.data.sale_data.current_target,
-          current_estimate: response.data.sale_data.current_estimate,
-          current_estimate_w1: response.data.sale_data.current_estimate_w1,
-          current_estimate_w2: response.data.sale_data.current_estimate_w2,
-          current_estimate_w3: response.data.sale_data.current_estimate_w3,
-          current_estimate_w4: response.data.sale_data.current_estimate_w4,
-          current_estimate_w5: response.data.sale_data.current_estimate_w5,
-          display_last_actual: response.data.sale_data.display_last_actual,
-          display_current_actual: response.data.sale_data.display_current_actual,
-          display_current_last_actual_percent: response.data.sale_data.display_current_last_actual_percent,
-          display_current_to_target_percent: response.data.sale_data.display_current_to_target_percent,
-          display_current_last_target_percent: response.data.sale_data.display_current_last_target_percent,
-          display_current_balance: response.data.sale_data.display_current_balance,
-         
+      const monthNumber = response.data.current_month; 
+      const monthAbbr = getMonthAbbreviation(monthNumber); 
+      const monthAbbr_last = getMonthAbbreviation(monthNumber-1); 
+    //  console.log(monthAbbr);
+        //
+        const salesDataArray = [];
+        salesDataArray.push({
+          type: 'data',
+            last_year: response.data.last_year,
+            current_month: response.data.current_month,
+            current_year: response.data.current_year,
+            month_txt:monthAbbr,
+            month_txt_last:monthAbbr_last,
           
-        },
-      });
+        });
+        salesDataArray.push({
+          type: 'overall',
+          saleData: {
+          
+            last_sale: response.data.sale_data.last_sale,
+            last_return: response.data.sale_data.last_return,
+            current_sale: response.data.sale_data.current_sale,
+            current_return: response.data.sale_data.current_return,
+            current_target: response.data.sale_data.current_target,
+            current_estimate: response.data.sale_data.current_estimate,
+            current_estimate_w1: response.data.sale_data.current_estimate_w1,
+            current_estimate_w2: response.data.sale_data.current_estimate_w2,
+            current_estimate_w3: response.data.sale_data.current_estimate_w3,
+            current_estimate_w4: response.data.sale_data.current_estimate_w4,
+            current_estimate_w5: response.data.sale_data.current_estimate_w5,
+            display_last_actual: response.data.sale_data.display_last_actual,
+            display_current_actual: response.data.sale_data.display_current_actual,
+            display_current_last_actual_percent: response.data.sale_data.display_current_last_actual_percent,
+            display_current_to_target_percent: response.data.sale_data.display_current_to_target_percent,
+            display_current_last_target_percent: response.data.sale_data.display_current_last_target_percent,
+            display_current_balance: response.data.sale_data.display_current_balance,
+          
+            
+          },
+        });
 
-    // ข้อมูลจาก brands
-    response.data.brands.forEach(brand => {
-      salesDataArray.push({
-        type: 'brand',
-        name: brand.topic_name,
-        saleData: brand.sale_data
-      });
-    });
-
-    // ข้อมูลจาก customers
-    salesDataArray.push({
-      type: 'customer',
-      name: response.data.customers.topic_name,
-      saleData: response.data.customers.sale_data
-    });
-
-    response.data.accounts.forEach(account => {
-      salesDataArray.push({
-        type: 'account',
-        name: account.topic_name,
-        saleData: account.sale_data
-      });
-    });
-
-    // ข้อมูลจาก names
-    response.data.names.forEach(name => {
-      salesDataArray.push({
-        type: 'name',
-        name: name.topic_name,
-        saleData: name.sale_data
-      });
-    });
-
-   // if (response.data && response.data.customers) {
-      //  response.data.customers.customers_groups.map((group, groupIndex) => {
-      //   return {
-      //     group: {
-      //       cus: groupIndex,
-      //       topic_name: group.topic_name,
-      //       sale_data: group.sale_data,
-      //       customers_subgroups: group.customers_subgroups.map((subgroup, subgroupIndex) => {
-      //         return {
-      //           subgroup: {
-      //             cus: subgroupIndex,
-      //             topic_name: subgroup.topic_name,
-      //             sale_data: subgroup.sale_data,
-      //             customers_items: subgroup.customers_items.map((item, itemIndex) => {
-      //               return {
-      //                 item: {
-      //                   cus: itemIndex,
-      //                   topic_name: item.topic_name,
-      //                   sale_data: item.sale_data,
-      //                 }
-      //               };
-      //             })
-      //           }
-      //         };
-      //       })
-      //     }
-      //   };
-      // });
-      
-    // } else {
-    //   this.error = "No sales summary data available.";
-    // }
     
-  const customerGroupsWithKeys = response.data.customers.customers_groups.map((group, groupIndex) => {
-  return {
-    group: {
-      cus: groupIndex,
-      topic_name: group.topic_name,
-      sale_data: group.sale_data,
-      customers_subgroups: group.customers_subgroups.map((subgroup, subgroupIndex) => {
-        return {
-          subgroup: {
-            cus: subgroupIndex,
-            topic_name: subgroup.topic_name,
-            sale_data: subgroup.sale_data,
-            customers_items: subgroup.customers_items.map((item, itemIndex) => {
+        response.data.brands.forEach(brand => {
+          salesDataArray.push({
+            type: 'brand',
+            name: brand.topic_name,
+            saleData: brand.sale_data
+          });
+        });
+
+      
+        salesDataArray.push({
+          type: 'customer',
+          name: response.data.customers.topic_name,
+          saleData: response.data.customers.sale_data
+        });
+
+        response.data.accounts.forEach(account => {
+          salesDataArray.push({
+            type: 'account',
+            name: account.topic_name,
+            saleData: account.sale_data
+          });
+        });
+
+      
+        response.data.names.forEach(name => {
+          salesDataArray.push({
+            type: 'name',
+            name: name.topic_name,
+            saleData: name.sale_data
+          });
+        });
+
+  
+        
+        const customerGroupsWithKeys = response.data.customers.customers_groups.map((group, groupIndex) => {
+          const customers_subgroups = group.customers_subgroups.map((subgroup, subgroupIndex) => {
+            const items = subgroup.customers_items.map((item, itemIndex) => {
               return {
                 item: {
-                  cus: itemIndex,
+                  item_key: itemIndex,
                   topic_name: item.topic_name,
-                  sale_data: item.sale_data,
+                  sale_data_item: item.sale_data,
                 }
               };
-            })
-          }
-        };
-      })
-    }
-  };
-});
-
-// เพิ่ม customerGroupsWithKeys เข้าไปใน salesDataArray
-salesDataArray.push(...customerGroupsWithKeys);
-
-    return salesDataArray; // ส่งค่ากลับเป็น array
-
-     
-    } catch (error) {
-      throw error.response ? error.response.data : 'เกิดข้อผิดพลาด'; 
-    }
+            });
+        
+            return {
+              subgroup: {
+                subgroup_key: subgroupIndex,
+                subgroup: subgroup.topic_name,
+                sale_data_subg: subgroup.sale_data, 
+                customers_items: items
+              }
+            };
+          });
+        
+          return {
+            group: {
+              groub_key: groupIndex,
+              topic_name: group.topic_name,
+              sale_data_groub: group.sale_data, 
+              customers_subgroups
+            }
+          };
+        });
+      
+        salesDataArray.push({
+          type: 'customerItem',
+          customerItem: customerGroupsWithKeys
+        });
+    //  console.log(JSON.stringify(customerGroupsWithKeys, null, 2));
+      return salesDataArray; 
+      
+      } catch (error) {
+       //  throw error.response ? error.response.data : 'เกิดข้อผิดพลาด'; 
+      }
   };
 
   
@@ -342,4 +310,6 @@ salesDataArray.push(...customerGroupsWithKeys);
     }
   };
 
+
+ 
   

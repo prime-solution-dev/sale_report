@@ -34,9 +34,22 @@ const getRoute = () => {
 
       <li class="nav-item">
         <sidenav-item
-          to="/tables"
-          :class="getRoute() === 'tables' ? 'active' : ''"
-          :navText="isRTL ? 'الجداول' : 'Report'"
+          to="/report-customer.groups"
+          :class="getRoute() === 'report-customer.groups' ? 'active' : ''"
+          :navText="isRTL ? '' : 'Customer Group Report'"
+        >
+          <template v-slot:icon>
+            <i
+              class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"
+            ></i>
+          </template>
+        </sidenav-item>
+      </li>
+      <li class="nav-item">
+        <sidenav-item
+          to="/report-keyaccount.groups"
+          :class="getRoute() === 'report-keyaccount.groups' ? 'active' : ''"
+          :navText="isRTL ? '' : 'KeyAccount Group Report'"
         >
           <template v-slot:icon>
             <i
@@ -48,8 +61,25 @@ const getRoute = () => {
 
       <li class="nav-item">
         <sidenav-item
-          to="/billing"
-          :class="getRoute() === 'billing' ? 'active' : ''"
+          to="/report-actaulsales"
+          :class="getRoute() === 'report-actaulsales' ? 'active' : ''"
+          :navText="isRTL ? '' : 'ActaulSales Report'"
+        >
+          <template v-slot:icon>
+            <i
+              class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"
+            ></i>
+          </template>
+        </sidenav-item>
+      </li>
+
+
+      
+      
+      <li class="nav-item">
+        <sidenav-item
+          to="/"
+          :class="getRoute() === '' ? 'active' : ''"
           :navText="isRTL ? 'الفواتیر' : 'Upload'"
         >
           <template v-slot:icon>
@@ -64,7 +94,7 @@ const getRoute = () => {
         <sidenav-item
           to="/profile"
           :class="getRoute() === 'profile' ? 'active' : ''"
-          :navText="isRTL ? 'حساب تعريفي' : 'User'"
+          :navText="isRTL ? '' : 'User'"
         >
           <template v-slot:icon>
             <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>

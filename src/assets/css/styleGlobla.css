@@ -1,0 +1,97 @@
+.bg-card_blue{
+    background-color:  #0081CC!important;
+}
+
+.bg-icon_card{
+  background-color: white;
+  padding: 6px;
+  float: right;
+  border-radius: 7px;
+  width: 24px;
+  height: 26px;
+  
+}
+.fz-14{
+  font-size:14px;
+}
+.fz-12{
+  font-size:12px;
+}
+.fz-10{
+  font-size:10px;
+}
+.bg-button-orange{
+  background-color: #F35746!important;
+  color:white!important;
+}
+.bg_groub{
+  background-color: #E6FAD2!important;
+}
+.bg_subgroub{
+  margin-top: 25px!important;
+  background-color: #FFE0CA!important;
+}
+.bg_grandtotal{
+  background-color: #D2E1FA!important;
+}
+.alert-danger2 {
+    color: #932037!important;
+    background-color: #fdd7de!important;
+    border-color: #fcc3ce!important;
+}
+
+.span_toggle{
+  background-color:white;
+   cursor: pointer;
+   border: 2px solid white; 
+   color:#699BF7; 
+   height: calc(100% - 10px); 
+   font-size:10px;
+   position: absolute; 
+   top: 5px; 
+   right: 0; 
+   display: flex; 
+   align-items: center; 
+   padding: 0 1px;
+}
+
+th, td {
+  padding: 15px!important;
+}
+.table {
+  width: 100%;
+  border-collapse: separate; 
+  border-spacing: 0 7px; 
+  border: none;
+}
+
+th {
+ 
+  border: 1px solid #dee2e6; 
+}
+
+th:first-child {
+  border-top-left-radius: 8px; 
+  border-bottom-left-radius: 8px;
+}
+
+th:last-child {
+  border-top-right-radius: 8px; 
+  border-bottom-right-radius: 8px; 
+}
+
+td {
+  border: 1px solid #ffffff00; 
+  padding: 6px;
+  text-align: left !important;
+}
+
+.rounded-left {
+  border-top-left-radius: 6px; 
+  border-bottom-left-radius: 6px; 
+}
+
+.rounded-right {
+  border-top-right-radius: 6px; 
+  border-bottom-right-radius: 6px; 
+}

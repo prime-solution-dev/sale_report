@@ -1,0 +1,438 @@
+<style>
+  .bg-card_blue{
+      background-color:  #0081CC!important;
+  }
+
+  .bg-icon_card{
+    background-color: white;
+    padding: 6px;
+    float: right;
+    border-radius: 7px;
+    width: 24px;
+    height: 26px;
+    
+  }
+  .fz-14{
+    font-size:14px;
+  }
+  .fz-12{
+    font-size:12px;
+  }
+  .fz-10{
+    font-size:10px;
+  }
+  .bg-button-orange{
+    background-color: #F35746!important;
+    color:white!important;
+  }
+  /* .bg_groub{
+    background-color: #E6FAD2!important;
+  }
+  .bg_subgroub{
+    background-color: #FFE0CA!important;
+  }
+  .bg_grandtotal{
+    background-color: #D2E1FA!important;
+  } */
+
+</style>
+<script setup>
+ // import AuthorsTable from "./components/AuthorsTable.vue";
+  import { formatNumber } from 'chart.js/helpers';
+  import {  fetchGetBrand, fetchGetChannel,fetchStoreType , 
+            fetchAccountGroup , fetchAccountName ,fetchSalesSummary
+         } from '../services/reportapi/getdataApi';
+</script>
+
+
+<template>
+ 
+
+<div class="py-4 container-fluid bg-white shadow-md">
+
+<div class="row mb-3">
+  <div class="col-lg-12 col-md-12 col-12">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="exampleSelect">Brand</label>
+            <select class="form-control" id="brand_id">
+              <option> Select Brand </option>
+              <option v-for="(brands, index) in GetBrand" :key="index" :value="brands.code" > {{ brands.code }} </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="exampleSelect">Channel</label>
+            <select class="form-control" id="channel_id" v-model="selectedChannel" @change="handleChannelChange">
+              <option value=""> Select Chanel</option>
+              <option v-for="(channels, index) in GetChannel" :key="index" :value="channels.code">{{ channels.code }} </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="exampleSelect">Store type</label>
+            <select class="form-control" id="store_types_id" v-model="selectedStoreType">
+              <option> Select Store type</option>
+              <option v-for="(store_types, index) in GetStoreType" :key="index" :value="store_types.code" > {{ store_types.code }} </option>
+            </select>
+          </div>
+        </div>
+
+     
+
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="exampleSelect">Key account Name</label>
+            <select class="form-control" id="acc_name_id">
+              <option> Select Key account Name </option>
+              <option v-for="(acc_name, index) in GetAccountName" :key="index" :value="acc_name.code" > {{ acc_name.code }} </option>
+
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="exampleSelect">Key account group</label>
+            <select class="form-control" id="acc_group_id">
+              <option> Select Key account group </option>
+              <option v-for="(acc_group, index) in GetAccountGroup" :key="index" :value="acc_group.code" > {{ acc_group.code }} </option>
+
+              
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-1">
+          <div class="form-group">
+            <label for="exampleSelect"></label>
+            <button class="btn mb-0  fw-lighter  btn-md null  ">Reset</button>
+          
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="form-group">
+            <label for="exampleSelect"></label>
+            <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary">Apply</button>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+   
+
+
+  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary">
+    <div class="row">
+      <div class="col-12">
+        
+        <div class="card">
+          <div class="card-header pb-0">
+            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Customer Group </h4>
+          </div>
+         
+          <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-3">
+              <table class="table align-items-center mb-0 table-borderless">
+              <thead class="bg-light">
+                <tr>
+                  <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    Customer Group
+                    </th>
+
+                    <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    Actual {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].last_year }}
+
+                    </th>
+                    <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    Target {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}
+
+                    </th>
+                    <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    %T {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }}
+
+                    </th>
+                    <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    Estimate {{ SalesTargetsSummary[0].month_txt_last}}
+
+                    </th>
+                    <!-- <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Week 1</th>
+                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Week 2</th>
+                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Week 3</th>
+                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Week 4</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" >Week 5</th> -->
+                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Sales before Return</th>
+                    <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    Actual Sales {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}
+
+                    </th>
+                    <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    %%To Target 24
+
+                    </th>
+                    <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].current_last }}
+
+                    </th>
+                    <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    {{ SalesTargetsSummary[0].month_txt_last}} Return
+
+                    </th>
+                    <th
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
+                    >
+                    Balance to go
+                    </th>
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                <template v-for="(item, index) in getCustomersItem" :key="index">
+                <template v-for="(customerGroup, groupIndex) in item.customerItem" :key="groupIndex">
+                  <template v-for="(subgroup, subgroupIndex) in customerGroup.group.customers_subgroups" :key="subgroupIndex">
+                    <!-- Item -->
+                    <template v-for="(customerItem, itemIndex) in subgroup.subgroup.customers_items" :key="itemIndex">
+                      <tr class="text-xs font-weight-bold mb-0">
+                        <td class="text-left">{{ customerItem.item.topic_name }}</td>
+                        <td>{{ formatNumber(customerItem.item.sale_data_item.display_last_actual) }}</td>
+                        <td>{{ formatNumber(customerItem.item.sale_data_item.current_target) }}  </td>
+                        <td>{{ formatNumber(customerItem.item.sale_data_item.display_current_last_target_percent) }} % </td>
+                        <td>{{ formatNumber(customerItem.item.sale_data_item.current_estimate) }}</td>
+                        <!-- <td>{{ formatNumber(customerItem.item.sale_data_item.current_estimate_w1) }} </td>
+                        <td> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w2) }} </td>
+                        <td> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w3) }} </td>
+                        <td> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w4) }} </td>
+                        <td> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w5) }} </td> -->
+                        <td> {{ formatNumber(customerItem.item.sale_data_item.last_return) }}</td>
+                        <td>   {{ formatNumber(customerItem.item.sale_data_item.display_current_actual) }} </td>
+                        <td> {{ formatNumber(customerItem.item.sale_data_item.current_target) }} % </td>
+                        <td> {{ formatNumber(customerItem.item.sale_data_item.display_current_last_actual_percent) }} % </td>
+                        <td> {{ formatNumber(customerItem.item.sale_data_item.last_return) }}   </td>
+                        <td>{{ formatNumber(customerItem.item.sale_data_item.current_return) }} </td>    
+                      </tr>
+                    </template>
+                    <!-- Subgroup -->
+                    <tr class="text-xs font-weight-bold mb-0 ">
+                      <td class="text-left">{{ subgroup.subgroup.subgroup }}</td>
+                      <td>{{ formatNumber(subgroup.subgroup.sale_data_subg.display_last_actual) }}</td>
+                      <td>{{ formatNumber(subgroup.subgroup.sale_data_subg.current_target) }}  </td>
+                      <td>{{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_target_percent) }} % </td>
+                      <td>{{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate) }}</td>
+                      <td>{{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w1) }} </td>
+                      <td> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w2) }} </td>
+                      <td> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w3) }} </td>
+                      <td> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w4) }} </td>
+                      <td> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w5) }} </td>
+                      <td> {{ formatNumber(subgroup.subgroup.sale_data_subg.last_return) }}</td>
+                      <td>   {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_actual) }} </td>
+                      <td> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_target) }} % </td>
+                      <td> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_actual_percent) }} % </td>
+                      <td> {{ formatNumber(subgroup.subgroup.sale_data_subg.last_return) }}   </td>
+                      <td>{{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </td>   
+                    </tr>
+                  </template>
+                    <!--  Group -->
+                    <tr class="text-xs font-weight-bold mb-0 ">
+                      <td class="text-left">{{ customerGroup.group.topic_name }}</td>
+                      <td>{{ formatNumber(customerGroup.group.sale_data_groub.display_last_actual) }}</td>
+                      <td>{{ formatNumber(customerGroup.group.sale_data_groub.current_target) }}  </td>
+                      <td>{{ formatNumber(customerGroup.group.sale_data_groub.display_current_last_target_percent) }} % </td>
+                      <td>{{ formatNumber(customerGroup.group.sale_data_groub.current_estimate) }}</td>
+                      <td>{{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w1) }} </td>
+                      <td> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w2) }} </td>
+                      <td> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w3) }} </td>
+                      <td> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w4) }} </td>
+                      <td> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w5) }} </td>
+                      <td> {{ formatNumber(customerGroup.group.sale_data_groub.last_return) }}</td>
+                      <td>   {{ formatNumber(customerGroup.group.sale_data_groub.display_current_actual) }} </td>
+                      <td> {{ formatNumber(customerGroup.group.sale_data_groub.current_target) }} % </td>
+                      <td> {{ formatNumber(customerGroup.group.sale_data_groub.display_current_last_actual_percent) }} % </td>
+                      <td> {{ formatNumber(customerGroup.group.sale_data_groub.last_return) }}   </td>
+                      <td>{{ formatNumber(customerGroup.group.sale_data_groub.current_return) }} </td>   
+                    </tr>
+                  </template>
+                </template>
+                    <tr v-for="(customer, index) in customers" :key="index" class="">
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ customer.name}}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_last_actual) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_target) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_current_last_target_percent) }} %</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w1) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w2) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w3) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w4) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w5) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.last_return) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_current_actual) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_target) }} %</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_current_last_actual_percent) }} %</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.last_return) }}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_return) }}</p>
+                      </td>    
+                    </tr>
+              </tbody>
+            </table>
+
+   
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+
+
+
+
+</template>
+
+<script>
+
+export default {
+  data() {
+    return {
+      GetChannel: [],
+      GetStoreType: [],
+      selectedChannel: null, 
+      selectedStoreType: null, 
+      SalesTargetsSummary: null,
+      GetBrand: null,
+      GetAccountGroup: null,
+      GetAccountName: null,
+      customersItem:null,
+      error: null,
+      loading: false,
+    };
+  },
+  methods: {
+  
+    async fetchData() {
+      this.loading = true;
+      this.error = null;
+    //  const chanelid = this.selectedChannel;
+      try {
+        this.GetBrand = await fetchGetBrand();
+        this.GetChannel = await fetchGetChannel();
+        this.GetAccountGroup = await fetchAccountGroup();
+        this.GetAccountName = await fetchAccountName();
+        this.GetStoreType = await fetchStoreType(this.selectedChannel);
+        this.SalesTargetsSummary = await fetchSalesSummary();
+      
+        
+      } catch (error) {
+        this.error = error; // จัดการข้อผิดพลาด
+        console.error(this.error);
+      } finally {
+        this.loading = false; // ปิดสถานะโหลด
+      }
+     
+    },
+  
+    async handleChannelChange() {
+        if (this.selectedChannel) {
+         // console.log('Channel value is: ' + this.selectedChannel);
+          try {
+            this.GetStoreType = await fetchStoreType(this.selectedChannel);
+          } catch (error) {
+         //   console.error('Error fetching store types:', error);
+          }
+        } else {
+       
+          this.GetStoreType = []; // เคลียร์เมื่อไม่มีการเลือก channel
+        }
+      }
+  },
+  computed: {
+    overallSummary() {
+      return this.SalesTargetsSummary.find(item => item.type === 'overall');
+    },
+    brandSales() {
+    return this.SalesTargetsSummary.filter(item => item.type === 'brand');
+    },
+    accountGroub() {
+    return this.SalesTargetsSummary.filter(item => item.type === 'account');
+    },
+    accountName() {
+    return this.SalesTargetsSummary.filter(item => item.type === 'name');
+    },
+    customers() {
+      return this.SalesTargetsSummary.filter(item => item.type === 'customer' );
+    },
+  
+    getCustomersItem() {
+      return (this.SalesTargetsSummary || []).filter(item => item.type === 'customerItem');
+    },
+    
+  }
+  ,
+  created() {
+    
+    this.fetchData(); // component created
+    
+  }
+  
+};
+
+
+</script>
