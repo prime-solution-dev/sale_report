@@ -58,13 +58,19 @@
 th, td {
   padding: 15px!important;
 }
-.table {
-  width: 100%;
-  border-collapse: separate; 
-  border-spacing: 0 7px; 
-  border: none;
+.table{
+  width: 100%!important;
+  border-collapse: separate!important; 
+  border-spacing: 0 7px!important; 
+  border: none!important;
+  border-bottom: none!important;
 }
 
+.table,
+.table th,
+.table td {
+  border: none; 
+}
 th {
  
   border: 1px solid #dee2e6; 
@@ -94,4 +100,9 @@ td {
 .rounded-right {
   border-top-right-radius: 6px; 
   border-bottom-right-radius: 6px; 
+}
+.text-date{
+  color:#A3AED0;
+  font-size: 12px!important;
+  text-align: right!important;
 }

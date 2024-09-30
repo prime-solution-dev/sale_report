@@ -1,10 +1,52 @@
 
+<style>
+/* .dropdown-menu_2 {
+  display: block;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+} */
+.dropdown_brand {
+  position: relative;
+}
+.dropdown-menu_2 {
+  display: block;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+
+.btn-dropdown{
+  display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+   
+    font-weight: 0!important;
+    line-height: 1.4rem;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #d2d6da;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.3rem;
+    transition: box-shadow 0.15s ease;
+    font-size: 12px!important;
+}
+
+</style>
 <script setup>
  // import AuthorsTable from "./components/AuthorsTable.vue";
   import { formatNumber } from 'chart.js/helpers';
   import {  fetchGetBrand, fetchGetChannel,fetchStoreType , 
             fetchAccountGroup , fetchAccountName ,fetchSalesSummary
          } from '../services/reportapi/getdataApi';
+
+         
+import "../../src/assets/css/styleGlobal.css";
 </script>
 
 
@@ -25,7 +67,7 @@
         <div class="container">
           <div class="row">
             <div class="col-md-2">
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="exampleSelect">Brand</label>
                 <select class="form-control" id="brand_id" v-model="selectedBrandID">
                  
@@ -33,7 +75,39 @@
                   <option>All</option>
                   <option v-for="(brands, index) in GetBrand" :key="index" :value="brands.code" > {{ brands.code }} </option>
                 </select>
+              </div> -->
+              <div class="form-group">
+                <label for="brandSelect">Brand</label>
+                <div class="dropdown_brand">
+                  <button 
+                    class="btn btn-dropdown dropdown-toggle" 
+                    type="button" 
+                    id="dropdownMenuButton" 
+                    @click.stop="toggleDropdown"
+                  >
+                  {{ selectedBrands.length ? truncateText(selectedBrands.join(', '), 2) : 'Select Customer Group' }}
+                    <!-- {{ selectedBrands.length ? selectedBrands.join(', ') : 'เลือกแบรนด์' }} -->
+                  </button>
+                  <div class="dropdown-menu_2" v-if="isDropdownOpen">
+                    <div v-for="(brand, index) in GetBrand" :key="index">
+                      <label :for="'brand-' + index" class="dropdown-item">
+                        <input 
+                          type="checkbox" 
+                          :id="'brand-' + index" 
+                          :name="'brand[]'" 
+                          :value="brand.code" 
+                          v-model="selectedBrandIDs" 
+                          @change="updateSelectedBrands" 
+                        />
+                        {{ brand.code }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
+
+          
+            
             </div>
 
             <div class="col-md-2">
@@ -104,13 +178,19 @@
    
   <div class="py-4 container-fluid bg-white shadow-lg" v-if="SalesTargetsSummary" >
     <div class="row mb-3">
-      <div class="col-lg-6 col-md-6 col-6 text-left">
+      <div class="col-lg-4 col-md-6 col-6 text-left">
         <h6 class="text-dark font-weight-bolder align-middle" > Total Company : {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}</h6> 
       </div>  
       <div class="col-lg-4 text-left"> 
         <div class="">
           <button class="btn mb-0 bg-button-orange btn-md w-100 null "><i class="fa fa-exclamation-circle"></i> New Customer Group</button>
         </div>
+      </div>
+      <div class="col-lg-4 text-end  ">
+        <span class="text-date"> Ass Of <i class="fa fa-calendar" aria-hidden="true"></i> {{month_txt_current }} {{ day_now }}
+        </span>
+
+
       </div>
     </div>
     <div class="row">
@@ -414,7 +494,7 @@
                 <thead >
                   <tr class=" bg-light bd_spc ">
                     <th style="text-align: left !important;" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" >
-                    Productss
+                    Product
                     </th>
 
                     <th
@@ -743,7 +823,7 @@
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    KeyAccountName
+                    Key Account Name
                     </th>
 
                     <th
@@ -887,7 +967,7 @@
             <div class="table-responsive p-3">
               <table class="table align-items-center mb-0" v-if="SalesTargetsSummary.length > 0">
                 <thead >
-                  <tr>
+                  <tr class="bg-light">
                     <th style="text-align: left !important;"
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
@@ -1047,6 +1127,7 @@ export default {
     return monthAbbreviations[monthNumber - 1];
   };
       const currentDate = new Date();
+      const daynow = currentDate.getDate();
       const currentYear = currentDate.getFullYear(); 
       const currentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; 
       const lastYear = currentYear-1;
@@ -1063,7 +1144,11 @@ export default {
       selectedChannel: null, 
       selectedStoreType: null, 
       SalesTargetsSummary: null,
-      GetBrand: null,
+      //GetBrand: null,
+      GetBrand: [],
+      selectedBrandIDs: [],
+      isDropdownOpen: false,
+      //
       GetAccountGroup: null,
       GetAccountName: null,
       customersItem:null,
@@ -1077,6 +1162,7 @@ export default {
       lastYear:lastYear,
       month_txt_current:monthAbbr,
       month_txt_last:monthAbbr_last,
+      day_now:daynow,
       isColumnVisible: false,
       isColumnVisibleDetail: false,
       isColumnVisibleCusName: false,
@@ -1140,6 +1226,23 @@ export default {
     async resetForm() {
       window.location.reload();
     },
+    //DropdownBrand
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
+      //alert('toggleDropdown');
+    },
+    updateSelectedBrands() {
+      console.log('Select Customer Group', this.selectedBrandIDs);
+    },
+    truncateText(text, colCount) {
+      const maxLength = colCount * 10; // ปรับขนาดตามความกว้างของคอลัมน์
+      return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    },
+    closeDropdown(event) {
+        if (!this.$el.contains(event.target) && !event.target.closest('.dropdown_brand')) {
+          this.isDropdownOpen = false;
+        }
+      }
   },
   computed: {
     overallSummary() {
@@ -1160,10 +1263,20 @@ export default {
     getCustomersItem() {
       return (this.SalesTargetsSummary || []).filter(item => item.type === 'customerItem');
     },
+    ///dropdown brands
+    selectedBrands() {
+      return this.selectedBrandIDs;
+    }
   }
   ,
   created() {
     this.fetchData(); // component created
+  },
+  mounted() {
+    document.addEventListener('click', this.closeDropdown);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.closeDropdown);
   }
   
 };
