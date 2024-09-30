@@ -4,6 +4,7 @@ import Tables from "../views/Tables.vue";
 import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import Signin from "../views/Signin.vue";
+import Upload from "../views/Upload.vue";
 const routes = [
   {
     path: "/",
@@ -34,6 +35,11 @@ const routes = [
     path: "/signup",
     name: "Signup",
     component: Signup,
+  },
+  {
+    path: "/upload",
+    name: "Upload",
+    component: Upload,
   },
 ];
 
