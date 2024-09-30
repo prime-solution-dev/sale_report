@@ -16,7 +16,7 @@ const hostapi = 'http://61.91.5.227:8099/';
   };
 
 
-  export const fetchSalesSummary = async (brandid,channelid,storetypeid,keynameid,keygroup) => {
+  export const fetchSalesSummary = async (yearid,monthid,brandid,channelid,storetypeid,keynameid,keygroup) => {
       
       const url = hostapi + 'Sales/GetSummarySalesTargets';
       const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; // แทนที่ด้วย token ของคุณ
@@ -27,6 +27,11 @@ const hostapi = 'http://61.91.5.227:8099/';
       const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
       console.log(currentYear,previousMonth);
 
+
+      const v_year= yearid;
+      const v_month= monthid;
+
+
       const v_brandid= brandid;
       const v_channelid= channelid;
       const v_storetypeid= storetypeid;
@@ -36,8 +41,8 @@ const hostapi = 'http://61.91.5.227:8099/';
      
   
       const body = {
-        year: 2024,
-        month: 9,
+        year: 0,
+        month: 0,
         brands: [],
         customers: [],
         store_types: [],
@@ -45,9 +50,44 @@ const hostapi = 'http://61.91.5.227:8099/';
         account_groups: [],
         account_names: []
       };
-      if(v_brandid) { 
-        body.brands.push(v_brandid);
+
+
+        if (v_year) { 
+          body.year = v_year;
+        } else {
+          body.year = currentYear; // ค่าปีปัจจุบันเป็นตัวเลข
+        }
+
+        if (v_month) { 
+          body.month = v_month;
+        } else {
+          body.month = previousMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
+        }
+      // if (v_year) { 
+      //   body.year = v_year;
+      // } else {
+      //   body.year = currentYear.toString();
+      // }
+    
+      // if (v_month) { 
+      //   body.month = v_month;
+      // } else {
+      //   body.month = previousMonth.toString();
+      // }
+
+
+      // body.year = v_year || currentYear;
+      // body.month = v_month || previousMonth;
+    
+      // กำหนดค่า brands
+      if (v_brandid && Array.isArray(v_brandid)) {
+        // กระจายค่าใน v_brandid เข้าไปใน brands
+        body.brands.push(...v_brandid);
       }
+      // if(v_brandid) { 
+      //   //body.brands.push(v_brandid);
+      //   body.brands.push(v_brandid);
+      // }
       if(v_channelid) { 
         body.channels.push(v_channelid);
       } 

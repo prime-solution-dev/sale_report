@@ -56,7 +56,7 @@ import 'jquery-ui/themes/base/theme.css';
 export default {
   mounted() {
     const today = new Date();
-    const currentMonth = today.getMonth();
+    const currentMonth = today.getMonth()-1;
     const currentYear = today.getFullYear();
 
     $(this.$refs.datepicker).datepicker({
@@ -71,19 +71,21 @@ export default {
         const month = inst.selectedMonth;
         const year = inst.selectedYear;
         $(this.$refs.datepicker).datepicker('setDate', new Date(year, month, 1));
+        this.$emit('dateSelected', { year, month });  // ส่งอีเวนต์กลับไป
       },
-      onChangeMonthYear: (year, month) => {
+      // onChangeMonthYear: (year, month) => {
+      onChangeMonthYear: () => {
         setTimeout(() => {
           $('.ui-datepicker-calendar').hide();
         }, 0);
-        console.log(year, month);
+        // console.log(year, month);
       },
       beforeShowDay: () => [false, "", ""], // ปิดการแสดงวัน
       defaultDate: new Date(currentYear, currentMonth, 1),
     }).datepicker("setDate", new Date(currentYear, currentMonth, 1));
 
     this.addEventListeners();
-    console.log('Initializing datepicker');
+    // console.log('Initializing datepicker');
   },
 
   methods: {
@@ -108,7 +110,7 @@ export default {
           $(this.$refs.datepicker).datepicker("refresh");
         }
         
-        console.log('Month link clicked: ', month, year); // เพิ่มการตรวจสอบที่นี่
+       // console.log('Month link clicked: ', month, year); // เพิ่มการตรวจสอบที่นี่
       });
     }
   },

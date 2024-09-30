@@ -1,12 +1,6 @@
 
 <style>
-/* .dropdown-menu_2 {
-  display: block;
-  position: absolute;
-  background-color: white;
-  border: 1px solid #ccc;
-  z-index: 1000;
-} */
+
 .dropdown_brand {
   position: relative;
 }
@@ -39,7 +33,8 @@
 
 </style>
 <script setup>
- // import AuthorsTable from "./components/AuthorsTable.vue";
+
+ 
   import { formatNumber } from 'chart.js/helpers';
   import {  fetchGetBrand, fetchGetChannel,fetchStoreType , 
             fetchAccountGroup , fetchAccountName ,fetchSalesSummary
@@ -47,6 +42,8 @@
 
          
 import "../../src/assets/css/styleGlobal.css";
+
+import DatePicker from './components/Datepicker.vue';
 </script>
 
 
@@ -65,6 +62,14 @@ import "../../src/assets/css/styleGlobal.css";
     <div class="row mb-3">
       <div class="col-lg-12 col-md-12 col-12">
         <div class="container">
+
+          <div class="row">
+            <div class="col-md-2">
+              <div>
+              <DatePicker @dateSelected="handleDateSelected"/>
+            </div>
+              </div>
+          </div>
           <div class="row">
             <div class="col-md-2">
               <!-- <div class="form-group">
@@ -76,6 +81,8 @@ import "../../src/assets/css/styleGlobal.css";
                   <option v-for="(brands, index) in GetBrand" :key="index" :value="brands.code" > {{ brands.code }} </option>
                 </select>
               </div> -->
+
+      
               <div class="form-group">
                 <label for="brandSelect">Brand</label>
                 <div class="dropdown_brand">
@@ -1110,22 +1117,26 @@ import "../../src/assets/css/styleGlobal.css";
 <script>
 
 export default {
+ 
+  components: {
+    DatePicker,
+  },
   
   data() {
 
     const getMonthAbbreviation = (monthNumber) => {
-    const monthAbbreviations = [
-      "Jan", "Feb", "Mar", "Apr",
-      "May", "Jun", "Jul", "Aug",
-      "Sep", "Oct", "Nov", "Dec"
-    ];
+      const monthAbbreviations = [
+        "Jan", "Feb", "Mar", "Apr",
+        "May", "Jun", "Jul", "Aug",
+        "Sep", "Oct", "Nov", "Dec"
+      ];
 
-    if (monthNumber < 1 || monthNumber > 12) {
-      throw new Error("Month must be between 1 and 12");
-    }
+      if (monthNumber < 1 || monthNumber > 12) {
+        throw new Error("Month must be between 1 and 12");
+      }
 
-    return monthAbbreviations[monthNumber - 1];
-  };
+      return monthAbbreviations[monthNumber - 1];
+    };
       const currentDate = new Date();
       const daynow = currentDate.getDate();
       const currentYear = currentDate.getFullYear(); 
@@ -1167,9 +1178,17 @@ export default {
       isColumnVisibleDetail: false,
       isColumnVisibleCusName: false,
       isColumnVisibleCusGroup: false,
+      selectedMonth: null,
+      selectedYear: null,
     };
   },
   methods: {
+
+    async handleDateSelected({ year, month }) {
+      this.selectedYear = year;
+      this.selectedMonth = month + 1;  // month เริ่มจาก 0
+      console.log('selected : ', this.selectedMonth, ' year: ', this.selectedYear);
+    },
 
   
     async fetchData() {
@@ -1182,7 +1201,7 @@ export default {
         this.GetAccountGroup = await fetchAccountGroup();
         this.GetAccountName = await fetchAccountName();
         this.GetStoreType = await fetchStoreType(this.selectedChannel);
-        this.SalesTargetsSummary = await fetchSalesSummary(this.selectedBrandID,this.selectedChannel,this.selectedStoreType,this.selectedAcName,this.selectedAcGroup);
+        this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandID,this.selectedChannel,this.selectedStoreType,this.selectedAcName,this.selectedAcGroup);
       
         
       } catch (error) {
@@ -1221,7 +1240,7 @@ export default {
       this.isColumnVisibleCusGroup = !this.isColumnVisibleCusGroup; 
     },
     async applySearch() {
-      this.SalesTargetsSummary = await fetchSalesSummary(this.selectedBrandID,this.selectedChannel,this.selectedStoreType,this.selectedAcName,this.selectedAcGroup);
+      this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannel,this.selectedStoreType,this.selectedAcName,this.selectedAcGroup);
     },
     async resetForm() {
       window.location.reload();
@@ -1232,7 +1251,7 @@ export default {
       //alert('toggleDropdown');
     },
     updateSelectedBrands() {
-      console.log('Select Customer Group', this.selectedBrandIDs);
+      //console.log('Select Customer Group', this.selectedBrandIDs);
     },
     truncateText(text, colCount) {
       const maxLength = colCount * 10; // ปรับขนาดตามความกว้างของคอลัมน์
