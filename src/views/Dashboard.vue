@@ -1,9 +1,5 @@
 
 <style>
-
-.dropdown_brand {
-  position: relative;
-}
 .dropdown-menu_2 {
   display: block;
   position: absolute;
@@ -12,10 +8,40 @@
   z-index: 1000;
 }
 
+.dropdown-menu_channel {
+  display: block;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+
+.dropdown-menu_storetype {
+  display: block;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+
+.dropdown-menu_acgroup {
+  display: block;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+.dropdown-menu_accountname {
+  display: block;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
 .btn-dropdown{
   display: block;
     width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.75rem!important;
    
     font-weight: 0!important;
     line-height: 1.4rem;
@@ -30,20 +56,44 @@
     transition: box-shadow 0.15s ease;
     font-size: 12px!important;
 }
+.hasDatepicker{
+    text-align: center;
+    padding: 0.4rem;
+    border: none;
+    margin-bottom: 1rem;
+    letter-spacing: -0.025rem;
+    text-transform: none;
+    border-radius: 0.3rem;
+    background-color: #fff;
+    background-clip: padding-box;
+    /* border: 1px solid #d2d6da; */
+    width: -webkit-fill-available;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)!important;
 
+}
+
+.ui-widget.ui-widget-content {
+    border: 1px solid #c5c5c5 /*{borderColorDefault}*/;
+    display: none;
+}
 </style>
 <script setup>
 
  
   import { formatNumber } from 'chart.js/helpers';
-  import {  fetchGetBrand, fetchGetChannel,fetchStoreType , 
-            fetchAccountGroup , fetchAccountName ,fetchSalesSummary
-         } from '../services/reportapi/getdataApi';
+  import {  fetchSalesSummary } from '../services/reportapi/getdataApi';
 
          
 import "../../src/assets/css/styleGlobal.css";
 
 import DatePicker from './components/Datepicker.vue';
+import FilterBrand from './components/FilterBrands.vue';
+import FilterChannel from './components/FilterChannels.vue';
+import FilterStoreType from './components/FilterStoreTypes.vue';
+import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
+import FilterAccountName from './components/FilterCustomerNames.vue';
+
 </script>
 
 
@@ -62,131 +112,50 @@ import DatePicker from './components/Datepicker.vue';
     <div class="row mb-3">
       <div class="col-lg-12 col-md-12 col-12">
         <div class="container">
-
-          <div class="row">
+          <div class="row mt-3">
             <div class="col-md-2">
-              <div>
-              <DatePicker @dateSelected="handleDateSelected"/>
-            </div>
-              </div>
-          </div>
-          <div class="row">
-            <div class="col-md-2">
-              <!-- <div class="form-group">
-                <label for="exampleSelect">Brand</label>
-                <select class="form-control" id="brand_id" v-model="selectedBrandID">
-                 
-                  <option disabled> Select Brand </option>
-                  <option>All</option>
-                  <option v-for="(brands, index) in GetBrand" :key="index" :value="brands.code" > {{ brands.code }} </option>
-                </select>
-              </div> -->
-
-      
-              <div class="form-group">
-                <label for="brandSelect">Brand</label>
-                <div class="dropdown_brand">
-                  <button 
-                    class="btn btn-dropdown dropdown-toggle" 
-                    type="button" 
-                    id="dropdownMenuButton" 
-                    @click.stop="toggleDropdown"
-                  >
-                  {{ selectedBrands.length ? truncateText(selectedBrands.join(', '), 2) : 'Select Customer Group' }}
-                    <!-- {{ selectedBrands.length ? selectedBrands.join(', ') : 'เลือกแบรนด์' }} -->
-                  </button>
-                  <div class="dropdown-menu_2" v-if="isDropdownOpen">
-
-                     <!-- ตัวเลือก Select All -->
-                    <label for="select-all" class="dropdown-item">
-                      <input 
-                        type="checkbox" 
-                        id="select-all" 
-                        :checked="isAllSelected" 
-                        @change="toggleSelectAll"
-                      />
-                      All
-                    </label>
-                    <div v-for="(brand, index) in GetBrand" :key="index">
-                      <label :for="'brand-' + index" class="dropdown-item">
-                        <input 
-                          type="checkbox" 
-                          :id="'brand-' + index" 
-                          :name="'brand[]'" 
-                          :value="brand.code" 
-                          v-model="selectedBrandIDs" 
-                          @change="updateSelectedBrands" 
-                        />
-                        {{ brand.code }}
-                      </label>
-                    </div>
-                  </div>
+              <label for="storetypesSelect">Month</label>
+                <div>
+                  <DatePicker @dateSelected="handleDateSelected"/>
                 </div>
               </div>
+            <div class="col-md-2">
+              <FilterBrand @update:brands="updateSelectedBrands"/>
+            </div>
+
+            <div class="col-md-2">
+              <FilterChannel @update:channels="updateSelectedChannels"/>
+            </div>
+
+            <div class="col-md-2">
+              <FilterStoreType ref="storeTypeComponent"  :selectedChannelIDs="selectedChannelIDs" @update:storetypes="updateSelectedStoreType"   />
+            </div>
+            <div class="col-md-2">
+              <FilterAccountName @update:accountnames="updateSelectedKeyAccountName"/>
+            </div>
+
+            <div class="col-md-2">
+              <FilterAcGroup @update:accgroups="updateSelectedKeyAccountGroup"/>
+            </div>
 
           
-            
-            </div>
-
-            <div class="col-md-2">
-              <div class="form-group">
-                <label for="exampleSelect">Channel</label>
-                <select class="form-control" id="channel_id" v-model="selectedChannel" @change="handleChannelChange">
-                  <option value=""> Select Chanel</option>
-                  <option v-for="(channels, index) in GetChannel" :key="index" :value="channels.code">{{ channels.code }} </option>
-                </select>
-              </div>
-            </div>
-
-            <div class="col-md-2">
-              <div class="form-group">
-                <label for="exampleSelect">Store type</label>
-                <select class="form-control" id="store_types_id" v-model="selectedStoreType">
-                  <option> Select Store type</option>
-                  <option v-for="(store_types, index) in GetStoreType" :key="index" :value="store_types.code" > {{ store_types.code }} </option>
-                </select>
-              </div>
-            </div>
-
-        
-
-            <div class="col-md-2">
-              <div class="form-group">
-                <label for="exampleSelect">Key account Name</label>
-                <select class="form-control" id="acc_name_id" v-model="selectedAcName">
-                  <option> Select Key account Name </option>
-                  <option v-for="(acc_name, index) in GetAccountName" :key="index" :value="acc_name.code" > {{ acc_name.code }} </option>
-
-                </select>
-              </div>
-            </div>
-
-            <div class="col-md-2">
-              <div class="form-group">
-                <label for="exampleSelect">Key account group</label>
-                <select class="form-control" id="acc_group_id"  v-model="selectedAcGroup">
-                  <option> Select Key account group </option>
-                  <option v-for="(acc_group, index) in GetAccountGroup" :key="index" :value="acc_group.code" > {{ acc_group.code }} </option>
-
-                  
-                </select>
-              </div>
-            </div>
-
-            <div class="col-md-1">
-              <div class="form-group">
-                <label for="exampleSelect"></label>
-                <button class="btn mb-0  fw-lighter  btn-md null  " @click="resetForm">Reset</button>
-              
-              </div>
-            </div>
-            <div class="col-md-1">
-              <div class="form-group">
-                <label for="exampleSelect"></label>
-                <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary" @click="applySearch">Apply</button>
-              </div>
-            </div>
     
+          </div>
+          <div class="row">
+            <div class="col-md-10"></div>
+              <div class="col-md-1">
+                <div class="form-group">
+                  <label for="exampleSelect"></label>
+                  <button class="btn mb-0  fw-lighter  btn-md null  " style="position: absolute;" @click="resetForm">Reset</button>
+                
+                </div>
+            </div>
+              <div class="col-md-1">
+                <div class="form-group">
+                  <label for="exampleSelect"></label>
+                  <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary" style="position: absolute;" @click="applySearch">Apply</button>
+                </div>
+            </div>
           </div>
         </div>
       </div>
@@ -769,7 +738,7 @@ import DatePicker from './components/Datepicker.vue';
                 </template>
                     <tr v-for="(customer, index) in customers" :key="index" class="bg_grandtotal">
                       <td class="rounded-left">
-                        <p class="text-xs font-weight-bold mb-0 pd-5 ">GRAND TOTAL{{ customer.name}}</p>
+                        <p class="text-xs font-weight-bold mb-0 pd-5 ">GRAND TOTAL {{ customer.name}}</p>
                       </td>
                       <td  class="text-center">
                         <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_last_actual) }}</p>
@@ -1131,6 +1100,12 @@ export default {
  
   components: {
     DatePicker,
+    FilterBrand,
+    FilterChannel,
+    FilterAcGroup,
+    FilterAccountName,
+    //FilterStoreType
+    
   },
   
   data() {
@@ -1160,24 +1135,17 @@ export default {
       const monthAbbr_last = getMonthAbbreviation(monthNumber-1); 
      // console.log(currentYear,previousMonth);
     return {
-      GetChannel: [],
-      GetStoreType: [],
-      selectedBrandID: null, 
+    
+      selectedChannelIDs:[],
       selectedChannel: null, 
       selectedStoreType: null, 
       SalesTargetsSummary: null,
-      //GetBrand: null,
-      GetBrand: [],
-      selectedBrandIDs: [],
-      isDropdownOpen: false,
       //
-      GetAccountGroup: null,
-      GetAccountName: null,
+
       customersItem:null,
       error: null,
       loading: false,
-      selectedAcGroup:null,
-      selectedAcName:null,
+
       currentMonth:currentMonth,
       currentYaer:currentYear,
       lastMonth :lastMonth,
@@ -1205,17 +1173,19 @@ export default {
     async fetchData() {
       this.loading = true;
       this.error = null;
-    //  const chanelid = this.selectedChannel;
       try {
-        this.GetBrand = await fetchGetBrand();
-        this.GetChannel = await fetchGetChannel();
-        this.GetAccountGroup = await fetchAccountGroup();
-        this.GetAccountName = await fetchAccountName();
-        this.GetStoreType = await fetchStoreType(this.selectedChannel);
-        this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandID,this.selectedChannel,this.selectedStoreType,this.selectedAcName,this.selectedAcGroup);
+        this.selectedBrandIDs, // รับค่าจาก selectedBrandIDs
+        this.selectedChannelIDs,
+        this.selectedStortTypeIDs,
+        this.selectedAccountNameIDs,
+        this.selectedAccountGroupIDs,
+        this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
       
-        
-      } catch (error) {
+        // console.log('Selected Brands:', this.selectedBrandIDs); 
+        // console.log('Selected Channels:', this.selectedChannelIDs); 
+      } 
+      
+      catch (error) {
         this.error = error; // จัดการข้อผิดพลาด
         console.error(this.error);
       } finally {
@@ -1223,21 +1193,29 @@ export default {
       }
      
     },
-  
-    async handleChannelChange() {
-        if (this.selectedChannel) {
-         // console.log('Channel value is: ' + this.selectedChannel);
-          try {
-            this.GetStoreType = await fetchStoreType(this.selectedChannel);
-          } catch (error) {
-         //   console.error('Error fetching store types:', error);
-          }
-        } else {
-       //   console.log('No channel selected');
-          this.GetStoreType = []; // เคลียร์เมื่อไม่มีการเลือก channel
-        }
-    }
-    ,
+    ////////////
+    updateSelectedBrands(brands) {
+      this.selectedBrandIDs = brands; // อัปเดต selectedBrandIDs ตามค่าที่ได้รับจาก filter.vue
+    },
+    updateSelectedChannels(channels) {
+     
+      this.selectedChannelIDs = channels;
+    this.$refs.storeTypeComponent.fetchStoreType(channels); // เรียกใช้ฟังก์ชัน fetchStoreType ใน StoreType
+     // this.handleChannelsSelected(channels);
+    },
+ 
+    updateSelectedStoreType(storetypes) {
+      this.selectedStortTypeIDs = storetypes; 
+    },
+    
+    updateSelectedKeyAccountGroup(accgroups) {
+      this.selectedAccountGroupIDs = accgroups; 
+    },
+    updateSelectedKeyAccountName(accountname) {
+      this.selectedAccountNameIDs = accountname; 
+    },
+
+
     toggleColumnDetail() {
       this.isColumnVisibleDetail = !this.isColumnVisibleDetail; 
     },
@@ -1251,45 +1229,27 @@ export default {
       this.isColumnVisibleCusGroup = !this.isColumnVisibleCusGroup; 
     },
     async applySearch() {
-      this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannel,this.selectedStoreType,this.selectedAcName,this.selectedAcGroup);
+      this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
+      console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
+      console.log('Select  selectedChannelIDs', this.selectedChannelIDs);
+      console.log('Select  selectedAccountNameIDs', this.selectedAccountNameIDs);
+      console.log('Select  selectedAccountGroupIDs', this.selectedAccountGroupIDs);
+      console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
     },
     async resetForm() {
       window.location.reload();
     },
-    //DropdownBrand
-    toggleDropdown() {
-      this.isDropdownOpen = !this.isDropdownOpen;
-      //alert('toggleDropdown');
-    },
-    updateSelectedBrands() {
-      //console.log('Select Customer Group', this.selectedBrandIDs);
-    },
-    toggleSelectAll(event) {
-      if (event.target.checked) {
-        // ถ้าติ๊กเลือก "All" ให้เลือกแบรนด์ทั้งหมด
-        this.selectedBrandIDs = this.GetBrand.map(brand => brand.code);
-      } else {
-        // ถ้าไม่ติ๊ก "All" ให้ยกเลิกการเลือกทั้งหมด
-        this.selectedBrandIDs = [];
-      }
-    },
-    truncateText(text, colCount) {
-      const maxLength = colCount * 10; // ปรับขนาดตามความกว้างของคอลัมน์
-      return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-    },
-    closeDropdown(event) {
-        if (!this.$el.contains(event.target) && !event.target.closest('.dropdown_brand')) {
-          this.isDropdownOpen = false;
-        }
-      }
+  
+    
   },
   computed: {
-    overallSummary() {
-      return this.SalesTargetsSummary.find(item => item.type === 'overall');
-    },
     brandSales() {
     return this.SalesTargetsSummary.filter(item => item.type === 'brand');
     },
+    overallSummary() {
+      return this.SalesTargetsSummary.find(item => item.type === 'overall');
+    },
+    
     accountGroub() {
     return this.SalesTargetsSummary.filter(item => item.type === 'account');
     },
@@ -1302,23 +1262,17 @@ export default {
     getCustomersItem() {
       return (this.SalesTargetsSummary || []).filter(item => item.type === 'customerItem');
     },
-    ///dropdown brands
-    selectedBrands() {
-      return this.selectedBrandIDs;
-    },
-    isAllSelected() {
-      return this.selectedBrandIDs.length === this.GetBrand.length;
-    }
+   
   }
   ,
   created() {
     this.fetchData(); // component created
   },
   mounted() {
-    document.addEventListener('click', this.closeDropdown);
+   // document.addEventListener('click', this.closeDropdown);
   },
   beforeUnmount() {
-    document.removeEventListener('click', this.closeDropdown);
+   // document.removeEventListener('click', this.closeDropdown);
   }
   
 };

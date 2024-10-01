@@ -1,7 +1,9 @@
 
-<style>.dropdown_brand {
+<style>
+.dropdown_brand {
     position: relative;
-  }</style>
+  }
+  </style>
 <template>
 <div class="form-group">
 <label for="brandSelect">Brand</label>

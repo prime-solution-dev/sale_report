@@ -84,22 +84,35 @@ const hostapi = 'http://61.91.5.227:8099/';
         // กระจายค่าใน v_brandid เข้าไปใน brands
         body.brands.push(...v_brandid);
       }
+      if (v_channelid && Array.isArray(v_channelid)) {
+        body.channels.push(...v_channelid);
+     }
+      if (v_storetypeid && Array.isArray(v_storetypeid)) {
+         body.store_types.push(...v_storetypeid);
+      }
+    
+      if (v_keynameid && Array.isArray(v_keynameid)) {
+        body.account_names.push(...v_keynameid);
+     }
+      if (v_keygroup && Array.isArray(v_keygroup)) {
+        body.account_groups.push(...v_keygroup);
+     }
       // if(v_brandid) { 
       //   //body.brands.push(v_brandid);
       //   body.brands.push(v_brandid);
       // }
-      if(v_channelid) { 
-        body.channels.push(v_channelid);
-      } 
-      if(v_storetypeid) { 
-        body.store_types.push(v_storetypeid);
-      } 
-      if(v_keynameid) { 
-        body.account_names.push(v_keynameid);
-      } 
-      if(v_keygroup) { 
-        body.account_groups.push(v_keygroup);
-      } 
+      // if(v_channelid) { 
+      //   body.channels.push(v_channelid);
+      // } 
+      // if(v_storetypeid) { 
+      //   body.store_types.push(v_storetypeid);
+      // } 
+      // if(v_keynameid) { 
+      //   body.account_names.push(v_keynameid);
+      // } 
+      // if(v_keygroup) { 
+      //   body.account_groups.push(v_keygroup);
+      // } 
    
     
       try {
@@ -290,9 +303,15 @@ const hostapi = 'http://61.91.5.227:8099/';
       channels:[]
     };
   
-    if (v_code) { 
-      body.channels.push(v_code);
-    } else {
+    // if (v_code) { 
+    //   body.channels.push(v_code);
+    // } else {
+    //   //console.warn('Channel code is empty or null.'); // แสดงคำเตือนถ้าไม่มีค่า
+    // }
+
+    if (v_code && Array.isArray(v_code)) {
+      body.channels.push(...v_code);
+    }else {
       //console.warn('Channel code is empty or null.'); // แสดงคำเตือนถ้าไม่มีค่า
     }
     try {
@@ -351,5 +370,123 @@ const hostapi = 'http://61.91.5.227:8099/';
   };
 
 
- 
+  export const fetchGetCustomer= async () => {
+    const GetCustomeApiUrl = hostapi+'Customer/GetCustomers'; 
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; // แทนที่ด้วย token ของคุณ
+    const body = {
+      "year" : 2024,
+      "month" : 9,
+      "brands" : [],
+      "group_omss" : [],
+      "products" : []
+    };
+    try {
+      const response = await axios.post(GetCustomeApiUrl, body,{
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        }
+      });
+      return response.data; // ส่งค่ากลับ
+    } catch (error) {
+      throw error.response ? error.response.data : ' fetchAccountName Error.'; 
+    }
+  };
   
+
+  // export const fetchGetActaulSales= async () => {
+  //   const GetCustomeApiUrl = hostapi+'Sales/GetActualSales'; 
+  //   const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; // แทนที่ด้วย token ของคุณ
+  //   const body = {
+  //     customers: [],
+  //   };
+  //   try {
+  //     const response = await axios.post(GetCustomeApiUrl, body,{
+  //       headers: {
+  //         'Authorization': token,
+  //         'Content-Type': 'application/json',
+  //       }
+  //     });
+  //     return response.data; // ส่งค่ากลับ
+  //   } catch (error) {
+  //     throw error.response ? error.response.data : ' fetchGetActaulSales Error.'; 
+  //   }
+  // };
+  
+
+  export const fetchGetActaulSales = async (yearid,monthid,brandid,group_omss,products) => {
+      
+    const url = hostapi + 'Sales/GetActualSales';
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; // แทนที่ด้วย token ของคุณ
+
+   
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
+    const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
+    console.log(currentYear,previousMonth);
+
+
+    const v_year= yearid;
+    const v_month= monthid;
+    const v_brandid= brandid;
+    const v_group_omss= group_omss;
+    const v_products= products;
+   
+     //console.log('fetch_='+v_brandid+' 2:'+v_channelid +' 3:'+v_storetypeid + ' 4:'+v_keynameid+' 5:'+v_keygroup);
+   
+
+    const body = {
+      year: 0,
+      month: 0,
+      brands: [],
+      group_omss: [],
+      products: [],
+    };
+
+
+      if (v_year) { 
+        body.year = v_year;
+      } else {
+        body.year = currentYear; // ค่าปีปัจจุบันเป็นตัวเลข
+      }
+
+      if (v_month) { 
+        body.month = v_month;
+      } else {
+        body.month = previousMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
+      }
+   
+    if (v_brandid && Array.isArray(v_brandid)) {
+      // กระจายค่าใน v_brandid เข้าไปใน brands
+      body.brands.push(...v_brandid);
+    }
+    if (v_group_omss && Array.isArray(v_group_omss)) {
+      body.group_omss.push(...v_group_omss);
+   }
+    if (v_products && Array.isArray(v_products)) {
+       body.products.push(...v_products);
+    }
+  
+   
+    
+    try {
+      const response = await axios.post(url, body, {
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        }
+      });
+     // console.log(''+body);
+   
+
+   
+  //  console.log(monthAbbr);
+      //
+    //  const salesDataArray = [];
+  //  console.log(JSON.stringify(customerGroupsWithKeys, null, 2));
+    return  response.data; 
+    
+    } catch (error) {
+      throw error.response ? error.response.data : 'เกิดข้อผิดพลาด'; 
+    }
+};

@@ -1,43 +1,31 @@
 
-<style>.dropdown_brand {
+<style>
+  .dropdown_channel {
     position: relative;
   }</style>
 <template>
 <div class="form-group">
-<label for="brandSelect">Brand</label>
-<div class="dropdown_brand">
-    <button 
-    class="btn btn-dropdown dropdown-toggle" 
-    type="button" 
-    id="dropdownMenuButton" 
-    @click.stop="toggleDropdown"
-    >
-    {{ selectedBrands.length ? truncateText(selectedBrands.join(', '), 2) : 'Select Customer Group' }}
-    <!-- {{ selectedBrands.length ? selectedBrands.join(', ') : 'เลือกแบรนด์' }} -->
+<label for="channelSelect">Channel</label>
+<div class="dropdown_channel">
+    <button  class="btn btn-dropdown dropdown-toggle"  type="button"  id="dropdownSelectChannel" @click.stop="ToggleSelectChannel">
+    {{ selectedChannels.length ? truncateText(selectedChannels.join(', '), 2) : 'Select Channel' }}
     </button>
-    <div class="dropdown-menu_2" v-if="isDropdownOpen">
-
+    <div class="dropdown-menu_channel" v-if="isDropdownOpen">
         <!-- ตัวเลือก Select All -->
     <label for="select-all" class="dropdown-item">
-        <input 
-        type="checkbox" 
-        id="select-all" 
-        :checked="isAllSelected" 
-        @change="toggleSelectAll"
-        />
-        All
+        <input  type="checkbox"  id="select-all" :checked="isAllSelected"  @change="toggleSelectAll" />  All
     </label>
-    <div v-for="(brand, index) in GetBrand" :key="index">
-        <label :for="'brand-' + index" class="dropdown-item">
+    <div v-for="(channel, index) in GetChannel" :key="index">
+        <label :for="'channel-' + index" class="dropdown-item">
         <input 
             type="checkbox" 
-            :id="'brand-' + index" 
-            :name="'brand[]'" 
-            :value="brand.code" 
-            v-model="selectedBrandIDs" 
-            @change="updateSelectedBrands" 
+            :id="'channel-' + index" 
+            :name="'channel[]'" 
+            :value="channel.code" 
+            v-model="selectedChannelIDs" 
+            @change="updateSelectedChannels" 
         />
-        {{ brand.code }}
+        {{ channel.code }}
         </label>
     </div>
     </div>
@@ -45,7 +33,7 @@
 </div>
 </template>
 <script>
- import {  fetchGetBrand } from '../../services/reportapi/getdataApi';
+ import {  fetchGetChannel ,fetchStoreType} from '../../services/reportapi/getdataApi';
 export default {
  
  
@@ -53,11 +41,10 @@ export default {
    
     return {
      
-      selectedBrandID: null, 
-     
-      //GetBrand: null,
-      GetBrand: [],
-      selectedBrandIDs: [],
+
+      //GetChannel: null,
+      GetChannel: [],
+      selectedChannelIDs: [],
       isDropdownOpen: false,
       //
      
@@ -67,18 +54,14 @@ export default {
     };
   },
   methods: {
-
-  
-
   
     async fetchData() {
       this.loading = true;
       this.error = null;
     //  const chanelid = this.selectedChannel;
       try {
-        this.GetBrand = await fetchGetBrand();
-       
-      
+        this.GetChannel = await fetchGetChannel();
+        
         
       } catch (error) {
         this.error = error; // จัดการข้อผิดพลาด
@@ -88,40 +71,62 @@ export default {
       }
      
     },
-    toggleDropdown() {
+    ToggleSelectChannel() {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
-    updateSelectedBrands() {
-      this.$emit('update:brands', this.selectedBrandIDs); // ส่งค่า selectedBrandIDs ไปยังคอมโพเนนต์หลัก
+    // updateSelectedChannels() {
+    //   this.$emit('update:channels', this.selectedChannelIDs); // ส่งค่า selectedChannelIDs ไปยังคอมโพเนนต์หลัก
+    //   if (this.selectedChannelIDs) {
+    //      // console.log('Channel value is: ' + this.selectedChannel);
+    //       try {
+    //         this.GetStoreType =  fetchStoreType(this.selectedChannelIDs);
+    //         alert(this.selectedChannelIDs);
+            
+    //       } catch (error) {
+    //      //   console.error('Error fetching store types:', error);
+    //       }
+    //     } else {
+  
+    //       this.GetStoreType = []; // เคลียร์เมื่อไม่มีการเลือก channel
+    //     }
+    // },
+    updateSelectedChannels() {
+      this.$emit('update:channels', this.selectedChannelIDs); // ส่งค่า selectedChannelIDs ไปยังคอมโพเนนต์หลัก
+      if (this.selectedChannelIDs.length) {
+        this.fetchStoreType(); // เรียกใช้ฟังก์ชัน fetchStoreType ใหม่
+      } else {
+        this.GetStoreType = []; // เคลียร์เมื่อไม่มีการเลือก channel
+      }
     },
+
+    async fetchStoreType() {
+        this.loading = true;
+        this.error = null;
+        try {
+          // รับค่า store type โดยกรองตาม channelIDs ที่เลือก
+          this.GetStoreType = await fetchStoreType(this.selectedChannelIDs);
+        } catch (error) {
+          this.error = error; // จัดการข้อผิดพลาด
+          console.error(this.error);
+        } finally {
+          this.loading = false; // ปิดสถานะโหลด
+        }
+      }
+    ,
+
     toggleSelectAll(event) {
-      this.selectedBrandIDs = event.target.checked ? this.GetBrand.map(brand => brand.code) : [];
-      this.updateSelectedBrands(); // อัปเดตค่าหลังจากเลือกหรือยกเลิกการเลือกทั้งหมด
+      this.selectedChannelIDs = event.target.checked ? this.GetChannel.map(channel => channel.code) : [];
+      
+      this.updateSelectedChannels(); // อัปเดตค่าหลังจากเลือกหรือยกเลิกการเลือกทั้งหมด
     },
    
-    // //DropdownBrand
-    // toggleDropdown() {
-    //   this.isDropdownOpen = !this.isDropdownOpen;
-    //   //alert('toggleDropdown');
-    // },
-    // updateSelectedBrands() {
-    // //   console.log('Select Customer Group', this.selectedBrandIDs);
-    // },
-    // toggleSelectAll(event) {
-    //   if (event.target.checked) {
-    //     // ถ้าติ๊กเลือก "All" ให้เลือกแบรนด์ทั้งหมด
-    //     this.selectedBrandIDs = this.GetBrand.map(brand => brand.code);
-    //   } else {
-    //     // ถ้าไม่ติ๊ก "All" ให้ยกเลิกการเลือกทั้งหมด
-    //     this.selectedBrandIDs = [];
-    //   }
-    // },
+   
     truncateText(text, colCount) {
       const maxLength = colCount * 10; // ปรับขนาดตามความกว้างของคอลัมน์
       return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     },
-    closeDropdown(event) {
-        if (!this.$el.contains(event.target) && !event.target.closest('.dropdown_brand')) {
+    closeDropdownChannel(event) {
+        if (!this.$el.contains(event.target) && !event.target.closest('.dropdown_channel')) {
           this.isDropdownOpen = false;
         }
       }
@@ -129,12 +134,12 @@ export default {
   },
   computed: {
   
-    ///dropdown brands
-    selectedBrands() {
-      return this.selectedBrandIDs;
+    ///dropdown channels
+    selectedChannels() {
+      return this.selectedChannelIDs;
     },
     isAllSelected() {
-      return this.selectedBrandIDs.length === this.GetBrand.length;
+      return this.selectedChannelIDs.length === this.GetChannel.length;
     }
   }
   ,
@@ -142,10 +147,10 @@ export default {
     this.fetchData(); // component created
   },
   mounted() {
-   document.addEventListener('click', this.closeDropdown);
+   document.addEventListener('click', this.closeDropdownChannel);
   },
   beforeUnmount() {
-    document.removeEventListener('click', this.closeDropdown);
+    document.removeEventListener('click', this.closeDropdownChannel);
   }
   
 };
