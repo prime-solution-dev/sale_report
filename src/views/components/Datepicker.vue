@@ -2,7 +2,6 @@
 <template>
   <div>
     <input type="text" ref="datepicker" />
-  
   </div>
 
  

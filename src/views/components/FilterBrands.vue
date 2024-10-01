@@ -1,3 +1,7 @@
+
+<style>.dropdown_brand {
+    position: relative;
+  }</style>
 <template>
 <div class="form-group">
 <label for="brandSelect">Brand</label>
@@ -40,44 +44,78 @@
 </div>
 </div>
 </template>
-
-
 <script>
-
+ import {  fetchGetBrand } from '../../services/reportapi/getdataApi';
 export default {
  
-
+ 
   data() {
+   
     return {
+     
+      selectedBrandID: null, 
      
       //GetBrand: null,
       GetBrand: [],
       selectedBrandIDs: [],
       isDropdownOpen: false,
+      //
      
+      error: null,
+      loading: false,
+      
     };
   },
   methods: {
 
   
+
   
-    //DropdownBrand
+    async fetchData() {
+      this.loading = true;
+      this.error = null;
+    //  const chanelid = this.selectedChannel;
+      try {
+        this.GetBrand = await fetchGetBrand();
+       
+      
+        
+      } catch (error) {
+        this.error = error; // จัดการข้อผิดพลาด
+        console.error(this.error);
+      } finally {
+        this.loading = false; // ปิดสถานะโหลด
+      }
+     
+    },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
-      //alert('toggleDropdown');
     },
     updateSelectedBrands() {
-      //console.log('Select Customer Group', this.selectedBrandIDs);
+      this.$emit('update:brands', this.selectedBrandIDs); // ส่งค่า selectedBrandIDs ไปยังคอมโพเนนต์หลัก
     },
     toggleSelectAll(event) {
-      if (event.target.checked) {
-        // ถ้าติ๊กเลือก "All" ให้เลือกแบรนด์ทั้งหมด
-        this.selectedBrandIDs = this.GetBrand.map(brand => brand.code);
-      } else {
-        // ถ้าไม่ติ๊ก "All" ให้ยกเลิกการเลือกทั้งหมด
-        this.selectedBrandIDs = [];
-      }
+      this.selectedBrandIDs = event.target.checked ? this.GetBrand.map(brand => brand.code) : [];
+      this.updateSelectedBrands(); // อัปเดตค่าหลังจากเลือกหรือยกเลิกการเลือกทั้งหมด
     },
+   
+    // //DropdownBrand
+    // toggleDropdown() {
+    //   this.isDropdownOpen = !this.isDropdownOpen;
+    //   //alert('toggleDropdown');
+    // },
+    // updateSelectedBrands() {
+    // //   console.log('Select Customer Group', this.selectedBrandIDs);
+    // },
+    // toggleSelectAll(event) {
+    //   if (event.target.checked) {
+    //     // ถ้าติ๊กเลือก "All" ให้เลือกแบรนด์ทั้งหมด
+    //     this.selectedBrandIDs = this.GetBrand.map(brand => brand.code);
+    //   } else {
+    //     // ถ้าไม่ติ๊ก "All" ให้ยกเลิกการเลือกทั้งหมด
+    //     this.selectedBrandIDs = [];
+    //   }
+    // },
     truncateText(text, colCount) {
       const maxLength = colCount * 10; // ปรับขนาดตามความกว้างของคอลัมน์
       return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
@@ -87,6 +125,7 @@ export default {
           this.isDropdownOpen = false;
         }
       }
+      
   },
   computed: {
   
@@ -103,7 +142,7 @@ export default {
     this.fetchData(); // component created
   },
   mounted() {
-    document.addEventListener('click', this.closeDropdown);
+   document.addEventListener('click', this.closeDropdown);
   },
   beforeUnmount() {
     document.removeEventListener('click', this.closeDropdown);
