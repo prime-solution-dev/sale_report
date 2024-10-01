@@ -164,6 +164,7 @@ const props = defineProps({
   },
   formData: {
     required: true,
+    type: Object,
   },
   errors: {
     required: true,

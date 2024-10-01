@@ -109,3 +109,71 @@ export const getUser = async () => {
         throw error.response ? error.response.data : 'เกิดข้อผิดพลาด';
     }
 };
+
+export const createUser = async (data) => {
+    try {
+        const url = hostapi + '/Authen/CreateUser';
+
+        const body = data
+        const response = await axios.post(url, body, {
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json',
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : 'เกิดข้อผิดพลาด';
+    }
+};
+
+export const updateUser = async (data) => {
+    try {
+        const url = hostapi + '/Authen/UpdateUsers';
+
+        const body = [data]
+        const response = await axios.post(url, body, {
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json',
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : 'เกิดข้อผิดพลาด';
+    }
+};
+
+export const deleteUser = async (data) => {
+    try {
+        const url = hostapi + '/Authen/DeleteUsers';
+
+        const body = [data]
+        const response = await axios.post(url, body, {
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json',
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : 'เกิดข้อผิดพลาด';
+    }
+};
+
+export const resetPasswordUser = async (data) => {
+    try {
+        const url = hostapi + '/Authen/ResetPassword';
+
+        const body = data
+        const response = await axios.post(url, body, {
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json',
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : 'เกิดข้อผิดพลาด';
+    }
+};

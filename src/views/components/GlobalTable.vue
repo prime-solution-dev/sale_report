@@ -22,7 +22,11 @@
         </a-tag>
       </template>
       <template v-if="column.key === 'resetPassword'">
-        <span style="font-size: 20px; color: gray"><KeyOutlined /> </span>
+        <span
+          @click="showResetPasswordConfirm(record)"
+          style="font-size: 20px; color: gray"
+          ><KeyOutlined />
+        </span>
       </template>
       <template v-if="column.key === 'edit'">
         <span
@@ -69,6 +73,10 @@ const props = defineProps({
     // type: Function,
     required: false,
   },
+  resetPasswordCallback: {
+    // type: Function,
+    required: false,
+  },
   deleteCallback: {
     // type: Function,
     required: false,
@@ -78,6 +86,10 @@ const props = defineProps({
     required: false,
   },
   confirmDelete: {
+    // type: Object,
+    required: false,
+  },
+  confirmResetPassword: {
     // type: Object,
     required: false,
   },
@@ -102,8 +114,31 @@ const handleEdit = async (txt, record) => {
 //   }
 // };
 
+const showResetPasswordConfirm = (record) => {
+//   console.log("showDeleteConfirm", props.confirmResetPassword);
+
+  Modal.confirm({
+    title: `${props.confirmResetPassword.title}`,
+    icon: createVNode(ExclamationCircleOutlined),
+    content: `${props.confirmResetPassword.content}`,
+    okText: "Yes",
+    okType: "danger",
+    cancelText: "No",
+    async onOk() {
+      console.log("OK");
+      if (props.resetPasswordCallback) {
+        await props.resetPasswordCallback(record);
+      }
+    },
+    onCancel() {
+      console.log("Cancel");
+    },
+    centered: true,
+  });
+};
+
 const showDeleteConfirm = (record) => {
-  console.log("showDeleteConfirm", props.confirmDelete);
+//   console.log("showDeleteConfirm", props.confirmDelete);
 
   Modal.confirm({
     title: `${props.confirmDelete.title}`,
