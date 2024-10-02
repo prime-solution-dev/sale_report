@@ -24,14 +24,29 @@ const getRoute = () => {
         <sidenav-item
           to="/dashboard-default"
           :class="getRoute() === 'dashboard-default' ? 'active' : ''"
-          :navText="isRTL ? 'لوحة القيادة' : 'Dashboard'"
+          :navText="isRTL ? ' لقيادة' : 'Dashboard'"
         >
           <template v-slot:icon>
             <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
+      <li class="nav-item">
+        <sidenav-item
+          to=""
+          :class="getRoute() === 'report-customer.groups' || getRoute() === 'report-keyaccount.groups' || getRoute() === 'report-actaulsales' ? 'active' : ''"
+          :navText="isRTL ? '' : ' Report'"
+        >
+          <template v-slot:icon >
+            <div style="background-color: rgb(183, 228, 255);
+    padding: 6px 10px 5px 10px;
+    border-radius: 11px;"><i class="ni ni-chart-bar-32  text-white text-sm opacity-10" ></i></div>
+            
+          </template>
+        </sidenav-item>
+      </li>
 
+      
       <li class="nav-item">
         <sidenav-item
           to="/report-customer.groups"
@@ -39,9 +54,8 @@ const getRoute = () => {
           :navText="isRTL ? '' : 'Customer Group Report'"
         >
           <template v-slot:icon>
-            <i
-              class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"
-            ></i>
+            <i class="ni ni-chart-bar-32  text-info text-sm opacity-10"></i>
+         
           </template>
         </sidenav-item>
       </li>
@@ -52,9 +66,7 @@ const getRoute = () => {
           :navText="isRTL ? '' : 'KeyAccount Group Report'"
         >
           <template v-slot:icon>
-            <i
-              class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"
-            ></i>
+            <i class="ni ni-chart-bar-32  text-info text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
@@ -66,9 +78,7 @@ const getRoute = () => {
           :navText="isRTL ? '' : 'ActaulSales Report'"
         >
           <template v-slot:icon>
-            <i
-              class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"
-            ></i>
+            <i class="ni ni-chart-bar-32  text-info text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
