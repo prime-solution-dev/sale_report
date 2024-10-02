@@ -1,11 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
-import Tables from "../views/Tables.vue";
+import ReportCustomers from "../views/ReportCustomerGroups.vue";
+import ReportKeyAccountGroups from "../views/ReportKeyAccountGroups.vue";
+import ReportActaulSales from "../views/ReportActaulSales.vue";
+
 import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import Signin from "../views/Signin.vue";
 import Upload from "../views/Upload.vue";
-// import Template from "../views/Template.vue";
+import Template from "../views/Template.vue";
 const routes = [
   {
     path: "/",
@@ -18,17 +21,26 @@ const routes = [
     component: Dashboard,
   },
   {
-    path: "/tables",
-    name: "Tables",
-    component: Tables,
-    children: [
-      {
-        path: "template",
-        name: "Template",
-        component: () => import("@/views/Template.vue"), 
-      },
-    ],
+    path: "/report-customer.groups",
+    name: "report-customer",
+    component: ReportCustomers,
   },
+  {
+    path: "/report-keyaccount.groups",
+    name: "report-keyaccount.group",
+    component: ReportKeyAccountGroups,
+  },
+  {
+    path: "/report-actaulsales",
+    name: "report-actualsales",
+    component: ReportActaulSales,
+  },
+  {
+    path: "/report-template",
+    name: "report-template",
+    component: Template,
+  },
+  
   {
     path: "/profile",
     name: "Profile",
