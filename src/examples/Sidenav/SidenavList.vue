@@ -24,7 +24,7 @@ const getRoute = () => {
         <sidenav-item
           to="/dashboard-default"
           :class="getRoute() === 'dashboard-default' ? 'active' : ''"
-          :navText="isRTL ? ' لقيادة' : 'Dashboard'"
+          :navText="isRTL ? '' : 'Dashboard'"
         >
           <template v-slot:icon>
             <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
@@ -33,14 +33,12 @@ const getRoute = () => {
       </li>
       <li class="nav-item">
         <sidenav-item
-          to=""
+          to="/"
           :class="getRoute() === 'report-customer.groups' || getRoute() === 'report-keyaccount.groups' || getRoute() === 'report-actaulsales' ? 'active' : ''"
           :navText="isRTL ? '' : ' Report'"
         >
           <template v-slot:icon >
-            <div style="background-color: rgb(183, 228, 255);
-    padding: 6px 10px 5px 10px;
-    border-radius: 11px;"><i class="ni ni-chart-bar-32  text-white text-sm opacity-10" ></i></div>
+            <div style="background-color: rgb(183, 228, 255);   padding: 6px 10px 5px 10px; border-radius: 11px;"><i class="ni ni-chart-bar-32  text-white text-sm opacity-10" ></i></div>
             
           </template>
         </sidenav-item>

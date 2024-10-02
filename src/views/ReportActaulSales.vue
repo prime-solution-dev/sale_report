@@ -89,15 +89,10 @@ import "../../src/assets/css/styleGlobal.css";
 
 import DatePicker from './components/Datepicker.vue';
 import FilterBrand from './components/FilterBrands.vue';
-import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
-import FilterAccountName from './components/FilterCustomernames.vue';
+import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
 
 </script>
-
-
 <template>
-  
-
   <div class="py-4 container-fluid bg-white shadow-md">
     <div class="row mb-3">
       <div class="col-lg-12 col-md-12 col-12">
@@ -105,140 +100,93 @@ import FilterAccountName from './components/FilterCustomernames.vue';
           <div class="row mt-3">
             <div class="col-md-2">
               <label for="storetypesSelect">Month</label>
-                <div>
-                  <DatePicker @dateSelected="handleDateSelected"/>
-                </div>
-              </div>
+              <DatePicker @dateSelected="handleDateSelected" />
+            </div>
             <div class="col-md-2">
-              <FilterBrand @update:brands="updateSelectedBrands"/>
+              <FilterBrand @update:brands="updateSelectedBrands" />
             </div>
-
-            <div class="col-md-2" hidden>
-              <FilterAcGroup @update:accgroups="updateSelectedKeyAccountGroup"/>
+            <div class="col-md-3">
+              <FilterGetGroupOm @update:group_omss="updateSelectedGroupOms" />
             </div>
-
-            <div class="col-md-2">
-              <FilterAccountName @update:accountnames="updateSelectedKeyAccountName"/>
-            </div>
-
             <div class="col-md-2">
               <div class="form-group">
                 <label for="exampleSelect">SKU</label>
-                <input type="text" class="form-control">
-              
+                <input type="text" class="form-control" v-model="selectedSKU" />
               </div>
             </div>
-          
             <div class="col-md-1">
-                <div class="form-group">
-                  <label for="exampleSelect"></label>
-                  <button class="btn mb-0  fw-lighter  btn-md null  "  @click="resetForm">Reset</button>
-                
-                </div>
+              <label for="exampleSelect"></label>
+              <button class="btn mb-0 fw-lighter btn-md" @click="resetForm">Reset</button>
             </div>
-              <div class="col-md-1">
-                <div class="form-group">
-                  <label for="exampleSelect"></label>
-                  <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary"  @click="applySearch">Apply</button>
-                </div>
-            </div>
-          </div>
-       
-        </div>
-      </div>
-    </div>
-  </div>
-
-   
-
-
-
-
-
-
-
-
-
-  <div class="py-4 mt-4 container-fluid" v-if="GetActaulSales" >
-    <div class="row">
-      <div class="col-12">
-        
-        <div class="card">
-          <div class="card-header pb-0">
-            <h4 class="font-weight-bolder">ActualSales QTY Report</h4>
-          </div>
-          <div class="card-body px-0 pt-0 pb-2">
-            <div class="table-responsive p-3">
-              <table class="table align-items-center mb-0" v-if="GetActaulSales.length > 0">
-                <thead >
-                  <tr class="bg-light">
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Customer   </th>
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Brand   </th>
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> SKU Type   </th>
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> SKU   </th>
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Child Code   </th>
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Description   </th>
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> QTY   </th>
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Invoice Net Amount WO Vat   </th>
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Return Base Unit   </th>
-                    <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Return Net Amount WO Vat   </th>
-
-                  </tr>
-                </thead>
-                <tbody v-if="GetActaulSales.length > 0">
-                  <tr class="text-center" v-for="(item, data) in GetActaulSales" :key="data">
-                    <td style="text-align: left !important;">
-                      <p class="text-xs font-weight-bold mb-0">{{ item.customer_group_oms}}</p>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ item.brand }}</p>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0"> sku type</p>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0"> sku </p>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0">childcode</p>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0">des</p>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ item.qty_sale }}</p>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ item.price_sale }}</p>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ item.qty_return }}</p>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ item.price_return }}</p>
-                    </td>
-
-                   
-                    
-                  </tr>
-                
-                </tbody>
-              </table>
-
-              <table  v-else>
-                <tr>
-                  <td> No data.</td>
-                </tr>
-
-              </table>
+            <div class="col-md-1">
+              <label for="exampleSelect"></label>
+              <button class="btn mb-0 btn-md text-white fw-lighter bg-primary" @click="applySearch">Apply</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
+    <div class="py-4 mt-4 container-fluid" v-if="GetActaulSales && GetActaulSales.length > 0">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header pb-0">
+              <h4 class="font-weight-bolder">ActualSales QTY Report</h4>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-3">
+                <table class="table align-items-center mb-0">
+                  <thead class="bg-light">
+                    <tr>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Customer</th>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Brand</th>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">SKU Type</th>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">SKU</th>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Child Code</th>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Description</th>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">QTY</th>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Invoice Net Amount WO Vat</th>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Return Base Unit</th>
+                      <th  class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Return Net Amount WO Vat</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template v-for="(item, index) in GetActaulSales" :key="index">
+                      <tr >
+                        <td class="text-xs font-weight-bold mb-0">{{ item.customer_group_oms }}</td>
+                        <td class="text-xs font-weight-bold mb-0">{{ item.brand }}</td>
+                        <td class="text-xs font-weight-bold mb-0">FG</td>
+                        <td class="text-xs font-weight-bold mb-0">{{ item.product_code }}</td>
+                        <td class="text-xs font-weight-bold mb-0">-</td>
+                        <td class="text-xs font-weight-bold mb-0">{{ item.product_name }}</td>
+                        <td class="text-xs font-weight-bold mb-0">{{ item.qty_sale }}</td>
+                        <td class="text-xs font-weight-bold mb-0">{{ item.price_sale }}</td>
+                        <td class="text-xs font-weight-bold mb-0" >{{ item.qty_return }}</td>
+                        <td class="text-xs font-weight-bold mb-0">{{ item.price_return }}</td>
+                      </tr>
+                      <template v-if="item.components && item.components.length">
+                        <tr v-for="(component, compIndex) in item.components" :key="compIndex">
+                          <td class="text-xs font-weight-bold mb-0">{{ component.product_code }}</td>
+                          <td class="text-xs font-weight-bold mb-0">{{ item.brand }}</td>
+                          <td class="text-xs font-weight-bold mb-0">CH</td>
+                          <td class="text-xs font-weight-bold mb-0">{{ component.product_hierarchy }}</td>
+                          <td class="text-xs font-weight-bold mb-0">{{ component.product_code }}</td>
+                          <td class="text-xs font-weight-bold mb-0">{{ component.product_name }}</td>
+                          <td class="text-xs font-weight-bold mb-0">{{ component.qty }}</td>
+                          <td class="text-xs font-weight-bold mb-0">0</td>
+                          <td class="text-xs font-weight-bold mb-0">0</td>
+                        </tr>
+                      </template>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
 </template>
 
 <script>
@@ -248,8 +196,7 @@ export default {
   components: {
     DatePicker,
     FilterBrand,
-    FilterAcGroup,
-    FilterAccountName,
+    FilterGetGroupOm,
     
   },
   
@@ -282,12 +229,13 @@ export default {
     return {
     
       selectedChannelIDs:[],
+      selectedGroupOmsIDs:[],
+      selectedSKU:[],
       selectedChannel: null, 
       selectedStoreType: null, 
       GetActaulSales: null,
       //
 
-      customersItem:null,
       error: null,
       loading: false,
 
@@ -298,10 +246,7 @@ export default {
       month_txt_current:monthAbbr,
       month_txt_last:monthAbbr_last,
       day_now:daynow,
-      isColumnVisible: false,
-      isColumnVisibleDetail: false,
-      isColumnVisibleCusName: false,
-      isColumnVisibleCusGroup: false,
+     
       selectedMonth: null,
       selectedYear: null,
     };
@@ -322,9 +267,9 @@ export default {
         this.selectedBrandIDs, // รับค่าจาก selectedBrandIDs
         this.selectedChannelIDs,
         this.selectedStortTypeIDs,
-        this.selectedAccountNameIDs,
-        this.selectedAccountGroupIDs,
-        this.GetActaulSales = await fetchGetActaulSales(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
+        this.selectedGroupOmsIDs,
+        this.selectedSKU,
+        this.GetActaulSales = await fetchGetActaulSales(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedGroupOmsIDs,this.selectedSKU);
       
         // console.log('Selected Brands:', this.selectedBrandIDs); 
         // console.log('Selected Channels:', this.selectedChannelIDs); 
@@ -344,32 +289,17 @@ export default {
     },
    
     
-    updateSelectedKeyAccountGroup(accgroups) {
-      this.selectedAccountGroupIDs = accgroups; 
-    },
-    updateSelectedKeyAccountName(accountname) {
-      this.selectedAccountNameIDs = accountname; 
-    },
+   
 
+    updateSelectedGroupOms(group_omss) {
+      this.selectedGroupOmsIDs = group_omss; 
+    },
+    
 
-    toggleColumnDetail() {
-      this.isColumnVisibleDetail = !this.isColumnVisibleDetail; 
-    },
-    toggleColumnChannel() {
-      this.isColumnVisible = !this.isColumnVisible; 
-    },
-    toggleColumnCusName() {
-      this.isColumnVisibleCusName = !this.isColumnVisibleCusName; 
-    },
-    toggleColumnCusGroup() {
-      this.isColumnVisibleCusGroup = !this.isColumnVisibleCusGroup; 
-    },
+   
     async applySearch() {
-      this.GetActaulSales = await fetchGetActaulSales(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
-      // console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
-      // console.log('Select  selectedChannelIDs', this.selectedChannelIDs);
-      // console.log('Select  selectedAccountNameIDs', this.selectedAccountNameIDs);
-      // console.log('Select  selectedAccountGroupIDs', this.selectedAccountGroupIDs);
+      this.GetActaulSales = await fetchGetActaulSales(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedGroupOmsIDs,this.selectedSKU);
+     
       // console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
     },
     async resetForm() {
@@ -379,25 +309,7 @@ export default {
     
   },
   computed: {
-    // brandSales() {
-    // return this.GetActaulSales.filter(item => item.type === 'brand');
-    // },
-    // overallSummary() {
-    //   return this.GetActaulSales.find(item => item.type === 'overall');
-    // },
-    
-    // accountGroub() {
-    // return this.GetActaulSales.filter(item => item.type === 'account');
-    // },
-    // accountName() {
-    // return this.GetActaulSales.filter(item => item.type === 'name');
-    // },
-    // customers() {
-    //   return this.GetActaulSales.filter(item => item.type === 'customer' );
-    // },
-    // getCustomersItem() {
-    //   return (this.GetActaulSales || []).filter(item => item.type === 'customerItem');
-    // },
+ 
    
   }
   ,
@@ -405,10 +317,9 @@ export default {
     this.fetchData(); // component created
   },
   mounted() {
-   // document.addEventListener('click', this.closeDropdown);
+  
   },
   beforeUnmount() {
-   // document.removeEventListener('click', this.closeDropdown);
   }
   
 };
