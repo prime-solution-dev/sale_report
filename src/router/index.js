@@ -5,6 +5,7 @@ import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import Signin from "../views/Signin.vue";
 import Upload from "../views/Upload.vue";
+// import Template from "../views/Template.vue";
 const routes = [
   {
     path: "/",
@@ -20,6 +21,13 @@ const routes = [
     path: "/tables",
     name: "Tables",
     component: Tables,
+    children: [
+      {
+        path: "template",
+        name: "Template",
+        component: () => import("@/views/Template.vue"), 
+      },
+    ],
   },
   {
     path: "/profile",

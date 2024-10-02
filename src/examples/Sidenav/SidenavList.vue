@@ -44,6 +44,20 @@ const getRoute = () => {
             ></i>
           </template>
         </sidenav-item>
+        <!-- Sub-navbar for Report -->
+        <ul class="navbar-nav ms-3" v-if="getRoute() === 'tables'">
+          <li class="nav-item">
+            <sidenav-item
+              to="/tables/template"
+              :class="getRoute() === 'template' ? 'active' : ''"
+              :navText="isRTL ? 'تقرير 1' : 'Template'"
+            >
+              <template v-slot:icon>
+                <i class="ni ni-chart-bar-32 text-sm"></i>
+              </template>
+            </sidenav-item>
+          </li>
+        </ul>
       </li>
 
       <li class="nav-item">

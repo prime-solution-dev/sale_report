@@ -91,7 +91,7 @@ import {
   resetPasswordUser
 } from "../services/reportapi/user-api.service";
 
-const activeKey = ref("2");
+const activeKey = ref("1");
 
 let confirmDeleteTab1 = ref({
   title: "Are you sure you want to delete this?",
@@ -341,6 +341,9 @@ const OpenModalUploadUsers = (status) => {
     formDataUsers.email = "";
     formDataUsers.name = "";
     formDataUsers.userGroup = "";
+  } else {
+    console.log('Edit');
+    
   }
 
   titleUsers.value = `${status} User`;
@@ -431,9 +434,9 @@ const handleDeleteTab2 = async (record) => {
 
 const handleResetPasswordTab2 = async (record) => {
   try {
-    // console.log("handleResetPasswordTab2", record);
+    console.log("handleResetPasswordTab2", record);
     const mapDataForResetPassword = {
-      user: record.group,
+      user: record.email,
     };
     const response = await resetPasswordUser(mapDataForResetPassword);
     if (response) {
@@ -481,8 +484,8 @@ const submitModalCallbackUsers = async (data) => {
   // console.log("submitModalCallbackUsers", data);
   if (titleUsers.value == "Add User") {
     const mapDataForSave = {
-      user: data.name,
-      password: data.name,
+      user: data.email,
+      password: "",
       email: data.email,
       permission_group_id: data.userGroup,
       name: data.name,
@@ -507,6 +510,7 @@ const submitModalCallbackUsers = async (data) => {
     const mapDataForSave = {
       user_id: data.userID,
       email: data.email,
+      user: data.email,
       name: data.name,
       permission_group_code: filterGroupID[0].label,
     };
