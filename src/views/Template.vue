@@ -37,6 +37,20 @@ import {
   exportSalesTarget,
 } from "../services/reportapi/template-api.service";
 
+
+// import { useRoute } from "vue-router";
+
+// const route = useRoute();
+
+// const isChildRoute = ref(route.path !== '/tables');
+
+// watch(
+//   () => route.path,
+//   (newPath) => {
+//     isChildRoute.value = newPath !== '/tables';
+//   }
+// );
+
 const exportExcelCustomer = async () => {
   try {
     const response = await exportCustomer();

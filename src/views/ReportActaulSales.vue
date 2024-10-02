@@ -90,7 +90,7 @@ import "../../src/assets/css/styleGlobal.css";
 import DatePicker from './components/Datepicker.vue';
 import FilterBrand from './components/FilterBrands.vue';
 import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
-import FilterAccountName from './components/FilterCustomerNames.vue';
+import FilterAccountName from './components/FilterCustomernames.vue';
 
 </script>
 

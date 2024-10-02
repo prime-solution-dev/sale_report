@@ -87,7 +87,7 @@ import FilterBrand from './components/FilterBrands.vue';
 import FilterChannel from './components/FilterChannels.vue';
 import FilterStoreType from './components/FilterStoreTypes.vue';
 import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
-import FilterAccountName from './components/FilterCustomerNames.vue';
+import FilterAccountName from './components/FilterCustomernames.vue';
 
 </script>
 
