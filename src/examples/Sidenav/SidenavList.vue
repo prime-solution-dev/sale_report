@@ -112,7 +112,7 @@ const getRoute = () => {
       
       <li class="nav-item">
         <sidenav-item
-          to="/"
+          to="/upload"
           :class="getRoute() === '' ? 'active' : ''"
           :navText="isRTL ? 'الفواتیر' : 'Upload'"
         >
