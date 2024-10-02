@@ -14,7 +14,7 @@
     id="dropdownMenuButton" 
     @click.stop="toggleDropdown"
     >
-    {{ selectedBrands.length ? truncateText(selectedBrands.join(', '), 2) : 'Select Customer Group' }}
+    {{ selectedBrands.length ? truncateText(selectedBrands.join(', '), 2) : 'Select Brand' }}
     <!-- {{ selectedBrands.length ? selectedBrands.join(', ') : 'เลือกแบรนด์' }} -->
     </button>
     <div class="dropdown-menu_2" v-if="isDropdownOpen">

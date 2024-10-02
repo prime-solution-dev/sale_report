@@ -140,6 +140,8 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                   <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary"  @click="applySearch">Apply</button>
                 </div>
             </div>
+
+            
           </div>
        
         </div>
@@ -160,7 +162,12 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
         
         <div class="card">
           <div class="card-header pb-0">
-            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Customer Group</h4>
+            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Customer Group
+              <button class="btn mb-0 btn-md  fw-lighter export-button export-button float-right" @click="exportToExcel">
+                <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button>
+            </h4>
+           
+             
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-3">
@@ -321,7 +328,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 </template>
 
 <script>
-
+import * as XLSX from 'xlsx';
 export default {
  
   components: {
@@ -388,6 +395,55 @@ export default {
     };
   },
   methods: {
+
+    exportToExcel() {
+      const table = document.querySelector(".table tbody");
+      const rows = table.querySelectorAll("tr");
+        if (rows.length === 0) {
+          alert("ไม่มีข้อมูลให้ส่งออก");
+          return;
+        }
+
+        const data = [];
+
+        rows.forEach(row => {
+          const cells = row.querySelectorAll("td");
+          if (cells.length) {
+            const rowData = {
+              "Customer": cells[0].innerText.trim(),
+              "Actual Sales Last Year": this.formatNumber(cells[1].innerText),
+              "Target Current Year": this.formatNumber(cells[2].innerText),
+              "%T Current Year / A Last Year": this.formatNumber(cells[3].innerText),
+              "Estimate": this.formatNumber(cells[4].innerText),
+              "Sales before Return": this.formatNumber(cells[cells.length - 3].innerText),
+              "Actual Sales Current Year": this.formatNumber(cells[cells.length - 2].innerText),
+              "%To Target": this.formatNumber(cells[cells.length - 1].innerText),
+              "Return": this.formatNumber(cells[cells.length - 2].innerText), // Adjust according to your column structure
+              "Balance to go": this.formatNumber(cells[cells.length - 1].innerText) // Adjust according to your column structure
+            };
+
+            // Add weekly estimates if the column is visible
+            if (this.isColumnVisible) {
+              for (let i = 5; i <= 9; i++) { // Assuming week columns are from 5 to 9
+                rowData[`Week ${i - 4}`] = this.formatNumber(cells[i].innerText);
+              }
+            }
+
+            data.push(rowData);
+          }
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "DAILYSALESREPORT-ByCustomerGroup");
+        XLSX.writeFile(workbook, "DAILYSALESREPORT_ByCustomerGroup.xlsx");
+      },
+
+// Helper function to format numbers if needed
+formatNumber(value) {
+  return parseFloat(value.replace(/,/g, '').trim()) || 0;
+},
+    
 
     async handleDateSelected({ year, month }) {
       this.selectedYear = year;

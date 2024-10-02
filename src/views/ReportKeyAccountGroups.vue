@@ -170,7 +170,9 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
         
         <div class="card">
           <div class="card-header pb-0">
-            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Key Account Group</h4>
+            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Key Account Group  
+              <button class="btn mb-0 btn-md  fw-lighter export-button export-button float-right" @click="exportToExcel">
+              <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button></h4>
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-3">
@@ -317,7 +319,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 </template>
 
 <script>
-
+import * as XLSX from 'xlsx';
 export default {
  
   components: {
@@ -386,6 +388,54 @@ export default {
     };
   },
   methods: {
+
+    exportToExcel() {
+      const table = document.querySelector(".table tbody");
+      const rows = table.querySelectorAll("tr");
+      if (rows.length === 0) {
+        alert("ไม่มีข้อมูลให้ส่งออก");
+        return;
+      }
+      const data = [];
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        if (cells.length) {
+          const rowData = {
+            "Key Account Group": cells[0].innerText.trim(),
+            "Actual Last Year": this.formatNumber(cells[1].innerText),
+            "Target Current Year": this.formatNumber(cells[2].innerText),
+            "%T Current Year / A Last Year": this.formatNumber(cells[3].innerText.replace('%', '').trim()), 
+            "Estimate": this.formatNumber(cells[4].innerText),
+            "Sales before Return": this.formatNumber(cells[cells.length - 3].innerText),
+            "Actual Sales Current Year": this.formatNumber(cells[cells.length - 2].innerText),
+            "%To Target": this.formatNumber(cells[cells.length - 1].innerText.replace('%', '').trim()), 
+            "Return": this.formatNumber(cells[cells.length - 2].innerText), 
+            "Balance to go": this.formatNumber(cells[cells.length - 1].innerText) 
+          };
+          // Add weekly estimates if the column is visible
+          if (this.isColumnVisibleCusGroup) {
+            for (let i = 5; i <= 9; i++) { // Assuming week columns are from 5 to 9
+              if (cells[i]) {
+                rowData[`Week ${i - 4}`] = this.formatNumber(cells[i].innerText);
+              }
+            }
+          }
+
+          data.push(rowData);
+        }
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "DAILYSALESREPORT-KeyAccountGroup");
+      XLSX.writeFile(workbook, "DAILYSALESREPORT_KeyAccountGroup.xlsx");
+    },
+
+    // Helper function to format numbers if needed
+    formatNumber(value) {
+      return parseFloat(value.replace(/,/g, '').replace('%', '').trim()) || 0; // Handle both percentage and comma formats
+    }
+    ,
 
     async handleDateSelected({ year, month }) {
       this.selectedYear = year;

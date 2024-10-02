@@ -38,53 +38,12 @@
   border: 1px solid #ccc;
   z-index: 1000;
 }
-.btn-dropdown{
-  display: block;
-    width: 100%;
-    padding: 0.5rem 0.75rem!important;
-   
-    font-weight: 0!important;
-    line-height: 1.4rem;
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #d2d6da;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    border-radius: 0.3rem;
-    transition: box-shadow 0.15s ease;
-    font-size: 12px!important;
-}
-.hasDatepicker{
-    text-align: center;
-    padding: 0.4rem;
-    border: none;
-    margin-bottom: 1rem;
-    letter-spacing: -0.025rem;
-    text-transform: none;
-    border-radius: 0.3rem;
-    background-color: #fff;
-    background-clip: padding-box;
-    /* border: 1px solid #d2d6da; */
-    width: -webkit-fill-available;
-    font-size: 14px;
-    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)!important;
 
-}
 
-.ui-widget.ui-widget-content {
-    border: 1px solid #c5c5c5 /*{borderColorDefault}*/;
-    display: none;
-}
 </style>
 <script setup>
 
- 
-  //import { formatNumber } from 'chart.js/helpers';
-  import {  fetchGetActaulSales } from '../services/reportapi/getdataApi';
-
-         
+import {  fetchGetActaulSales } from '../services/reportapi/getdataApi';
 import "../../src/assets/css/styleGlobal.css";
 
 import DatePicker from './components/Datepicker.vue';
@@ -105,7 +64,7 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
             <div class="col-md-2">
               <FilterBrand @update:brands="updateSelectedBrands" />
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2 text-nowrap">
               <FilterGetGroupOm @update:group_omss="updateSelectedGroupOms" />
             </div>
             <div class="col-md-2">
@@ -122,6 +81,16 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
               <label for="exampleSelect"></label>
               <button class="btn mb-0 btn-md text-white fw-lighter bg-primary" @click="applySearch">Apply</button>
             </div>
+
+            <div class="col-md-2">
+              <label for="exportButton"></label>
+              <br>
+              <button class="btn mb-0 btn-md  fw-lighter export-button export-button" @click="exportToExcel">
+                <i class="fa fa-cloud-download" aria-hidden="true"></i>
+
+                 Download</button>
+            </div>
+            
           </div>
         </div>
       </div>
@@ -190,7 +159,7 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
 </template>
 
 <script>
-
+import * as XLSX from 'xlsx';
 export default {
  
   components: {
@@ -252,6 +221,65 @@ export default {
     };
   },
   methods: {
+    exportToExcel() {
+  if (!this.GetActaulSales || this.GetActaulSales.length === 0) {
+    alert("ไม่มีข้อมูลให้ส่งออก");
+    return;
+  }
+
+  // สร้างข้อมูลสำหรับ Excel
+  const data = [];
+  this.GetActaulSales.forEach(item => {
+    // ข้อมูลหลัก
+    data.push({
+      "Customer": item.customer_group_oms,
+      "Brand": item.brand,
+      "SKU Type" : 'FG',
+      "SKU": item.product_code,
+      "Child Code" : '-',
+      "Description": item.product_name,
+      "QTY": item.qty_sale,
+      "Invoice Net Amount WO Vat": item.price_sale,
+      "Return Base Unit": item.qty_return,
+      "Return Net Amount WO": item.price_return,
+    });
+
+    // ข้อมูล components ถ้ามี
+    if (item.components && item.components.length) {
+      item.components.forEach(component => {
+        data.push({
+          "Customer": item.customer_group_oms,
+          "Brand": item.brand,
+          "SKU Type": 'CH',
+          "SKU": component.product_hierarchy,
+          "Child Code": component.product_code,
+          "Description": component.product_name,
+          "QTY": component.qty,
+          "Invoice Net Amount WO Vat": 0,
+          "Return Base Unit": 0,
+          "Return Net Amount WO": 0,
+        });
+      });
+    }
+  });
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "ActualSalesQTYReport");
+  XLSX.writeFile(workbook, "ActualSalesQTYReport.xlsx");
+},
+    // async exportToExcel() {
+    //   if (!this.GetActaulSales || this.GetActaulSales.length === 0) {
+    //     alert("ไม่มีข้อมูลให้ส่งออก");
+    //     return;
+    //   }
+
+    //   const worksheet = XLSX.utils.json_to_sheet(this.GetActaulSales);
+    //   const workbook = XLSX.utils.book_new();
+    //   XLSX.utils.book_append_sheet(workbook, worksheet, "รายงานยอดขายจริง");
+    //   XLSX.writeFile(workbook, "รายงานยอดขายจริง.xlsx");
+    // },
+
 
     async handleDateSelected({ year, month }) {
       this.selectedYear = year;
