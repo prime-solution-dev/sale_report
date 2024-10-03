@@ -435,8 +435,8 @@ export default {
 
         const worksheet = XLSX.utils.json_to_sheet(data);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "DAILYSALESREPORT-ByCustomerGroup");
-        XLSX.writeFile(workbook, "DAILYSALESREPORT_ByCustomerGroup.xlsx");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "ds_customergroup");
+        XLSX.writeFile(workbook, "ds_customergroup.xlsx");
       },
 
 // Helper function to format numbers if needed

@@ -427,8 +427,8 @@ export default {
 
       const worksheet = XLSX.utils.json_to_sheet(data);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "DAILYSALESREPORT-KeyAccountGroup");
-      XLSX.writeFile(workbook, "DAILYSALESREPORT_KeyAccountGroup.xlsx");
+      XLSX.utils.book_append_sheet(workbook, worksheet, "ds_keyaccountgroup");
+      XLSX.writeFile(workbook, "ds_keyaccountgroup.xlsx");
     },
 
     // Helper function to format numbers if needed
