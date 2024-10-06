@@ -3,6 +3,10 @@ import { onBeforeUnmount, onBeforeMount, ref } from "vue";
 import { useStore } from "vuex";
 import "../../src/assets/css/styleMainpage.css";
 import background_paper from "@/assets/img/background-paper.png";
+import ResetPasswordModal from '/components/ModalResetPassword.vue';
+
+const showModal = ref(false);
+
 const body = document.getElementsByTagName("body")[0];
 const store = useStore();
 const day_now = ref('');
@@ -97,3 +101,12 @@ onBeforeUnmount(() => {
 </style>
 
 
+<template>
+  <div>
+    <button @click="showModal = true">Reset Password</button>
+    <ResetPasswordModal
+      :isVisible="showModal"
+      @onClose="showModal = false"
+    />
+  </div>
+</template>
