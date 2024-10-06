@@ -82,7 +82,7 @@
 
  
   import { formatNumber } from 'chart.js/helpers';
-  import {  fetchSalesSummary } from '../services/reportapi/getdataApi';
+  import {  fetchReportCustomerGroups } from '../services/reportapi/getdataApi';
 
          
 import "../../src/assets/css/styleGlobal.css";
@@ -91,9 +91,7 @@ import DatePicker from './components/Datepicker.vue';
 import FilterBrand from './components/FilterBrands.vue';
 import FilterChannel from './components/FilterChannels.vue';
 import FilterStoreType from './components/FilterStoreTypes.vue';
-import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
-import FilterAccountName from './components/FilterCustomernames.vue';
-
+import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 </script>
 
 
@@ -122,12 +120,10 @@ import FilterAccountName from './components/FilterCustomernames.vue';
             <div class="col-md-2">
               <FilterStoreType ref="storeTypeComponent"  :selectedChannelIDs="selectedChannelIDs" @update:storetypes="updateSelectedStoreType"   />
             </div>
-            <div class="col-md-2">
-              <FilterAccountName @update:accountnames="updateSelectedKeyAccountName"/>
-            </div>
+      
 
-            <div class="col-md-2" hidden>
-              <FilterAcGroup @update:accgroups="updateSelectedKeyAccountGroup"/>
+            <div class="col-md-2" >
+              <FilterGetCustomerGroup @update:customergroups="updateSelectedGetCustomerGroups"/>
             </div>
 
           
@@ -144,6 +140,8 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                   <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary"  @click="applySearch">Apply</button>
                 </div>
             </div>
+
+            
           </div>
        
         </div>
@@ -164,7 +162,12 @@ import FilterAccountName from './components/FilterCustomernames.vue';
         
         <div class="card">
           <div class="card-header pb-0">
-            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Customer Group</h4>
+            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Customer Group
+              <button class="btn mb-0 btn-md  fw-lighter export-button export-button float-right" @click="exportToExcel">
+                <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button>
+            </h4>
+           
+             
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-3">
@@ -174,7 +177,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                   <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    Customer Group
+                    Customer
                     </th>
 
                     <th
@@ -243,7 +246,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                 <template v-for="(customerGroup, groupIndex) in item.customerItem" :key="groupIndex">
                   <template v-for="(subgroup, subgroupIndex) in customerGroup.group.customers_subgroups" :key="subgroupIndex">
                     <!-- Item -->
-                    <template v-for="(customerItem, itemIndex) in subgroup.subgroup.customers_items" :key="itemIndex">
+                    <!-- <template v-for="(customerItem, itemIndex) in subgroup.subgroup.customers_items" :key="itemIndex">
                       <tr class="text-xs font-weight-bold mb-0">
                         <td class="text-left">{{ customerItem.item.topic_name }}</td>
                         <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.display_last_actual) }}</td>
@@ -262,10 +265,10 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                         <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.last_return) }}   </td>
                         <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.current_return) }} </td>    
                       </tr>
-                    </template>
+                    </template> -->
                     <!-- Subgroup -->
-                    <tr class="text-xs font-weight-bold mb-0 bg_subgroub">
-                      <td class="text-left rounded-left"> TOTAL {{ subgroup.subgroup.subgroup }}</td>
+                    <tr class="text-xs font-weight-bold mb-0 ">
+                      <td class="text-left rounded-left">  {{ subgroup.subgroup.subgroup }}</td>
                       <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_last_actual) }}</td>
                       <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_target) }}  </td>
                       <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_target_percent) }} % </td>
@@ -284,7 +287,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     </tr>
                   </template>
                     <!--  Group -->
-                    <tr class="text-xs font-weight-bold mb-0 bg_groub ">
+                    <!-- <tr class="text-xs font-weight-bold mb-0 bg_groub ">
                       <td class="text-left rounded-left">TOTAL {{ customerGroup.group.topic_name }}</td>
                       <td class="text-center">{{ formatNumber(customerGroup.group.sale_data_groub.display_last_actual) }}</td>
                       <td class="text-center">{{ formatNumber(customerGroup.group.sale_data_groub.current_target) }}  </td>
@@ -301,59 +304,10 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                       <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.display_current_last_actual_percent) }} % </td>
                       <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.last_return) }}   </td>
                       <td class="text-center rounded-right">{{ formatNumber(customerGroup.group.sale_data_groub.current_return) }} </td>   
-                    </tr>
+                    </tr> -->
                   </template>
                 </template>
-                    <tr v-for="(customer, index) in customers" :key="index" class="bg_grandtotal">
-                      <td class="rounded-left">
-                        <p class="text-xs font-weight-bold mb-0 pd-5 ">GRAND TOTAL {{ customer.name}}</p>
-                      </td>
-                      <td  class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_last_actual) }}</p>
-                      </td>
-                      <td  class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_target) }}</p>
-                      </td>
-                      <td  class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_current_last_target_percent) }} %</p>
-                      </td>
-                      <td  class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate) }}</p>
-                      </td>
-                      <td v-if="isColumnVisible"  class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w1) }}</p>
-                      </td>
-                      <td v-if="isColumnVisible" class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w2) }}</p>
-                      </td>
-                      <td v-if="isColumnVisible" class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w3) }}</p>
-                      </td>
-                      <td v-if="isColumnVisible" class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w4) }}</p>
-                      </td>
-                      <td v-if="isColumnVisible" class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w5) }}</p>
-                      </td>
-                      <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.last_return) }}</p>
-                      </td>
-                      <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_current_actual) }}</p>
-                      </td>
-                      <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_target) }} %</p>
-                      </td>
-                      <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_current_last_actual_percent) }} %</p>
-                      </td>
-                      <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.last_return) }}</p>
-                      </td>
-                      <td class="text-center rounded-right">
-                        <p class="text-xs font-weight-bold mb-0 ">{{ formatNumber(customer.saleData.current_return) }}</p>
-                      </td>    
-                    </tr>
+                   
               </tbody>
             </table>
 
@@ -370,18 +324,18 @@ import FilterAccountName from './components/FilterCustomernames.vue';
 
 
 
+
 </template>
 
 <script>
-
+import * as XLSX from 'xlsx';
 export default {
  
   components: {
     DatePicker,
     FilterBrand,
     FilterChannel,
-    FilterAcGroup,
-    FilterAccountName,
+    FilterGetCustomerGroup,
     //FilterStoreType
     
   },
@@ -418,6 +372,7 @@ export default {
       selectedChannel: null, 
       selectedStoreType: null, 
       SalesTargetsSummary: null,
+      selectedCustomerGroupsIDs:null,
       //
 
       customersItem:null,
@@ -441,6 +396,55 @@ export default {
   },
   methods: {
 
+    exportToExcel() {
+      const table = document.querySelector(".table tbody");
+      const rows = table.querySelectorAll("tr");
+        if (rows.length === 0) {
+          alert("ไม่มีข้อมูลให้ส่งออก");
+          return;
+        }
+
+        const data = [];
+
+        rows.forEach(row => {
+          const cells = row.querySelectorAll("td");
+          if (cells.length) {
+            const rowData = {
+              "Customer": cells[0].innerText.trim(),
+              "Actual Sales Last Year": this.formatNumber(cells[1].innerText),
+              "Target Current Year": this.formatNumber(cells[2].innerText),
+              "%T Current Year / A Last Year": this.formatNumber(cells[3].innerText),
+              "Estimate": this.formatNumber(cells[4].innerText),
+              "Sales before Return": this.formatNumber(cells[cells.length - 3].innerText),
+              "Actual Sales Current Year": this.formatNumber(cells[cells.length - 2].innerText),
+              "%To Target": this.formatNumber(cells[cells.length - 1].innerText),
+              "Return": this.formatNumber(cells[cells.length - 2].innerText), // Adjust according to your column structure
+              "Balance to go": this.formatNumber(cells[cells.length - 1].innerText) // Adjust according to your column structure
+            };
+
+            // Add weekly estimates if the column is visible
+            if (this.isColumnVisible) {
+              for (let i = 5; i <= 9; i++) { // Assuming week columns are from 5 to 9
+                rowData[`Week ${i - 4}`] = this.formatNumber(cells[i].innerText);
+              }
+            }
+
+            data.push(rowData);
+          }
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "DAILYSALESREPORT-ByCustomerGroup");
+        XLSX.writeFile(workbook, "DAILYSALESREPORT_ByCustomerGroup.xlsx");
+      },
+
+// Helper function to format numbers if needed
+formatNumber(value) {
+  return parseFloat(value.replace(/,/g, '').trim()) || 0;
+},
+    
+
     async handleDateSelected({ year, month }) {
       this.selectedYear = year;
       this.selectedMonth = month + 1;  // month เริ่มจาก 0
@@ -455,12 +459,10 @@ export default {
         this.selectedBrandIDs, // รับค่าจาก selectedBrandIDs
         this.selectedChannelIDs,
         this.selectedStortTypeIDs,
-        this.selectedAccountNameIDs,
-        this.selectedAccountGroupIDs,
-        this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
+        this.SelectedGetCustomerGroups,
+        this.SalesTargetsSummary = await fetchReportCustomerGroups(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedCustomerGroupsIDs);
       
-        // console.log('Selected Brands:', this.selectedBrandIDs); 
-        // console.log('Selected Channels:', this.selectedChannelIDs); 
+      
       } 
       
       catch (error) {
@@ -486,13 +488,10 @@ export default {
       this.selectedStortTypeIDs = storetypes; 
     },
     
-    updateSelectedKeyAccountGroup(accgroups) {
-      this.selectedAccountGroupIDs = accgroups; 
+    updateSelectedGetCustomerGroups(customergroups) {
+      this.selectedCustomerGroupsIDs = customergroups; 
     },
-    updateSelectedKeyAccountName(accountname) {
-      this.selectedAccountNameIDs = accountname; 
-    },
-
+   
 
     toggleColumnDetail() {
       this.isColumnVisibleDetail = !this.isColumnVisibleDetail; 
@@ -507,12 +506,11 @@ export default {
       this.isColumnVisibleCusGroup = !this.isColumnVisibleCusGroup; 
     },
     async applySearch() {
-      this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
-      console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
-      console.log('Select  selectedChannelIDs', this.selectedChannelIDs);
-      console.log('Select  selectedAccountNameIDs', this.selectedAccountNameIDs);
-      console.log('Select  selectedAccountGroupIDs', this.selectedAccountGroupIDs);
-      console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
+      this.SalesTargetsSummary = await fetchReportCustomerGroups(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedCustomerGroupsIDs);
+      // console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
+      // console.log('Select  selectedChannelIDs', this.selectedChannelIDs);
+      // console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
+      // console.log('Select  selectedCustomerGroupsIDs', this.selectedCustomerGroupsIDs);
     },
     async resetForm() {
       window.location.reload();
@@ -521,22 +519,7 @@ export default {
     
   },
   computed: {
-    brandSales() {
-    return this.SalesTargetsSummary.filter(item => item.type === 'brand');
-    },
-    overallSummary() {
-      return this.SalesTargetsSummary.find(item => item.type === 'overall');
-    },
     
-    accountGroub() {
-    return this.SalesTargetsSummary.filter(item => item.type === 'account');
-    },
-    accountName() {
-    return this.SalesTargetsSummary.filter(item => item.type === 'name');
-    },
-    customers() {
-      return this.SalesTargetsSummary.filter(item => item.type === 'customer' );
-    },
     getCustomersItem() {
       return (this.SalesTargetsSummary || []).filter(item => item.type === 'customerItem');
     },

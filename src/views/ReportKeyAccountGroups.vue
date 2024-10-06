@@ -81,8 +81,8 @@
 <script setup>
 
  
-  import { formatNumber } from 'chart.js/helpers';
-  import {  fetchSalesSummary } from '../services/reportapi/getdataApi';
+import { formatNumber } from 'chart.js/helpers';
+import {  fetchReportKeyAccountGroup } from '../services/reportapi/getdataApi';
 
          
 import "../../src/assets/css/styleGlobal.css";
@@ -93,7 +93,7 @@ import FilterChannel from './components/FilterChannels.vue';
 import FilterStoreType from './components/FilterStoreTypes.vue';
 import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
 import FilterAccountName from './components/FilterCustomernames.vue';
-
+import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 </script>
 
 
@@ -130,8 +130,10 @@ import FilterAccountName from './components/FilterCustomernames.vue';
               <FilterAccountName @update:accountnames="updateSelectedKeyAccountName"/>
             </div>
 
-         
-          
+            <div class="col-md-2" >
+              <FilterGetCustomerGroup @update:customergroups="updateSelectedGetCustomerGroups"/>
+            </div>
+
             <div class="col-md-1">
                 <div class="form-group">
                   <label for="exampleSelect"></label>
@@ -162,17 +164,19 @@ import FilterAccountName from './components/FilterCustomernames.vue';
 
 
 
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary" >
+  <div class="py-4 mt-4 container-fluid" v-if="ReportKeyAccountGroup" >
     <div class="row">
       <div class="col-12">
         
         <div class="card">
           <div class="card-header pb-0">
-            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Key Account Group</h4>
+            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Key Account Group  
+              <button class="btn mb-0 btn-md  fw-lighter export-button export-button float-right" @click="exportToExcel">
+              <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button></h4>
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-3">
-              <table class="table align-items-center mb-0" v-if="SalesTargetsSummary.length > 0">
+              <table class="table align-items-center mb-0" v-if="ReportKeyAccountGroup.length > 0">
                 <thead >
                   <tr class="bg-light">
                     <th style="text-align: left !important;"
@@ -184,23 +188,23 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    Actual {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].last_year }}
+                    Actual {{ ReportKeyAccountGroup[0].month_txt}} {{ ReportKeyAccountGroup[0].last_year }}
 
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    Target {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}
+                    Target {{ ReportKeyAccountGroup[0].month_txt}} {{ ReportKeyAccountGroup[0].current_year }}
 
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    %T {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }}
+                    %T {{ ReportKeyAccountGroup[0].current_year }} /A {{ ReportKeyAccountGroup[0].last_year }}
 
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" style="position: relative; height: 100%;" >
-                      Estimate {{ SalesTargetsSummary[0].month_txt_last}}
+                      Estimate {{ ReportKeyAccountGroup[0].month_txt_last}}
                       <span @click="toggleColumnCusGroup"  class="span_toggle">
                         <i class="fa" :class="isColumnVisibleCusGroup ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
                       </span>
@@ -214,7 +218,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    Actual Sales {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}
+                    Actual Sales {{ ReportKeyAccountGroup[0].month_txt}} {{ ReportKeyAccountGroup[0].current_year }}
 
                     </th>
                     <th
@@ -226,13 +230,13 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].current_last }}
+                    %A {{ ReportKeyAccountGroup[0].current_year }} /A {{ ReportKeyAccountGroup[0].current_last }}
 
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    {{ SalesTargetsSummary[0].month_txt_last}} Return
+                    {{ ReportKeyAccountGroup[0].month_txt_last}} Return
 
                     </th>
                     <th
@@ -315,7 +319,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
 </template>
 
 <script>
-
+import * as XLSX from 'xlsx';
 export default {
  
   components: {
@@ -324,6 +328,8 @@ export default {
     FilterChannel,
     FilterAcGroup,
     FilterAccountName,
+    FilterGetCustomerGroup,
+    
     //FilterStoreType
     
   },
@@ -359,7 +365,7 @@ export default {
       selectedChannelIDs:[],
       selectedChannel: null, 
       selectedStoreType: null, 
-      SalesTargetsSummary: null,
+      ReportKeyAccountGroup: null,
       //
 
       customersItem:null,
@@ -383,6 +389,54 @@ export default {
   },
   methods: {
 
+    exportToExcel() {
+      const table = document.querySelector(".table tbody");
+      const rows = table.querySelectorAll("tr");
+      if (rows.length === 0) {
+        alert("ไม่มีข้อมูลให้ส่งออก");
+        return;
+      }
+      const data = [];
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        if (cells.length) {
+          const rowData = {
+            "Key Account Group": cells[0].innerText.trim(),
+            "Actual Last Year": this.formatNumber(cells[1].innerText),
+            "Target Current Year": this.formatNumber(cells[2].innerText),
+            "%T Current Year / A Last Year": this.formatNumber(cells[3].innerText.replace('%', '').trim()), 
+            "Estimate": this.formatNumber(cells[4].innerText),
+            "Sales before Return": this.formatNumber(cells[cells.length - 3].innerText),
+            "Actual Sales Current Year": this.formatNumber(cells[cells.length - 2].innerText),
+            "%To Target": this.formatNumber(cells[cells.length - 1].innerText.replace('%', '').trim()), 
+            "Return": this.formatNumber(cells[cells.length - 2].innerText), 
+            "Balance to go": this.formatNumber(cells[cells.length - 1].innerText) 
+          };
+          // Add weekly estimates if the column is visible
+          if (this.isColumnVisibleCusGroup) {
+            for (let i = 5; i <= 9; i++) { // Assuming week columns are from 5 to 9
+              if (cells[i]) {
+                rowData[`Week ${i - 4}`] = this.formatNumber(cells[i].innerText);
+              }
+            }
+          }
+
+          data.push(rowData);
+        }
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "DAILYSALESREPORT-KeyAccountGroup");
+      XLSX.writeFile(workbook, "DAILYSALESREPORT_KeyAccountGroup.xlsx");
+    },
+
+    // Helper function to format numbers if needed
+    formatNumber(value) {
+      return parseFloat(value.replace(/,/g, '').replace('%', '').trim()) || 0; // Handle both percentage and comma formats
+    }
+    ,
+
     async handleDateSelected({ year, month }) {
       this.selectedYear = year;
       this.selectedMonth = month + 1;  // month เริ่มจาก 0
@@ -399,7 +453,8 @@ export default {
         this.selectedStortTypeIDs,
         this.selectedAccountNameIDs,
         this.selectedAccountGroupIDs,
-        this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
+        
+        this.ReportKeyAccountGroup = await fetchReportKeyAccountGroup(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
       
         // console.log('Selected Brands:', this.selectedBrandIDs); 
         // console.log('Selected Channels:', this.selectedChannelIDs); 
@@ -435,6 +490,10 @@ export default {
       this.selectedAccountNameIDs = accountname; 
     },
 
+    updateSelectedGetCustomerGroups(customergroups) {
+      this.selectedCustomerGroupsIDs = customergroups; 
+    },
+   
 
     toggleColumnDetail() {
       this.isColumnVisibleDetail = !this.isColumnVisibleDetail; 
@@ -449,12 +508,8 @@ export default {
       this.isColumnVisibleCusGroup = !this.isColumnVisibleCusGroup; 
     },
     async applySearch() {
-      this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
-      console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
-      console.log('Select  selectedChannelIDs', this.selectedChannelIDs);
-      console.log('Select  selectedAccountNameIDs', this.selectedAccountNameIDs);
-      console.log('Select  selectedAccountGroupIDs', this.selectedAccountGroupIDs);
-      console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
+      this.ReportKeyAccountGroup = await fetchReportKeyAccountGroup(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs,this.selectedCustomerGroupsIDs);
+      console.log('Select  selectedCustomerGroupsIDs', this.selectedCustomerGroupsIDs);
     },
     async resetForm() {
       window.location.reload();
@@ -464,23 +519,23 @@ export default {
   },
   computed: {
     brandSales() {
-    return this.SalesTargetsSummary.filter(item => item.type === 'brand');
+    return this.ReportKeyAccountGroup.filter(item => item.type === 'brand');
     },
     overallSummary() {
-      return this.SalesTargetsSummary.find(item => item.type === 'overall');
+      return this.ReportKeyAccountGroup.find(item => item.type === 'overall');
     },
     
     accountGroub() {
-    return this.SalesTargetsSummary.filter(item => item.type === 'account');
+    return this.ReportKeyAccountGroup.filter(item => item.type === 'account');
     },
     accountName() {
-    return this.SalesTargetsSummary.filter(item => item.type === 'name');
+    return this.ReportKeyAccountGroup.filter(item => item.type === 'name');
     },
     customers() {
-      return this.SalesTargetsSummary.filter(item => item.type === 'customer' );
+      return this.ReportKeyAccountGroup.filter(item => item.type === 'customer' );
     },
     getCustomersItem() {
-      return (this.SalesTargetsSummary || []).filter(item => item.type === 'customerItem');
+      return (this.ReportKeyAccountGroup || []).filter(item => item.type === 'customerItem');
     },
    
   }

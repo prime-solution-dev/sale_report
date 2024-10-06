@@ -48,7 +48,7 @@
 </style>
 <script>
 import $ from 'jquery';
-import 'jquery-ui/ui/widgets/datepicker';
+import 'jquery-ui/ui/widgets/datepicker-v2';
 import 'jquery-ui/themes/base/theme.css';
 
 
