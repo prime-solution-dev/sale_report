@@ -42,7 +42,7 @@
                 :show-search="item.type === 'select'"
                 :format="item.type === 'datePicker' ? dateFormat : undefined"
                 :picker="item.type === 'datePicker' ? item.picker : undefined"
-                :pattern="item.type === 'input' ? '[a-zA-Z0-9]*' : undefined"
+                :disabled="item.disable ? item.disable  : undefined"
                 :style="{
                   width:
                     item.type === 'datePicker'
@@ -226,6 +226,7 @@ const beforeUpload = (file) => {
 const emit = defineEmits(["update:modalVisible"]);
 
 const handleCancel = () => {
+  localFormData.value = {}
   emit("update:modalVisible", false);
 };
 
