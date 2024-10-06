@@ -1,0 +1,71 @@
+.row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.col-xl-3 ,.col-lg-3 ,.col-md-3{
+  flex: 1 1 15%;
+  margin: 10px;
+  max-width: 200px;
+}
+
+.float-right{
+  float: right!important;
+}
+
+/* main.vuecssstyle */
+
+.text-welcome{
+  color: #0081CC;
+  font-weight: bold;
+  font-size: 42px;
+
+}
+
+.text-head{
+  color:#49BCFF;
+  font-weight: bold;
+  font-size: 48px;
+}
+
+.text-head-sub{
+  color:#49BCFF;
+}
+
+.text-span-menu{
+  font-size: 1.5em;
+  color: black;
+  margin-top: 10px;
+  font-weight: 200;
+}
+
+.menu-button i {
+  font-size: 44px; 
+  color:#69DCFC;
+}
+
+
+
+.menu-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding-top:38px;
+  padding-left: 30px!important;
+  padding-right: 30px!important;
+  padding-bottom: 38px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+
+
+
+
+.menu-button:hover {
+  background-color: #f0f0f0;
+}
