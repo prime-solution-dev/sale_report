@@ -26,7 +26,7 @@ defineProps({
 <template>
   <router-link :to="to" class="nav-link" @click="minimizeSidebar">
     <div
-      class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center"
+      class=" icon-shape icon-sm text-center d-flex align-items-center justify-content-center"
     >
       <slot name="icon"></slot>
     </div>

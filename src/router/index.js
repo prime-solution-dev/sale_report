@@ -10,6 +10,8 @@ import Signin from "../views/Signin.vue";
 import Upload from "../views/Upload.vue";
 import Template from "../views/Template.vue";
 import MainMenu from "../views/Main.vue";
+import MenuReport from "../views/Report.vue";
+
 const routes = [
   {
     path: "/",
@@ -67,7 +69,11 @@ const routes = [
     name: "Main",
     component: MainMenu,
   },
-
+  {
+    path: "/report",
+    name: "Report",
+    component: MenuReport,
+  },
   
 ];
 
