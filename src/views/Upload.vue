@@ -56,7 +56,11 @@
     <a-flex :style="{ ...boxStyle }" justify="flex-end" align="center">
       latest upload
       <CalendarOutlined class="mx-2" />
-      {{ activeTab == 'customerMaster' ? txtLatestUploadTab1 : txtLatestUploadTab2 }}
+      {{
+        activeTab == "customerMaster"
+          ? txtLatestUploadTab1
+          : txtLatestUploadTab2
+      }}
     </a-flex>
 
     <div class="tab-content" id="pills-tabContent">
@@ -115,6 +119,7 @@ import {
   getLastUploadSalesTargets,
 } from "../services/reportapi/upload-api.service";
 import dayjs from "dayjs";
+import { Modal } from "ant-design-vue";
 
 const value3 = ref();
 const activeTab = ref("customerMaster");
@@ -361,6 +366,11 @@ const submitModalCallback = async (data) => {
     const res = await uploadCustomers(files.originFileObj);
     if (res) {
       statusModal.value = false;
+      Modal.success({
+        title: `Customer Master`,
+        content: `Upload เสร็จแล้ว`,
+        centered: true,
+      });
     }
   } else {
     const date = dayjs(data.date);
@@ -369,6 +379,11 @@ const submitModalCallback = async (data) => {
     const res = await uploadSalesTargets(files.originFileObj, year, month);
     if (res) {
       statusModal.value = false;
+      Modal.success({
+        title: `Target, Estimated Sale`,
+        content: `Upload เสร็จแล้ว`,
+        centered: true,
+      });
     }
   }
 };
@@ -387,7 +402,7 @@ const fetchDataLastUploadCustomer = async () => {
     // console.log(res);
     const dateString = res.last_update;
     const formattedDate = dayjs(dateString).format("DD/MM/YYYY");
-    txtLatestUploadTab1.value = formattedDate
+    txtLatestUploadTab1.value = formattedDate;
   } catch (error) {
     console.error("Error fetching customer data:", error);
   }
@@ -399,7 +414,7 @@ const fetchDataLastUploadSalesTarget = async () => {
     // console.log(res);
     const dateString = res.last_update;
     const formattedDate = dayjs(dateString).format("DD/MM/YYYY");
-    txtLatestUploadTab2.value = formattedDate
+    txtLatestUploadTab2.value = formattedDate;
   } catch (error) {
     console.error("Error fetching customer data:", error);
   }
@@ -408,7 +423,7 @@ const fetchDataLastUploadSalesTarget = async () => {
 const fetchDataCustomer = async () => {
   try {
     const res = await getCustomers();
-    if (res == null) return 
+    if (res == null) return;
     const mapData = res.customers.map((data) => {
       return {
         customerCode: data.customer_code,
@@ -436,7 +451,7 @@ const fetchDataSalesTarget = async (month = null, year = null) => {
     };
     const res = await getSalesTargets(date);
     // console.log(res);
-    if (res == null) return 
+    if (res == null) return;
 
     const mapData = res.map((data) => {
       return {

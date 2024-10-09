@@ -32,11 +32,10 @@
 
 <script setup>
 import { UploadOutlined } from "@ant-design/icons-vue";
-import {
-  exportCustomer,
-  exportSalesTarget,
-} from "../services/reportapi/template-api.service";
-
+// import {
+//   exportCustomer,
+//   exportSalesTarget,
+// } from "../services/reportapi/template-api.service";
 
 // import { useRoute } from "vue-router";
 
@@ -53,13 +52,14 @@ import {
 
 const exportExcelCustomer = async () => {
   try {
-    const response = await exportCustomer();
+    // const response = await exportCustomer();
 
-    const blob = new Blob([response], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+    // const blob = new Blob([response], {
+    //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    // });
     const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
+    // link.href = window.URL.createObjectURL(blob);
+    link.href = "/customer_template.xlsx";
     link.download = "customer_template.xlsx";
     link.click();
   } catch (error) {
@@ -69,13 +69,14 @@ const exportExcelCustomer = async () => {
 
 const exportExcelSalesTarget = async () => {
   try {
-    const response = await exportSalesTarget();
+    // const response = await exportSalesTarget();
 
-    const blob = new Blob([response], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+    // const blob = new Blob([response], {
+    //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    // });
     const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
+    // link.href = window.URL.createObjectURL(blob);
+    link.href = "/salesTarget_template.xlsx";
     link.download = "salesTarget_template.xlsx";
     link.click();
   } catch (error) {
