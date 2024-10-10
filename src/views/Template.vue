@@ -2,7 +2,7 @@
   <div>
     <div class="card me-2 p-4 custom-card">
       <div class="d-flex align-items-center justify-content-center h-100">
-        <div class="text-center">
+        <div class="text-start">
           <a-button
             type="primary"
             @click="exportExcelCustomer"
