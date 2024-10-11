@@ -331,6 +331,7 @@ export default {
       // console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
     },
     async resetForm() {
+      // this.$router.go(0);
       window.location.reload();
     },
   

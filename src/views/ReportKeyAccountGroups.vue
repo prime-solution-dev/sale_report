@@ -204,7 +204,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" style="position: relative; height: 100%;" >
-                      Estimate {{ ReportKeyAccountGroup[0].month_txt_last}}
+                      Estimate {{ ReportKeyAccountGroup[0].month_txt_current}}
                       <span @click="toggleColumnCusGroup"  class="span_toggle">
                         <i class="fa" :class="isColumnVisibleCusGroup ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
                       </span>
@@ -230,13 +230,13 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    %A {{ ReportKeyAccountGroup[0].current_year }} /A {{ ReportKeyAccountGroup[0].current_last }}
+                    %A {{ ReportKeyAccountGroup[0].current_year }} /A {{ ReportKeyAccountGroup[0].last_year }}
 
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    {{ ReportKeyAccountGroup[0].month_txt_last}} Return
+                    {{ ReportKeyAccountGroup[0].month_txt_current}} Return
 
                     </th>
                     <th
@@ -291,10 +291,10 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                       <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_actual_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.last_return) }}</p>
+                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_return) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_return) }}</p>
+                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_balance) }}</p>
                     </td>
                     
                   </tr>
@@ -513,6 +513,7 @@ export default {
     },
     async resetForm() {
       window.location.reload();
+     // this.$router.go(0);
     },
   
     

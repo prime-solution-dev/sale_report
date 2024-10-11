@@ -24,6 +24,7 @@ const hostapi = 'http://61.91.5.227:8099/';
      
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
+      const MonthCurrent = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; // เดือนที่แล้ว (1-12)
       const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
       console.log(currentYear,previousMonth);
 
@@ -61,7 +62,7 @@ const hostapi = 'http://61.91.5.227:8099/';
         if (v_month) { 
           body.month = v_month;
         } else {
-          body.month = previousMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
+          body.month = MonthCurrent; // ค่าเดือนที่แล้วเป็นตัวเลข
         }
    
     

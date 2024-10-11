@@ -64,7 +64,7 @@ const toggleSubmenu = (menu) => {
           <sidenav-item
             to="/report-customer.groups"
             :class="getRoute() === 'report-customer.groups' ? 'active' : ''"
-            :navText="isRTL ? '' : 'Customer Group Report'"
+            :navText="isRTL ? '' : 'Daily Sales by Customer Group'"
           >
             <template v-slot:icon>
               <i class="ni ni-chart-bar-32  text-info text-sm opacity-10"></i>
@@ -76,14 +76,14 @@ const toggleSubmenu = (menu) => {
           <sidenav-item
             to="/report-keyaccount.groups"
             :class="getRoute() === 'report-keyaccount.groups' ? 'active' : ''"
-            :navText="isRTL ? '' : 'Key Account Group '"
+            :navText="isRTL ? '' : 'Daily Sales by KeyAccount Group'"
           >
             <template v-slot:icon>
               <i class="ni ni-chart-bar-32  text-info text-sm opacity-10"></i>
             </template>
           </sidenav-item>
         
-          <ul class="navbar-nav ms-3" v-if="getRoute() === 'tables'">
+          <!-- <ul class="navbar-nav ms-3" v-if="getRoute() === 'tables'">
             <li class="nav-item">
               <sidenav-item
                 to="/tables/template"
@@ -95,14 +95,14 @@ const toggleSubmenu = (menu) => {
                 </template>
               </sidenav-item>
             </li>
-          </ul>
+          </ul> -->
         </li>
 
         <li class="nav-item submenu">
           <sidenav-item
             to="/report-actaulsales"
             :class="getRoute() === 'report-actaulsales' ? 'active' : ''"
-            :navText="isRTL ? '' : 'ActaulSales Report'"
+            :navText="isRTL ? '' : 'Actual Sales'"
           >
             <template v-slot:icon>
               <i class="ni ni-chart-bar-32  text-info text-sm opacity-10"></i>
@@ -177,11 +177,12 @@ const toggleSubmenu = (menu) => {
 .submenu {
   list-style-type: none; 
   padding-left: 5px; 
+  font-size: 0.8rem;
 }
 .sub-icon{
   color:#007bff; 
   text-align: right;
-  margin-left: 5rem;
+  margin-left: 8rem;
 }
 .div-flex{
   display: flex; 
