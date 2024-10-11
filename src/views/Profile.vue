@@ -68,7 +68,7 @@
     :formData="formDataUsers"
     :errors="errorsUsers"
     :btnFooter="2"
-    :txtBtnSubmit=titleUsers
+    :txtBtnSubmit="titleUsers"
     @update:modalVisible="handleModalVisibleVisibilityUsers"
   />
 </template>
@@ -88,7 +88,7 @@ import {
   createUser,
   updateUser,
   deleteUser,
-  resetPasswordUser
+  resetPasswordUser,
 } from "../services/reportapi/user-api.service";
 
 const activeKey = ref("1");
@@ -217,8 +217,10 @@ const formData = reactive({
 });
 
 const errors = reactive({
-  month: "",
-  files: "",
+  userGroupID: "",
+  userGroupCode: "",
+  userGroupName: "",
+  table: [],
 });
 
 const formDataUsers = reactive({
@@ -229,8 +231,10 @@ const formDataUsers = reactive({
 });
 
 const errorsUsers = reactive({
-  month: "",
-  files: "",
+  userID: "",
+  email: "",
+  name: "",
+  userGroup: "",
 });
 
 const modalFormItem = reactive([
@@ -239,9 +243,11 @@ const modalFormItem = reactive([
     value: "userGroupName",
     placeholder: "User Group Name *",
     type: "input",
-    span: 6,
+    span: 8,
     validate: true,
+    disable: false,
     required: true,
+    pattern: "[a-zA-Z0-9]*",
   },
   {
     label: "",
@@ -318,8 +324,12 @@ const modalFormItemUsers = reactive([
 ]);
 
 const OpenModalUpload = (status) => {
+  errors.userGroupName = "";
+  errors.table = [];
   if (status == "Add") {
+    modalFormItem[0].disable = false;
     formData.userGroupName = "";
+    // modalFormItem = '';
     const updatedA = modalFormItem[1].dataTable.map((item) => {
       return {
         ...item,
@@ -328,6 +338,8 @@ const OpenModalUpload = (status) => {
     });
 
     modalFormItem[1].dataTable = updatedA;
+  } else {
+    modalFormItem[0].disable = true;
   }
 
   title.value = `${status} Group`;
@@ -337,13 +349,18 @@ const OpenModalUpload = (status) => {
 const OpenModalUploadUsers = (status) => {
   // console.log(status);
 
+  errorsUsers.email = "";
+  errorsUsers.name = "";
+  errorsUsers.userGroup = "";
+
   if (status == "Add") {
+    console.log("Add");
     formDataUsers.email = "";
     formDataUsers.name = "";
     formDataUsers.userGroup = "";
+    formDataUsers.userID = "";
   } else {
-    console.log('Edit');
-    
+    console.log("Edit");
   }
 
   titleUsers.value = `${status} User`;
@@ -448,79 +465,161 @@ const handleResetPasswordTab2 = async (record) => {
   }
 };
 
-const submitModalCallback = async (data) => {
-  // console.log("submitModalCallback", data);
-  if (title.value == "Add Group") {
-    const mapDataForSave = {
-      permission_group_code: data.userGroupName,
-      permission_group_name: data.userGroupName,
-      module_item_ids: data.table,
-    };
-    const res = await createPermissions(mapDataForSave);
-    // console.log(res);
-    if (res) {
-      await fetchDataModuleItems();
-      await fetchDataPermission();
-      statusModal.value = false;
+const validateForm = () => {
+  // console.log("validate", formData);
+  let valid = true;
+
+  const validationRules = {
+    userGroupName: "User Group Name  is required",
+    table: "Permission is required",
+  };
+
+  const isEnglishAndNumbersOnly = (input) => {
+    const regex = /^[A-Za-z0-9]+$/;
+    return regex.test(input);
+  };
+
+  for (const [field, errorMessage] of Object.entries(validationRules)) {
+    if (Array.isArray(formData[field])) {
+      if (formData[field].length === 0) {
+        errors[field] = errorMessage;
+        valid = false;
+      } else {
+        errors[field] = "";
+      }
+    } else {
+      if (!formData[field] || formData[field].toString().trim() === "") {
+        errors[field] = errorMessage;
+        valid = false;
+      } else if (field === "userGroupName" && !isEnglishAndNumbersOnly(formData[field])) {
+        errors[field] = "User Group Name must contain only English letters and numbers";
+        valid = false;
+      } else {
+        errors[field] = "";
+      }
     }
-  } else {
-    const mapDataForSave = {
-      permission_group_id: data.userGroupID,
-      permission_group_name: data.userGroupName,
-      module_item_ids: data.table,
-    };
-    // console.log(mapDataForSave);
-    const res = await updatePermissions(mapDataForSave);
-    // console.log(res);
-    if (res) {
-      await fetchDataModuleItems();
-      await fetchDataPermission();
-      statusModal.value = false;
+  }
+  return valid;
+};
+
+const validateFormUser = () => {
+  // console.log("validate", formDataUsers);
+  let valid = true;
+
+  const validationRules = {
+    name: "Name  is required",
+    email: "Email is required",
+    userGroup: "User Group is required",
+  };
+
+  for (const [field, errorMessage] of Object.entries(validationRules)) {
+    if (Array.isArray(formDataUsers[field])) {
+      if (formDataUsers[field].length === 0) {
+        errorsUsers[field] = errorMessage;
+        valid = false;
+      } else {
+        errorsUsers[field] = "";
+      }
+    } else {
+      if (!formDataUsers[field] || formDataUsers[field].toString().trim() === "") {
+        errorsUsers[field] = errorMessage;
+        valid = false;
+      } else {
+        errorsUsers[field] = "";
+      }
+    }
+  }
+
+  // console.log('valid', valid);
+  
+  return valid;
+};
+
+const submitModalCallback = async (data) => {
+  // console.log("submitModalCallback data", data);
+  formData.userGroupName = data.userGroupName;
+  formData.table = data.table;
+  // console.log("submitModalCallback formData", formData);
+
+  if (validateForm()) {
+    if (title.value == "Add Group") {
+      const mapDataForSave = {
+        permission_group_code: data.userGroupName,
+        permission_group_name: data.userGroupName,
+        module_item_ids: data.table,
+      };
+      const res = await createPermissions(mapDataForSave);
+      // console.log(res);
+      if (res) {
+        await fetchDataModuleItems();
+        await fetchDataPermission();
+        statusModal.value = false;
+      }
+    } else {
+      const mapDataForSave = {
+        permission_group_id: data.userGroupID,
+        permission_group_name: data.userGroupName,
+        module_item_ids: data.table,
+      };
+      // console.log(mapDataForSave);
+      const res = await updatePermissions(mapDataForSave);
+      // console.log(res);
+      if (res) {
+        await fetchDataModuleItems();
+        await fetchDataPermission();
+        statusModal.value = false;
+      }
     }
   }
 };
 
 const submitModalCallbackUsers = async (data) => {
   // console.log("submitModalCallbackUsers", data);
-  if (titleUsers.value == "Add User") {
-    const mapDataForSave = {
-      user: data.email,
-      password: "",
-      email: data.email,
-      permission_group_id: data.userGroup,
-      name: data.name,
-    };
-    // console.log(mapDataForSave);
-    const res = await createUser(mapDataForSave);
-    // console.log(res);
-    if (res) {
-      await fetchDataPermission();
-      await fetchDataUser();
-      statusModalUsers.value = false;
-    }
-  } else {
-    console.log('1', data.userGroup);
-    console.log(modalFormItemUsers[2].options);
-    
-    const filterGroupID = modalFormItemUsers[2].options.filter((f) => {
-      return f.value == data.userGroup;
-    });
-    console.log(filterGroupID);
+  formDataUsers.email= data.email
+  formDataUsers.name = data.name
+  formDataUsers.userGroup = data.userGroup
 
-    const mapDataForSave = {
-      user_id: data.userID,
-      email: data.email,
-      user: data.email,
-      name: data.name,
-      permission_group_code: filterGroupID[0].label,
-    };
-    console.log(mapDataForSave);
-    const res = await updateUser(mapDataForSave);
-    // console.log(res);
-    if (res) {
-      await fetchDataPermission();
-      await fetchDataUser();
-      statusModalUsers.value = false;
+  if (validateFormUser()) {
+    if (titleUsers.value == "Add User") {
+      const mapDataForSave = {
+        user: data.email,
+        password: "",
+        email: data.email,
+        permission_group_id: data.userGroup,
+        name: data.name,
+      };
+      // console.log(mapDataForSave);
+      const res = await createUser(mapDataForSave);
+      // console.log(res);
+      if (res) {
+        await fetchDataPermission();
+        await fetchDataUser();
+        statusModalUsers.value = false;
+      }
+    } else {
+      // console.log("1", data.userGroup);
+      // console.log(modalFormItemUsers[2].options);
+
+      const filterGroupID = modalFormItemUsers[2].options.filter((f) => {
+        return f.value == data.userGroup;
+      });
+      // console.log(filterGroupID);
+
+      const mapDataForSave = {
+        user_id: data.userID,
+        email: data.email,
+        user: data.email,
+        name: data.name,
+        permission_group_code: filterGroupID[0].label,
+      };
+      console.log(mapDataForSave);
+      const res = await updateUser(mapDataForSave);
+      // console.log(res);
+      if (res) {
+        await fetchDataPermission();
+        await fetchDataUser();
+        statusModalUsers.value = false;
+      }
     }
   }
 };
@@ -573,7 +672,7 @@ const fetchDataPermission = async () => {
   try {
     // console.log("fetchDataPermission");
     const res = await getPermission();
-    console.log(res,'awd');
+    console.log(res, "awd");
 
     if (res) {
       const mapData = res.map((data, index) => {
@@ -595,7 +694,7 @@ const fetchDataPermission = async () => {
 
       dataTableTab1.value = mapData;
       modalFormItemUsers[2].options = mapOptions;
-    } 
+    }
   } catch (error) {
     console.error("Error fetching customer data:", error);
   }
@@ -606,7 +705,7 @@ const fetchDataUser = async () => {
     // console.log("fetchDataUser");
     const res = await getUser();
     console.log(res);
-    if(!res) return
+    if (!res) return;
     const mapData = res
       .map((data) => {
         return {
