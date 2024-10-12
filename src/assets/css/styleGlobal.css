@@ -34,6 +34,10 @@
 .bg_grandtotal{
   background-color: #D2E1FA!important;
 }
+
+.bg_summary {
+  background-color: #ffffc3 !important;
+}
 .alert-danger2 {
     color: #932037!important;
     background-color: #fdd7de!important;

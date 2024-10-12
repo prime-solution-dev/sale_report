@@ -150,7 +150,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
   </div>
 
    
-
+  <!-- <p>Selected Month: {{ monthName }} / Selected Year: {{ selectedYear }}</p> -->
 
 
 
@@ -177,10 +177,10 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                   <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" > Customer  </th>
 
                   <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" >
-                    Actual {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].last_year }}
+                    Actual  {{ getCustomersItem[0].monthtxt }} {{ SalesTargetsSummary[0].last_year }}
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">
-                    Target {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}
+                    Target {{ getCustomersItem[0].monthtxt }} {{ SalesTargetsSummary[0].current_year }}
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">
@@ -188,12 +188,12 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" style="position: relative; height: 100%;" >
-                    Estimate {{ SalesTargetsSummary[0].month_txt_current}} 
+                    Estimate {{ getCustomersItem[0].monthtxt }} 
                     </th>
                  
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Sales before Return</th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"  >
-                    Actual Sales {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}
+                    Actual Sales {{ getCustomersItem[0].monthtxt }} {{ SalesTargetsSummary[0].current_year }}
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">
@@ -203,7 +203,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" >
                       %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }} </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" >
-                      {{ SalesTargetsSummary[0].month_txt_current}} Return
+                      {{ getCustomersItem[0].monthtxt }} Return
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">
                       Balance to go
@@ -221,12 +221,20 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                       <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_target) }}  </td>   
                       <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_target_percent) }} % </td>
                       <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate) }}</td>
-                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.last_return) }}</td>  <!-- //Before Return -->
+                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_sale) }}</td>  <!-- //Before Return -->
                       <td class="text-center">   {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_actual) }} </td>
                       <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_to_target_percent) }} % </td> <!-- //Target Return -->
                       <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_actual_percent) }} % </td>
-                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }}   </td> <!-- //Return -->
-                      <td class="text-center rounded-right">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }} </td>   <!-- //Balance To Go -->
+                      <td class="text-center"> 
+                        <a v-if="subgroup.subgroup.sale_data_subg.display_current_balance < 0 && subgroup.subgroup.sale_data_subg.current_return !== 0 || subgroup.subgroup.sale_data_subg.current_return < subgroup.subgroup.sale_data_subg.display_current_actual && subgroup.subgroup.sale_data_subg.current_return !== 0"  style="color:red;">  - {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </a>
+                        <a v-else >  {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </a>
+                        <!-- {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }}   -->
+                       </td> <!-- //Return -->
+                      <td class="text-center rounded-right">
+                        <a v-if="subgroup.subgroup.sale_data_subg.display_current_balance < 0  " style="color:red;"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }} </a>
+                        <a v-else >  {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }} </a>
+                        <!-- {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }} -->
+                       </td>   <!-- //Balance To Go -->
                     </tr>
                   </template>
                    
@@ -279,7 +287,15 @@ export default {
       }
 
       return monthAbbreviations[monthNumber - 1];
+
+   
     };
+    // if(this.SalesTargetsSummary){
+    //     alert();
+    //   }
+    //   else{
+    //     alert();
+    //   }
       const currentDate = new Date();
       const daynow = currentDate.getDate();
       const currentYear = currentDate.getFullYear(); 
@@ -318,63 +334,96 @@ export default {
   },
   methods: {
 
+    getMonthAbbreviation(monthNumber) {
+      const monthAbbreviations = [
+        "Jan", "Feb", "Mar", "Apr",
+        "May", "Jun", "Jul", "Aug",
+        "Sep", "Oct", "Nov", "Dec"
+      ];
+      if (monthNumber < 1 || monthNumber > 12) {
+        throw new Error("Month must be between 1 and 12");
+      }
+      return monthAbbreviations[monthNumber - 1];
+    },
+
     exportToExcel() {
-      const table = document.querySelector(".table tbody");
-      const rows = table.querySelectorAll("tr");
-        if (rows.length === 0) {
-          alert("No Data");
-          return;
+
+      const monthAbbr = this.getMonthAbbreviation(this.selectedMonth); // เรียกใช้ฟังก์ชัน
+     
+
+      const table = document.querySelector(".table");
+      const headerRow = table.querySelector("thead tr");
+      const rows = table.querySelectorAll("tbody tr");
+
+      if (rows.length === 0) {
+        alert("No Data");
+        return;
+      }
+
+      const data = [];
+
+
+      // if (!SalesTargetsSummary || SalesTargetsSummary.length === 0) {
+      //   alert("SalesTargetsSummary is empty or undefined.");
+      //   return;
+      // }
+      const month = `${monthAbbr} ${this.selectedYear}`;
+      data.push([`Month :  ${month}`]);
+
+    
+      const brand = this.selectedBrandIDs || " ALL "; 
+      data.push([`Brand :  ${brand}`]);
+
+      const channel = this.selectedChannelID || " ALL "; 
+      data.push([`Channel :  ${channel}`]);
+
+      const customer = this.selectedCustomerGroupsIDs || " ALL "; 
+      data.push([`Customer :  ${customer}`]);
+      // ดึงชื่อหัวคอลัมน์จาก thead
+      const headers = [];
+      const headerCells = headerRow.querySelectorAll("th");
+      headerCells.forEach(header => {
+        headers.push(header.innerText.trim());
+      });
+
+    
+      data.push(headers);
+
+      // ดึงข้อมูลจากแต่ละแถวใน tbody
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        if (cells.length) {
+          const rowData = [];
+          cells.forEach(cell => {
+            rowData.push(cell.innerText.trim());
+          });
+
+          data.push(rowData);
         }
+      });
 
-        const data = [];
+      const worksheet = XLSX.utils.aoa_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "ds_customergroup");
 
-        rows.forEach(row => {
-          const cells = row.querySelectorAll("td");
-          if (cells.length) {
-            const rowData = {
-              "Customer": cells[0].innerText.trim(),
-              "Actual Sales Last Year": this.formatNumber(cells[1].innerText),
-              "Target Current Year": this.formatNumber(cells[2].innerText),
-              "%T Current Year / A Last Year": this.formatNumber(cells[3].innerText),
-              "Estimate": this.formatNumber(cells[4].innerText),
-              "Sales before Return": this.formatNumber(cells[cells.length - 3].innerText),
-              "Actual Sales Current Year": this.formatNumber(cells[cells.length - 2].innerText),
-              "%To Target": this.formatNumber(cells[cells.length - 1].innerText),
-              "Return": this.formatNumber(cells[cells.length - 2].innerText), // Adjust according to your column structure
-              "Balance to go": this.formatNumber(cells[cells.length - 1].innerText) // Adjust according to your column structure
-            };
-
-            // Add weekly estimates if the column is visible
-           
-
-            data.push(rowData);
-          }
-        });
-
-        // const worksheet = XLSX.utils.json_to_sheet(data);
-        // const workbook = XLSX.utils.book_new();
-        // XLSX.utils.book_append_sheet(workbook, worksheet, "ds_customergroup");
-        // XLSX.writeFile(workbook, "ds_customergroup.xlsx");
-
-        const worksheet = XLSX.utils.json_to_sheet(data);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "ds_customergroup");
-
-        
-        const fileName = "Daily_Sales_ByCustomerGroup_Report.xlsx";
-        XLSX.writeFile(workbook, fileName);
-      },
+      // กำหนดชื่อไฟล์ได้ตามต้องการ
+      const fileName = `Daily_Sales_ByCustomerGroup_Report-${month}.xlsx`;
+      XLSX.writeFile(workbook, fileName);
+    } ,
 
 // Helper function to format numbers if needed
-formatNumber(value) {
-  return parseFloat(value.replace(/,/g, '').trim()) || 0;
+    formatNumber(value) {
+    return parseFloat(value.replace(/,/g, '').trim()) || 0;
 },
     
 
     async handleDateSelected({ year, month }) {
       this.selectedYear = year;
       this.selectedMonth = month + 1;  // month เริ่มจาก 0
-      console.log('selected : ', this.selectedMonth, ' year: ', this.selectedYear);
+      this.monthName = this.getMonthAbbreviation(this.selectedMonth); // ใช้ฟังก์ชันแปลงเดือน
+      console.log('Selected Month:', this.monthName, 'Year:', this.selectedYear);
+      //console.log('selected : ', this.selectedMonth, ' year: ', this.selectedYear);
+      
     },
 
   

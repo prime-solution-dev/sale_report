@@ -263,21 +263,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                     <td>
                       <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate) }}</p>
                     </td>
-                    <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w1) }}</p>
-                  </td>
-                  <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w2) }}</p>
-                  </td>
-                  <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w3) }}</p>
-                  </td>
-                  <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w4) }}</p>
-                  </td>
-                  <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w5) }}</p>
-                  </td>
+                   
                   <td>
                     <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.last_return) }}</p>
                   </td>
