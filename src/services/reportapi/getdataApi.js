@@ -25,8 +25,8 @@ const hostapi = 'http://61.91.5.227:8099/';
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
       const MonthCurrent = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; // เดือนที่แล้ว (1-12)
-      const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
-      console.log(currentYear,previousMonth);
+   //   const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
+    //  console.log(currentYear,previousMonth);
 
 
       const v_year= yearid;
@@ -355,6 +355,39 @@ const hostapi = 'http://61.91.5.227:8099/';
   };
 
 
+  export const fetchAccountNameByGroup= async (groupcode) => {
+    const GetAccountNameApiUrl = hostapi+'Customer/GetAccountName'; 
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
+    const v_code= groupcode;
+    if(v_code!==null){
+      //
+    }else{
+      //
+    }
+    const body = {
+      account_groups: [],
+    };
+
+
+    if (v_code && Array.isArray(v_code)) {
+      body.account_groups.push(...v_code);
+    }else {
+      //console.warn('Channel code is empty or null.'); // แสดงคำเตือนถ้าไม่มีค่า
+    }
+
+    try {
+      const response = await axios.post(GetAccountNameApiUrl, body,{
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        }
+      });
+      return response.data; // ส่งค่ากลับ
+    } catch (error) {
+      throw error.response ? error.response.data : ' fetchAccountName Error.'; 
+    }
+  };
+
   export const fetchGetCustomer= async () => {
     const GetCustomeApiUrl = hostapi+'Customer/GetCustomers'; 
     const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
@@ -388,51 +421,56 @@ const hostapi = 'http://61.91.5.227:8099/';
    
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
-    const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
-    console.log(currentYear,previousMonth);
+    const currentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1;
+   // const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
+   // console.log(currentYear,previousMonth);
 
 
-    const v_year= yearid;
-    const v_month= monthid;
-    const v_brandid= brandid;
-    const v_group_omss= group_omss;
-    const v_skutype= skutype;
+    // const v_year= yearid;
+    // const v_month= monthid;
+    // const v_brandid= brandid;
+    // const v_group_omss= group_omss;
+    // const v_skutype= skutype;
    
-     //console.log('fetch_='+v_brandid+' 2:'+v_channelid +' 3:'+v_storetypeid + ' 4:'+v_keynameid+' 5:'+v_keygroup);
+   //  console.log('v_skutype = '+v_skutype);
    
 
     const body = {
-      year: 0,
-      month: 0,
-      brands: [],
-      group_omss: [],
-      products: [],
+      year: yearid || currentYear, // ใช้ปีที่ระบุหรือตั้งเป็นปีปัจจุบัน
+      month: monthid || currentMonth, // ใช้เดือนที่ระบุหรือตั้งเป็นเดือนปัจจุบัน
+      brands: Array.isArray(brandid) ? [...brandid] : [], // กระจายค่าใน brandid
+      group_omss: Array.isArray(group_omss) ? [...group_omss] : [], // กระจายค่าใน group_omss
+      products: Array.isArray(skutype) ? [...skutype] : [] // ส่งเป็นอาเรย์
     };
+    //console.log('Sending body:', body); 
 
+  //     if (v_year) { 
+  //       body.year = v_year;
+  //     } else {
+  //       body.year = currentYear; // ค่าปีปัจจุบันเป็นตัวเลข
+  //     }
 
-      if (v_year) { 
-        body.year = v_year;
-      } else {
-        body.year = currentYear; // ค่าปีปัจจุบันเป็นตัวเลข
-      }
-
-      if (v_month) { 
-        body.month = v_month;
-      } else {
-        body.month = previousMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
-      }
+  //     if (v_month) { 
+  //       body.month = v_month;
+  //     } else {
+  //       body.month = currentMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
+  //     }
    
-    if (v_brandid && Array.isArray(v_brandid)) {
-      // กระจายค่าใน v_brandid เข้าไปใน brands
-      body.brands.push(...v_brandid);
-    }
-    if (v_group_omss && Array.isArray(v_group_omss)) {
-      body.group_omss.push(...v_group_omss);
-   }
-    if (v_skutype && Array.isArray(v_skutype)) {
-       body.products.push(...v_skutype);
-    }
-  
+  //   if (v_brandid && Array.isArray(v_brandid)) {
+  //     // กระจายค่าใน v_brandid เข้าไปใน brands
+  //     body.brands.push(...v_brandid);
+  //   }
+  //   if (v_group_omss && Array.isArray(v_group_omss)) {
+  //     body.group_omss.push(...v_group_omss);
+  //  }
+  //   // if (v_skutype && Array.isArray(v_skutype)) {
+  //   //    body.products.push(...v_skutype);
+  //   // }
+  //   if (v_skutype) { 
+  //     body.products = JSON.stringify(v_skutype);
+  //   } else {
+  //     body.products = JSON.stringify([]);
+  //   }
     try {
       const response = await axios.post(url, body, {
         headers: {

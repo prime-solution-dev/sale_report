@@ -14,7 +14,7 @@
   </style>
 <template>
 <div class="form-group">
-<label for="group_omsSelect">Customer Group  Form OMS : </label>
+<label for="group_omsSelect">Customer Group1 From OMS : </label>
 <div class="dropdown_group_oms">
     <button  class="btn btn-dropdown dropdown-toggle"  type="button"  id="dropdownSelectGroupOms" @click.stop="ToggleSelectGroupOms">
     {{ selectedGroupOms.length ? truncateText(selectedGroupOms.join(', '), 2) : 'Select GroupOms' }}

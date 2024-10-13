@@ -92,7 +92,7 @@ import FilterBrand from './components/FilterBrands.vue';
 import FilterChannel from './components/FilterChannels.vue';
 import FilterStoreType from './components/FilterStoreTypes.vue';
 import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
-import FilterKeyAccountNameByGroupvue from './components/FilterKeyAccountNameByGroupvue.vue';
+import FilterKeyAccountNameByGroupvue from './components/FilterKeyAccountNameByGroup.vue';
 import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 </script>
 
@@ -242,7 +242,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                 <tbody v-if="accountGroub.length > 0">
                   <tr class="text-center" v-for="(item, data_group) in accountGroub" :key="data_group">
                     <td style="text-align: left !important;">
-                      <p class="text-center text-xs font-weight-bold mb-0">{{ item.name}}</p>
+                      <p class="text-left text-xs font-weight-bold mb-0">{{ item.name}}</p>
                     </td>
                     <td>
                       <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_last_actual) }}</p>
@@ -413,8 +413,9 @@ export default {
     const month = `${monthAbbr}${yeardefault}`;
     data.push([`Month: ${month}`]);
     data.push([`Brand: ${this.selectedBrandIDs || "ALL"}`]);
-    data.push([`Channel: ${this.selectedChannelID || "ALL"}`]);
-    data.push([`Customer: ${this.selectedCustomerGroupsIDs || "ALL"}`]);
+    data.push([`Key Account Group: ${this.selectedAccountGroupIDs || "ALL"}`]);
+    //data.push([`Customer: ${this.selectedCustomerGroupsIDs || "ALL"}`]);
+    data.push([` `]);
 
     const headers = [];
     const headerCells = headerRow.querySelectorAll("th");
@@ -437,7 +438,7 @@ export default {
 
     // สร้าง workbook และ worksheet
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("ds_customergroup");
+    const worksheet = workbook.addWorksheet("keyaccountgroup");
 
     // เพิ่มข้อมูล
     data.forEach((row, rowIndex) => {
@@ -573,7 +574,7 @@ export default {
    
     async applySearch() {
       this.ReportKeyAccountGroup = await fetchReportKeyAccountGroup(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs,this.selectedCustomerGroupsIDs);
-      console.log('Select  selectedCustomerGroupsIDs', this.selectedCustomerGroupsIDs);
+      //console.log('Select  selectedCustomerGroupsIDs', this.selectedCustomerGroupsIDs);
     },
     async resetForm() {
       window.location.reload();
@@ -591,7 +592,8 @@ export default {
     },
     
     accountGroub() {
-    return this.ReportKeyAccountGroup.filter(item => item.type === 'account');
+    return this.ReportKeyAccountGroup.filter(item => item.type === 'name');
+   // return this.ReportKeyAccountGroup.filter(item => item.type === 'account');
     },
     accountName() {
     return this.ReportKeyAccountGroup.filter(item => item.type === 'name');

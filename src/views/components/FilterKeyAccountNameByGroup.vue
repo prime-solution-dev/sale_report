@@ -33,7 +33,7 @@
 </div>
 </template>
 <script>
- import {  fetchAccountName } from '../../services/reportapi/getdataApi';
+ import {  fetchAccountNameByGroup } from '../../services/reportapi/getdataApi';
 export default {
  
  
@@ -58,7 +58,7 @@ export default {
       this.error = null;
     //  const chanelid = this.selectedAccountName;
       try {
-        this.GetAccountName = await fetchAccountName();
+        this.GetAccountName = await fetchAccountNameByGroup();
         
       } catch (error) {
         this.error = error; // จัดการข้อผิดพลาด

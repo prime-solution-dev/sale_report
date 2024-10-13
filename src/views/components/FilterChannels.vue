@@ -74,22 +74,7 @@ export default {
     ToggleSelectChannel() {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
-    // updateSelectedChannels() {
-    //   this.$emit('update:channels', this.selectedChannelIDs); // ส่งค่า selectedChannelIDs ไปยังคอมโพเนนต์หลัก
-    //   if (this.selectedChannelIDs) {
-    //      // console.log('Channel value is: ' + this.selectedChannel);
-    //       try {
-    //         this.GetStoreType =  fetchStoreType(this.selectedChannelIDs);
-    //         alert(this.selectedChannelIDs);
-            
-    //       } catch (error) {
-    //      //   console.error('Error fetching store types:', error);
-    //       }
-    //     } else {
-  
-    //       this.GetStoreType = []; // เคลียร์เมื่อไม่มีการเลือก channel
-    //     }
-    // },
+
     updateSelectedChannels() {
       this.$emit('update:channels', this.selectedChannelIDs); // ส่งค่า selectedChannelIDs ไปยังคอมโพเนนต์หลัก
       if (this.selectedChannelIDs.length) {

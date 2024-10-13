@@ -42,7 +42,7 @@
 
 </style>
 <script setup>
-
+ import { formatNumber } from 'chart.js/helpers';
 import {  fetchGetActaulSales } from '../services/reportapi/getdataApi';
 import "../../src/assets/css/styleGlobal.css";
 
@@ -123,27 +123,34 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
                     <template v-for="(item, index) in GetActaulSales" :key="index">
                       <tr >
                         <td class="text-xs font-weight-bold mb-0">{{ item.customer_group_oms }}</td>
-                        <td class="text-xs font-weight-bold mb-0">{{ item.brand }}</td>
+                        <td class=" text-xs font-weight-bold mb-0">{{ item.brand }}</td>
                         <td class="text-xs font-weight-bold mb-0">FG</td>
                         <td class="text-xs font-weight-bold mb-0">{{ item.product_code }}</td>
-                        <td class="text-xs font-weight-bold mb-0">-</td>
-                        <td class="text-xs font-weight-bold mb-0">{{ item.product_name }}</td>
-                        <td class="text-xs font-weight-bold mb-0">{{ item.qty_sale }}</td>
-                        <td class="text-xs font-weight-bold mb-0">{{ item.price_sale }}</td>
-                        <td class="text-xs font-weight-bold mb-0" >{{ item.qty_return }}</td>
-                        <td class="text-xs font-weight-bold mb-0">{{ item.price_return }}</td>
+                        <td class="text-xs font-weight-bold mb-0"> {{ item.product_hierarchy }} </td>
+                        <td class=" text-xs font-weight-bold mb-0">{{ item.product_name }}</td>
+                        <td class="text-center text-xs font-weight-bold mb-0">{{ item.qty_sale }}</td>
+                        <td class="text-center text-xs font-weight-bold mb-0">{{ item.price_sale }}</td>
+                        <td class="text-center text-xs font-weight-bold mb-0" :style="{ color: item.qty_return !== 0 ? 'red' : 'inherit' }">
+                            {{ item.qty_return !== 0 ? '-' + formatNumber(Math.abs(item.qty_return)) : formatNumber(item.qty_return) }}
+                        </td>
+                        <td class="text-center text-xs font-weight-bold mb-0" :style="{ color: item.price_return !== 0 ? 'red' : 'inherit' }">
+                            {{ item.price_return !== 0 ? '-' + formatNumber(Math.abs(item.price_return)) : formatNumber(item.price_return) }}
+                        </td>
+                        <!-- <td class="text-xs font-weight-bold mb-0"  >
+                          -{{ item.price_return }}
+                        </td> -->
                       </tr>
                       <template v-if="item.components && item.components.length">
                         <tr v-for="(component, compIndex) in item.components" :key="compIndex">
-                          <td class="text-xs font-weight-bold mb-0">{{ component.product_code }}</td>
-                          <td class="text-xs font-weight-bold mb-0">{{ item.brand }}</td>
-                          <td class="text-xs font-weight-bold mb-0">CH</td>
-                          <td class="text-xs font-weight-bold mb-0">{{ component.product_hierarchy }}</td>
-                          <td class="text-xs font-weight-bold mb-0">{{ component.product_code }}</td>
-                          <td class="text-xs font-weight-bold mb-0">{{ component.product_name }}</td>
-                          <td class="text-xs font-weight-bold mb-0">{{ component.qty }}</td>
-                          <td class="text-xs font-weight-bold mb-0">0</td>
-                          <td class="text-xs font-weight-bold mb-0">0</td>
+                          <td class=" text-xs font-weight-bold mb-0">{{ component.product_code }}</td>
+                          <td class=" text-xs font-weight-bold mb-0">{{ item.brand }}</td>
+                          <td class="text-xs font-weight-bold mb-0">Child</td>
+                          <td class=" text-xs font-weight-bold mb-0">{{ component.product_hierarchy }}</td>
+                          <td class=" text-xs font-weight-bold mb-0">{{ component.product_code }}</td>
+                          <td class=" text-xs font-weight-bold mb-0">{{ component.product_name }}</td>
+                          <td class="text-center text-xs font-weight-bold mb-0">{{ component.qty }}</td>
+                          <td class="text-center text-xs font-weight-bold mb-0"></td>
+                          <td class="text-center text-xs font-weight-bold mb-0"></td>
                         </tr>
                       </template>
                     </template>
@@ -159,7 +166,7 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
 </template>
 
 <script>
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 export default {
  
   components: {
@@ -199,7 +206,7 @@ export default {
     
       selectedChannelIDs:[],
       selectedGroupOmsIDs:[],
-      selectedSKU:[],
+      selectedSKU:null,
       selectedChannel: null, 
       selectedStoreType: null, 
       GetActaulSales: null,
@@ -221,64 +228,141 @@ export default {
     };
   },
   methods: {
-    exportToExcel() {
-  if (!this.GetActaulSales || this.GetActaulSales.length === 0) {
-    alert("ไม่มีข้อมูลให้ส่งออก");
-    return;
-  }
 
-  // สร้างข้อมูลสำหรับ Excel
-  const data = [];
-  this.GetActaulSales.forEach(item => {
-    // ข้อมูลหลัก
-    data.push({
-      "Customer": item.customer_group_oms,
-      "Brand": item.brand,
-      "SKU Type" : 'FG',
-      "SKU": item.product_code,
-      "Child Code" : '-',
-      "Description": item.product_name,
-      "QTY": item.qty_sale,
-      "Invoice Net Amount WO Vat": item.price_sale,
-      "Return Base Unit": item.qty_return,
-      "Return Net Amount WO": item.price_return,
+    getMonthAbbreviation(monthNumber) {
+      const monthAbbreviations = [
+        "Jan", "Feb", "Mar", "Apr",
+        "May", "Jun", "Jul", "Aug",
+        "Sep", "Oct", "Nov", "Dec"
+      ];
+      if (monthNumber < 1 || monthNumber > 12) {
+        throw new Error("Month must be between 1 and 12");
+      }
+      return monthAbbreviations[monthNumber - 1];
+    },
+
+
+    exportToExcel() {
+    const currentDate = new Date();
+    const currentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; 
+    const currentYear = currentDate.getFullYear(); 
+
+    const monthdefult = this.selectedMonth || currentMonth;
+    const yeardefault = this.selectedYear || currentYear;
+
+    const monthAbbr = this.getMonthAbbreviation(monthdefult);
+    const table = document.querySelector(".table");
+    const headerRow = table.querySelector("thead tr");
+    const rows = table.querySelectorAll("tbody tr");
+
+    if (rows.length === 0) {
+      alert("No Data");
+      return;
+    }
+
+    const data = [];
+    const month = `${monthAbbr}${yeardefault}`;
+    data.push([`Month: ${month}`]);
+    // data.push([`Brand: ${this.selectedBrandIDs || "ALL"}`]);
+    // data.push([`Key Account Group: ${this.selectedAccountGroupIDs || "ALL"}`]);
+    // //data.push([`Customer: ${this.selectedCustomerGroupsIDs || "ALL"}`]);
+    // data.push([` `]);
+
+    const headers = [];
+    const headerCells = headerRow.querySelectorAll("th");
+    headerCells.forEach(header => {
+      headers.push(header.innerText.trim());
     });
 
-    // ข้อมูล components ถ้ามี
-    if (item.components && item.components.length) {
-      item.components.forEach(component => {
-        data.push({
-          "Customer": item.customer_group_oms,
-          "Brand": item.brand,
-          "SKU Type": 'CH',
-          "SKU": component.product_hierarchy,
-          "Child Code": component.product_code,
-          "Description": component.product_name,
-          "QTY": component.qty,
-          "Invoice Net Amount WO Vat": 0,
-          "Return Base Unit": 0,
-          "Return Net Amount WO": 0,
+    data.push(headers);
+
+    rows.forEach(row => {
+      const cells = row.querySelectorAll("td");
+      if (cells.length) {
+        const rowData = [];
+        cells.forEach(cell => {
+          rowData.push(cell.innerText.trim());
         });
+        data.push(rowData);
+      }
+    });
+
+    // สร้าง workbook และ worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("ActualSales");
+
+    // เพิ่มข้อมูล
+    data.forEach((row, rowIndex) => {
+        const excelRow = worksheet.addRow(row);
+        // ตั้งค่าสไตล์สำหรับ header
+        if (rowIndex === 1) {
+          excelRow.eachCell((cell) => {
+            cell.style.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFADD8E6' } 
+            };
+            cell.style.font = {
+              bold: true,
+              color: { argb: 'FF000000' } 
+            };
+            cell.style.border = {
+              top: { style: 'thin', color: { argb: 'FF000000' } },
+              left: { style: 'thin', color: { argb: 'FF000000' } },
+              bottom: { style: 'thin', color: { argb: 'FF000000' } },
+              right: { style: 'thin', color: { argb: 'FF000000' } }
+            };
+            cell.alignment = {
+              horizontal: 'center',
+              vertical: 'middle'
+            };
+          });
+        }else{
+        
+          excelRow.eachCell((cell, colIndex) => {
+        // กำหนดให้คอลัมน์ A 
+          if (colIndex === 1 ) {
+            cell.alignment = {
+              horizontal: 'left', 
+              vertical: 'middle'
+            };
+          } else {
+              cell.alignment = {
+                horizontal: 'right', // ชิดขวาสำหรับคอลัมน์อื่น
+                vertical: 'middle'
+              };
+            }
+          });
+          
+        }
       });
-    }
-  });
+      worksheet.columns.forEach(column => {
+        const maxLength = column.values.reduce((max, value) => {
+          return Math.max(max, value ? value.toString().length : 0);
+        }, 0);
+        column.width = maxLength < 18 ? 30 : maxLength; 
+      });
 
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "ActualSalesQTYReport");
-  XLSX.writeFile(workbook, "ActualSalesQTYReport.xlsx");
-},
-    // async exportToExcel() {
-    //   if (!this.GetActaulSales || this.GetActaulSales.length === 0) {
-    //     alert("ไม่มีข้อมูลให้ส่งออก");
-    //     return;
-    //   }
+      const fileName = `Actual_Sales_QTY_Report-${month}.xlsx`;
+        workbook.xlsx.writeBuffer()
+        .then((buffer) => {
+          const blob = new Blob([buffer], { type: 'application/octet-stream' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = fileName;
+          link.click();
+          URL.revokeObjectURL(link.href);
+        })
+        .catch((error) => {
+          console.error("Error creating Excel file:", error);
+        });
+    },
 
-    //   const worksheet = XLSX.utils.json_to_sheet(this.GetActaulSales);
-    //   const workbook = XLSX.utils.book_new();
-    //   XLSX.utils.book_append_sheet(workbook, worksheet, "รายงานยอดขายจริง");
-    //   XLSX.writeFile(workbook, "รายงานยอดขายจริง.xlsx");
-    // },
+    // Helper function to format numbers if needed
+    formatNumber(value) {
+        return parseFloat(value.replace(/,/g, '').trim()) || 0;
+    },
+        
 
 
     async handleDateSelected({ year, month }) {
@@ -326,9 +410,29 @@ export default {
 
    
     async applySearch() {
+  
+       // เช็คว่า selectedSKU เป็น string แล้วแปลงเป็นอาเรย์
+    if (typeof this.selectedSKU === 'string' && this.selectedSKU.trim() !== '') {
+        this.selectedSKU = [this.selectedSKU]; // แปลงเป็นอาเรย์
+    }
+
+    // เช็คว่า selectedSKU เป็นอาเรย์ที่ไม่ว่าง
+    if (!Array.isArray(this.selectedSKU) || this.selectedSKU.length === 0 || this.selectedSKU.every(sku => sku.trim() === '')) {
+        console.log('SKU is empty or invalid. Setting to empty array.');
+        this.selectedSKU = []; // ตั้งค่าเป็นอาเรย์ว่าง
+    }
+
+
+     
       this.GetActaulSales = await fetchGetActaulSales(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedGroupOmsIDs,this.selectedSKU);
      
-      // console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
+      // console.log('Sending to API:', {
+      //     year: this.selectedYear,
+      //     month: this.selectedMonth,
+      //     brands: this.selectedBrandIDs,
+      //     group_omss: this.selectedGroupOmsIDs,
+      //     products: this.selectedSKU,
+      // });
     },
     async resetForm() {
       // this.$router.go(0);

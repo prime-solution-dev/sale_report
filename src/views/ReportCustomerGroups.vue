@@ -387,7 +387,7 @@ exportToExcel() {
   data.push([`Month: ${month}`]);
   data.push([`Brand: ${this.selectedBrandIDs || "ALL"}`]);
   data.push([`Channel: ${this.selectedChannelID || "ALL"}`]);
-  data.push([`Customer: ${this.selectedCustomerGroupsIDs || "ALL"}`]);
+  data.push([` `]);
 
   const headers = [];
   const headerCells = headerRow.querySelectorAll("th");
