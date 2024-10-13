@@ -484,13 +484,11 @@ export const fetchReportCustomerGroups = async (yearid,monthid,brandid,channelid
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
   const CurrentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; 
-  //const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
-  //console.log(currentYear,previousMonth,CurrentMonth);
 
 
   const v_year= yearid;
   const v_month= monthid;
-  console.log(v_year,v_month,currentDate);
+  //console.log(v_year,v_month,currentDate);
 
   const v_brandid= brandid;
   const v_channelid= channelid;
@@ -611,7 +609,7 @@ export const fetchReportCustomerGroups = async (yearid,monthid,brandid,channelid
       monthselectd = getMonthAbbreviation(v_month);
       
     } else {
-      monthselectd = getMonthAbbreviation(CurrentMonth);; 
+      monthselectd = getMonthAbbreviation(CurrentMonth);
     }
 
 
@@ -696,8 +694,9 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
  
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
-  const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
-  console.log(currentYear,previousMonth);
+  const currentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; // 
+  //const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
+  //console.log(currentYear,currentMonth);
 
 
   const v_year= yearid;
@@ -734,31 +733,30 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
     if (v_month) { 
       body.month = v_month;
     } else {
-      body.month = previousMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
+      body.month = currentMonth; 
     }
 
 
-  // กำหนดค่า brands
-  if (v_brandid && Array.isArray(v_brandid)) {
-    // กระจายค่าใน v_brandid เข้าไปใน brands
-    body.brands.push(...v_brandid);
-  }
-  if (v_channelid && Array.isArray(v_channelid)) {
-    body.channels.push(...v_channelid);
- }
-  if (v_storetypeid && Array.isArray(v_storetypeid)) {
-     body.store_types.push(...v_storetypeid);
-  }
 
-  if (v_keynameid && Array.isArray(v_keynameid)) {
-    body.account_names.push(...v_keynameid);
- }
-  if (v_keygroup && Array.isArray(v_keygroup)) {
-    body.account_groups.push(...v_keygroup);
- }
- if (v_customer && Array.isArray(v_customer)) {
-  body.customers.push(...v_customer);
-}
+    if (v_brandid && Array.isArray(v_brandid)) {
+      body.brands.push(...v_brandid);
+    }
+    if (v_channelid && Array.isArray(v_channelid)) {
+      body.channels.push(...v_channelid);
+  }
+    if (v_storetypeid && Array.isArray(v_storetypeid)) {
+      body.store_types.push(...v_storetypeid);
+    }
+
+    if (v_keynameid && Array.isArray(v_keynameid)) {
+      body.account_names.push(...v_keynameid);
+  }
+    if (v_keygroup && Array.isArray(v_keygroup)) {
+      body.account_groups.push(...v_keygroup);
+  }
+  if (v_customer && Array.isArray(v_customer)) {
+    body.customers.push(...v_customer);
+    } 
 
  
   try {
@@ -769,10 +767,10 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
       }
     });
    // console.log(''+body);
-  const monthNumber = response.data.current_month; 
-  const monthAbbr = getMonthAbbreviation(monthNumber); 
-  const monthAbbr_last = getMonthAbbreviation(monthNumber-1); 
-//  console.log(monthAbbr);
+    const monthNumber = response.data.current_month; 
+    const monthAbbr = getMonthAbbreviation(monthNumber); 
+    const monthAbbr_last = getMonthAbbreviation(monthNumber-1); 
+  //  console.log(monthAbbr);
     //
     const salesDataArray = [];
     salesDataArray.push({
@@ -811,26 +809,42 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
     });
 
 
-    response.data.brands.forEach(brand => {
-      salesDataArray.push({
-        type: 'brand',
-        name: brand.topic_name,
-        saleData: brand.sale_data
-      });
-    });
+    // response.data.brands.forEach(brand => {
+    //   salesDataArray.push({
+    //     type: 'brand',
+    //     name: brand.topic_name,
+    //     saleData: brand.sale_data
+    //   });
+    // });
 
   
-    salesDataArray.push({
-      type: 'customer',
-      name: response.data.customers.topic_name,
-      saleData: response.data.customers.sale_data
-    });
+    // salesDataArray.push({
+    //   type: 'customer',
+    //   name: response.data.customers.topic_name,
+    //   saleData: response.data.customers.sale_data
+    // });
+
+    let monthselectd;
+    let yearselectd; 
+
+    if (v_year) { 
+      yearselectd = v_year;
+    } else {
+      yearselectd = currentYear; 
+    }
+    if(v_month) { 
+      monthselectd = getMonthAbbreviation(v_month);
+    }else{
+      monthselectd = getMonthAbbreviation(currentMonth);
+    }
 
     response.data.accounts.forEach(account => {
       salesDataArray.push({
         type: 'account',
         name: account.topic_name,
-        saleData: account.sale_data
+        saleData: account.sale_data,
+        monthtxt:monthselectd,
+        yeartxt:yearselectd
       });
     });
 
@@ -839,48 +853,50 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
       salesDataArray.push({
         type: 'name',
         name: name.topic_name,
-        saleData: name.sale_data
+        saleData: name.sale_data,
+        monthtxt:monthselectd,
+        yeartxt:yearselectd
       });
     });
 
 
     
-    const customerGroupsWithKeys = response.data.customers.customers_groups.map((group, groupIndex) => {
-      const customers_subgroups = group.customers_subgroups.map((subgroup, subgroupIndex) => {
-        const items = subgroup.customers_items.map((item, itemIndex) => {
-          return {
-            item: {
-              item_key: itemIndex,
-              topic_name: item.topic_name,
-              sale_data_item: item.sale_data,
-            }
-          };
-        });
+    // const customerGroupsWithKeys = response.data.customers.customers_groups.map((group, groupIndex) => {
+    //   const customers_subgroups = group.customers_subgroups.map((subgroup, subgroupIndex) => {
+    //     const items = subgroup.customers_items.map((item, itemIndex) => {
+    //       return {
+    //         item: {
+    //           item_key: itemIndex,
+    //           topic_name: item.topic_name,
+    //           sale_data_item: item.sale_data,
+    //         }
+    //       };
+    //     });
     
-        return {
-          subgroup: {
-            subgroup_key: subgroupIndex,
-            subgroup: subgroup.topic_name,
-            sale_data_subg: subgroup.sale_data, 
-            customers_items: items
-          }
-        };
-      });
+    //     return {
+    //       subgroup: {
+    //         subgroup_key: subgroupIndex,
+    //         subgroup: subgroup.topic_name,
+    //         sale_data_subg: subgroup.sale_data, 
+    //         customers_items: items
+    //       }
+    //     };
+    //   });
     
-      return {
-        group: {
-          groub_key: groupIndex,
-          topic_name: group.topic_name,
-          sale_data_groub: group.sale_data, 
-          customers_subgroups
-        }
-      };
-    });
+    //   return {
+    //     group: {
+    //       groub_key: groupIndex,
+    //       topic_name: group.topic_name,
+    //       sale_data_groub: group.sale_data, 
+    //       customers_subgroups
+    //     }
+    //   };
+    // });
   
-    salesDataArray.push({
-      type: 'customerItem',
-      customerItem: customerGroupsWithKeys
-    });
+    // salesDataArray.push({
+    //   type: 'customerItem',
+    //   customerItem: customerGroupsWithKeys
+    // });
 //  console.log(JSON.stringify(customerGroupsWithKeys, null, 2));
   return salesDataArray; 
   

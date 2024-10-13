@@ -92,7 +92,7 @@ import FilterBrand from './components/FilterBrands.vue';
 import FilterChannel from './components/FilterChannels.vue';
 import FilterStoreType from './components/FilterStoreTypes.vue';
 import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
-import FilterAccountName from './components/FilterCustomernames.vue';
+import FilterKeyAccountNameByGroupvue from './components/FilterKeyAccountNameByGroupvue.vue';
 import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 </script>
 
@@ -127,7 +127,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
             </div>
 
             <div class="col-md-2">
-              <FilterAccountName @update:accountnames="updateSelectedKeyAccountName"/>
+              <FilterKeyAccountNameByGroupvue @update:accountnames="updateSelectedKeyAccountName"/>
             </div>
 
             <div class="col-md-2" >
@@ -182,19 +182,19 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                     <th style="text-align: left !important;"
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    Key Account Group
+                    Key Account Name
                     </th>
 
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    Actual {{ ReportKeyAccountGroup[0].month_txt}} {{ ReportKeyAccountGroup[0].last_year }}
+                    Actual {{ accountGroub[0].monthtxt }} {{ ReportKeyAccountGroup[0].last_year }}
 
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    Target {{ ReportKeyAccountGroup[0].month_txt}} {{ ReportKeyAccountGroup[0].current_year }}
+                    Target {{ accountGroub[0].monthtxt }} {{ ReportKeyAccountGroup[0].current_year }}
 
                     </th>
                     <th
@@ -204,21 +204,14 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" style="position: relative; height: 100%;" >
-                      Estimate {{ ReportKeyAccountGroup[0].month_txt_current}}
-                      <span @click="toggleColumnCusGroup"  class="span_toggle">
-                        <i class="fa" :class="isColumnVisibleCusGroup ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
-                      </span>
+                      Estimate {{ accountGroub[0].monthtxt }}
                     </th>
-                    <th v-if="isColumnVisibleCusGroup" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Week 1</th>
-                    <th v-if="isColumnVisibleCusGroup" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Week 2</th>
-                    <th v-if="isColumnVisibleCusGroup" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Week 3</th>
-                    <th v-if="isColumnVisibleCusGroup" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Week 4</th>
-                    <th v-if="isColumnVisibleCusGroup" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Week 5</th>
+                   
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"> Sales before return</th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    Actual Sales {{ ReportKeyAccountGroup[0].month_txt}} {{ ReportKeyAccountGroup[0].current_year }}
+                    Actual Sales {{ accountGroub[0].monthtxt }} {{ ReportKeyAccountGroup[0].current_year }}
 
                     </th>
                     <th
@@ -236,7 +229,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    {{ ReportKeyAccountGroup[0].month_txt_current}} Return
+                    {{ accountGroub[0].monthtxt }} Return
 
                     </th>
                     <th
@@ -249,38 +242,49 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                 <tbody v-if="accountGroub.length > 0">
                   <tr class="text-center" v-for="(item, data_group) in accountGroub" :key="data_group">
                     <td style="text-align: left !important;">
-                      <p class="text-xs font-weight-bold mb-0">{{ item.name}}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ item.name}}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_last_actual) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_last_actual) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_target_percent) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_target_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate) }}</p>
                     </td>
                    
                   <td>
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.last_return) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_sale) }}</p><!-- SALE Before Return -->
                   </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_actual) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_actual) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_to_target_percent) }} %</p><!-- %To Target 24 -->
+                 
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_actual_percent) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_actual_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_return) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0" > 
+                        <a v-if="item.saleData.display_current_balance < 0 && item.saleData.current_return !== 0 || item.saleData.current_return < item.saleData.display_current_actual && item.saleData.current_return !== 0"  style="color:red;">  - {{ formatNumber(item.saleData.current_return) }} </a>
+                        <a v-else >  {{ formatNumber(item.saleData.current_return) }} </a>
+                        <!-- {{ formatNumber(item.saleData.current_return) }} -->
+                        <!-- RETURN -->
+                      </p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_balance) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0" >
+                        <a v-if="item.saleData.display_current_balance < 0  " style="color:red;"> {{ formatNumber(item.saleData.display_current_balance) }} </a>
+                        <a v-else >  {{ formatNumber(item.saleData.display_current_balance) }} </a>
+                      </p>
+                     
+                      <!-- <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_balance) }}</p> -->
                     </td>
                     
                   </tr>
@@ -305,7 +309,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 </template>
 
 <script>
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 export default {
  
   components: {
@@ -313,7 +317,7 @@ export default {
     FilterBrand,
     FilterChannel,
     FilterAcGroup,
-    FilterAccountName,
+    FilterKeyAccountNameByGroupvue,
     FilterGetCustomerGroup,
     
     //FilterStoreType
@@ -374,47 +378,132 @@ export default {
     };
   },
   methods: {
+    getMonthAbbreviation(monthNumber) {
+      const monthAbbreviations = [
+        "Jan", "Feb", "Mar", "Apr",
+        "May", "Jun", "Jul", "Aug",
+        "Sep", "Oct", "Nov", "Dec"
+      ];
+      if (monthNumber < 1 || monthNumber > 12) {
+        throw new Error("Month must be between 1 and 12");
+      }
+      return monthAbbreviations[monthNumber - 1];
+    },
+
 
     exportToExcel() {
-      const table = document.querySelector(".table tbody");
-      const rows = table.querySelectorAll("tr");
-      if (rows.length === 0) {
-        alert("ไม่มีข้อมูลให้ส่งออก");
-        return;
-      }
-      const data = [];
-      rows.forEach(row => {
-        const cells = row.querySelectorAll("td");
-        if (cells.length) {
-          const rowData = {
-            "Key Account Group": cells[0].innerText.trim(),
-            "Actual Last Year": this.formatNumber(cells[1].innerText),
-            "Target Current Year": this.formatNumber(cells[2].innerText),
-            "%T Current Year / A Last Year": this.formatNumber(cells[3].innerText.replace('%', '').trim()), 
-            "Estimate": this.formatNumber(cells[4].innerText),
-            "Sales before Return": this.formatNumber(cells[cells.length - 3].innerText),
-            "Actual Sales Current Year": this.formatNumber(cells[cells.length - 2].innerText),
-            "%To Target": this.formatNumber(cells[cells.length - 1].innerText.replace('%', '').trim()), 
-            "Return": this.formatNumber(cells[cells.length - 2].innerText), 
-            "Balance to go": this.formatNumber(cells[cells.length - 1].innerText) 
-          };
-          // Add weekly estimates if the column is visible
-          if (this.isColumnVisibleCusGroup) {
-            for (let i = 5; i <= 9; i++) { // Assuming week columns are from 5 to 9
-              if (cells[i]) {
-                rowData[`Week ${i - 4}`] = this.formatNumber(cells[i].innerText);
-              }
-            }
-          }
+    const currentDate = new Date();
+    const currentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; 
+    const currentYear = currentDate.getFullYear(); 
 
-          data.push(rowData);
+    const monthdefult = this.selectedMonth || currentMonth;
+    const yeardefault = this.selectedYear || currentYear;
+
+    const monthAbbr = this.getMonthAbbreviation(monthdefult);
+    const table = document.querySelector(".table");
+    const headerRow = table.querySelector("thead tr");
+    const rows = table.querySelectorAll("tbody tr");
+
+    if (rows.length === 0) {
+      alert("No Data");
+      return;
+    }
+
+    const data = [];
+    const month = `${monthAbbr}${yeardefault}`;
+    data.push([`Month: ${month}`]);
+    data.push([`Brand: ${this.selectedBrandIDs || "ALL"}`]);
+    data.push([`Channel: ${this.selectedChannelID || "ALL"}`]);
+    data.push([`Customer: ${this.selectedCustomerGroupsIDs || "ALL"}`]);
+
+    const headers = [];
+    const headerCells = headerRow.querySelectorAll("th");
+    headerCells.forEach(header => {
+      headers.push(header.innerText.trim());
+    });
+
+    data.push(headers);
+
+    rows.forEach(row => {
+      const cells = row.querySelectorAll("td");
+      if (cells.length) {
+        const rowData = [];
+        cells.forEach(cell => {
+          rowData.push(cell.innerText.trim());
+        });
+        data.push(rowData);
+      }
+    });
+
+    // สร้าง workbook และ worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("ds_customergroup");
+
+    // เพิ่มข้อมูล
+    data.forEach((row, rowIndex) => {
+        const excelRow = worksheet.addRow(row);
+        // ตั้งค่าสไตล์สำหรับ header
+        if (rowIndex === 4) {
+          excelRow.eachCell((cell) => {
+            cell.style.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFADD8E6' } 
+            };
+            cell.style.font = {
+              bold: true,
+              color: { argb: 'FF000000' } 
+            };
+            cell.style.border = {
+              top: { style: 'thin', color: { argb: 'FF000000' } },
+              left: { style: 'thin', color: { argb: 'FF000000' } },
+              bottom: { style: 'thin', color: { argb: 'FF000000' } },
+              right: { style: 'thin', color: { argb: 'FF000000' } }
+            };
+            cell.alignment = {
+              horizontal: 'center',
+              vertical: 'middle'
+            };
+          });
+        }else{
+        
+          excelRow.eachCell((cell, colIndex) => {
+        // กำหนดให้คอลัมน์ A 
+          if (colIndex === 1 ) {
+            cell.alignment = {
+              horizontal: 'left', 
+              vertical: 'middle'
+            };
+          } else {
+              cell.alignment = {
+                horizontal: 'right', // ชิดขวาสำหรับคอลัมน์อื่น
+                vertical: 'middle'
+              };
+            }
+          });
+          
         }
       });
+      worksheet.columns.forEach(column => {
+        const maxLength = column.values.reduce((max, value) => {
+          return Math.max(max, value ? value.toString().length : 0);
+        }, 0);
+        column.width = maxLength < 18 ? 30 : maxLength; 
+      });
 
-      const worksheet = XLSX.utils.json_to_sheet(data);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "ds_keyaccountgroup");
-      XLSX.writeFile(workbook, "ds_keyaccountgroup.xlsx");
+      const fileName = `Daily_Sales_ByKeyAccountGroup_Report-${month}.xlsx`;
+        workbook.xlsx.writeBuffer()
+        .then((buffer) => {
+          const blob = new Blob([buffer], { type: 'application/octet-stream' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = fileName;
+          link.click();
+          URL.revokeObjectURL(link.href);
+        })
+        .catch((error) => {
+          console.error("Error creating Excel file:", error);
+        });
     },
 
     // Helper function to format numbers if needed
@@ -481,18 +570,7 @@ export default {
     },
    
 
-    toggleColumnDetail() {
-      this.isColumnVisibleDetail = !this.isColumnVisibleDetail; 
-    },
-    toggleColumnChannel() {
-      this.isColumnVisible = !this.isColumnVisible; 
-    },
-    toggleColumnCusName() {
-      this.isColumnVisibleCusName = !this.isColumnVisibleCusName; 
-    },
-    toggleColumnCusGroup() {
-      this.isColumnVisibleCusGroup = !this.isColumnVisibleCusGroup; 
-    },
+   
     async applySearch() {
       this.ReportKeyAccountGroup = await fetchReportKeyAccountGroup(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs,this.selectedCustomerGroupsIDs);
       console.log('Select  selectedCustomerGroupsIDs', this.selectedCustomerGroupsIDs);
