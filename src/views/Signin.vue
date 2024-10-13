@@ -10,12 +10,16 @@ import background_login from "@/assets/img/bg-loginpage.png";
 import Modal from '/src/views/components/ModalStatusState';
 
 const router = useRouter(); // Get router instance
-const isModalVisible = ref(false);
+// const isModalVisible = ref(false);
 const isLoading = ref(false); 
 
 const body = document.getElementsByTagName("body")[0];
 
 const store = useStore();
+
+const isModalVisible = ref(false);
+const message = ref(''); // ประกาศ message
+
 onBeforeMount(() => {
   store.state.hideConfigButton = true;
   store.state.showNavbar = false;
@@ -70,8 +74,27 @@ const handleLogin = async () => {
       localStorage.removeItem('password'); // ลบเมื่อไม่ได้เลือก Remember
     }
 
-    isModalVisible.value = true; // ModalState...
+   
+    //   await Swal.fire({
+    //   title: 'Login Successful!',
+    //   text: 'You will be redirected shortly.',
+    //   icon: 'success',
+    //   timer: 3000,
+    //   timerProgressBar: true,
+    //   willClose: () => {
+    //     router.push('/Main'); // นำทางหลังจาก 3 วินาที
+    //   }
+    //  });
+
+      // ตั้งค่า modal แทนที่จะแสดง SweetAlert2 ที่นี่
+      isModalVisible.value = true;
+      message.value = 'Login successful!'; // ตั้งข้อความ
+      isLoading.value = false; // ปิดการโหลด
           
+   
+      setTimeout(() => {
+        router.push('/Main'); // เปลี่ยนเส้นทางหลังจาก 3 วินาที
+      }, 3000); // 3000 มิลลิวินาที = 3 วินาที
 
    
     console.log('Login successful:', userData);
@@ -80,14 +103,14 @@ const handleLogin = async () => {
     errorMessage.value = error.message || 'invalid username or password';
   }
 };
-const handleCloseModal = () => {
-  isModalVisible.value = false;
+// const handleCloseModal = () => {
+//   isModalVisible.value = false;
   
-  //   setTimeout(() => {
+//   //   setTimeout(() => {
     
-  //     router.push('/Main');
-  // }, 1500); // 3000 มิลลิวินาที = 3 วินาที
-};
+//   //     router.push('/Main');
+//   // }, 1500); // 3000 มิลลิวินาที = 3 วินาที
+// };
 
 
 
@@ -136,10 +159,7 @@ const handleCloseModal = () => {
                         autocomplete="current-password" 
                          :error="!!errorMessage"
                       />
-<!-- 
-                      <argon-alert v-if="errorMessage" color="danger" icon="ni ni-like-2 ni-sm" dismissible>
-                          <strong> {{ errorMessage }}</strong> 
-                      </argon-alert>   -->
+
                       
                       <span v-if="errorMessage" style="color: red;">
                         {{ errorMessage }}</span>
@@ -170,13 +190,19 @@ const handleCloseModal = () => {
                     @close="handleCloseModal"
                   /> -->
 
+                  <!-- <Modal
+                    title="Status"
+                    :message="message"
+                    :isLoading="isLoading"
+                  /> -->
+
                   <Modal
-                  :isVisible="isModalVisible"
-                  title="Status"
-                  :message="isLoading ? '' : 'Login successful!'"
-                  :isLoading="isLoading"
-                  @close="handleCloseModal"
-                />
+                    v-if="isModalVisible"
+                    title="Status"
+                    :message="message"
+                    :isLoading="isLoading"
+                    @close="isModalVisible = false"
+                  />
                   </form>
                 </div>
               
