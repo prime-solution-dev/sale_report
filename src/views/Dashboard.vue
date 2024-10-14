@@ -81,13 +81,88 @@
    
     padding: 1rem!important;
 }
+
+.popover-container {
+  position: relative;
+  display: inline-block;
+  width: 100%!important;
+}
+
+
+.popover-newcustomer {
+  position: absolute;
+  color: black; /* สีข้อความ */
+  padding: 5px;
+  border-radius: 0.2rem;
+  top: 0% !important;
+  left: 100%!important;
+  transform: translateX(-50%);
+  z-index: 100;
+  white-space: nowrap;
+ 
+  transition: opacity 0.3s ease, transform 0.3s ease; /* การเปลี่ยนแปลง */
+}
+
+.popover-content {
+  /* display: flex; */
+  justify-content: space-between;
+  color: rgb(31, 12, 83);
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+  padding: 0px;
+  font-size: 12px!important;
+  text-align: right!important;
+
+}
+
+.close-button-popover {
+  background: none;
+  border: none;
+  color: rgb(31, 12, 83);
+  cursor: pointer;
+  padding: 0;
+  margin-left: 3px;
+  font-weight: bold;
+  font-size: 8px!important;
+}
+.box_customercode{
+  text-align: left!important;
+  margin-left: 8px!important;
+  padding-bottom : 3px!important;
+}
+.text_head_popover{
+  font-size: 12px;
+  color: #b8acac;
+  background-color: #f3f3f3;
+ 
+}
+
+
 </style>
 <script setup>
 
  
   import { formatNumber } from 'chart.js/helpers';
-  import {  fetchSalesSummary } from '../services/reportapi/getdataApi';
+  import {  fetchSalesSummary , fetchGetCompareCustomerMasterGroup} from '../services/reportapi/getdataApi';
+  import { ref } from 'vue';
 
+
+  const showPopover = ref(false);
+// สลับสถานะการแสดง popover
+const togglePopover = () => {
+  showPopover.value = !showPopover.value;
+};
+
+// ปิด popover เมื่อคลิกที่ปุ่ม "ปิด"
+const closePopover = () => {
+  showPopover.value = false;
+};
+
+// ซ่อน popover เมื่อเมาส์ออกจาก popover-container
+const hidePopover = () => {
+  // ไม่ต้องทำอะไรในที่นี้เพื่อให้ popover ค้างอยู่
+};
          
 import "../../src/assets/css/styleGlobal.css";
 
@@ -169,10 +244,37 @@ import FilterAccountName from './components/FilterCustomernames.vue';
       <div class="col-lg-4 col-md-6 col-6 text-left">
         <h6 class="text-dark font-weight-bolder align-middle" > Total Company : {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}</h6> 
       </div>  
-      <div class="col-lg-4 text-left"> 
+      <!-- <div class="col-lg-4 text-left"> 
         <div class="">
           <button class="btn mb-0 bg-button-orange btn-md w-100 null "><i class="fa fa-exclamation-circle"></i> New Customer Group</button>
         </div>
+      </div> -->
+      <div class="col-lg-4 text-left"> 
+
+        <div class="popover-container" @mouseleave="hidePopover">
+          <button @click="togglePopover" class="btn mb-0 bg-button-orange btn-md w-100 null ">
+            <i class="fa fa-exclamation-circle"></i> New Customer Group
+          </button>
+          <transition name="fade">
+            <div v-if="showPopover" class="popover-newcustomer">
+              <!-- <button class="close-button-popover" @click.stop="closePopover">x</button> -->
+              <div class="popover-content ">
+               
+                <div class="contents"> 
+                  <div class="text_head_popover"> &nbsp; &nbsp;Customer Code  <span @click.stop="closePopover" class="close-button-popover"> x &nbsp;&nbsp;</span></div>
+                  <div v-if="GetCompareCustomerMasterGroup.flag_new_customer == true" class="box_customercode"> 
+                    <span v-for="(newcustomer, index) in GetCompareCustomerMasterGroup" :key="index" >&nbsp; code {{ index++ }}<br>  </span>
+                  </div>
+                  <div v-else class="box_customercode "> 
+                    <span class="text-left ">&nbsp; &nbsp; no data <br> </span>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </transition>
+        </div>
+       
       </div>
       <div class="col-lg-4 text-end  ">
         <span class="text-date"> As Of <i class="fa fa-calendar" aria-hidden="true"></i> {{month_txt_current }} {{ day_now }}
@@ -471,9 +573,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
     </div>
   </div>
 
-
-
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary" >
+  <div class="py-3 mt-2 container-fluid" v-if="SalesTargetsSummary" >
     <div class="row">
       <div class="col-12">
         
@@ -646,7 +746,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
   </div>
 
 
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary">
+  <div class="py-3 mt-2 container-fluid" v-if="SalesTargetsSummary">
     <div class="row">
       <div class="col-12">
         
@@ -901,7 +1001,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
     
   </div>
 
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary" >
+  <div class="py-3 mt-2 container-fluid" v-if="SalesTargetsSummary" >
     <div class="row">
       <div class="col-12">
         <div class="card">
@@ -1108,7 +1208,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
     
   </div>
 
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary" >
+  <div class="py-3 mt-2 container-fluid" v-if="SalesTargetsSummary" >
     <div class="row">
       <div class="col-12">
         
@@ -1369,6 +1469,7 @@ export default {
       selectedChannel: null, 
       selectedStoreType: null, 
       SalesTargetsSummary: null,
+      GetCompareCustomerMasterGroup:null,
       //
   
       customersItem:null,
@@ -1409,7 +1510,7 @@ export default {
         this.selectedAccountNameIDs,
         this.selectedAccountGroupIDs,
         this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
-      
+        this.GetCompareCustomerMasterGroup = await fetchGetCompareCustomerMasterGroup();
         // console.log('Selected Brands:', this.selectedBrandIDs); 
         // console.log('Selected Channels:', this.selectedChannelIDs); 
       } 
@@ -1508,7 +1609,7 @@ export default {
     getCustomersItem() {
       return (this.SalesTargetsSummary || []).filter(item => item.type === 'customerItem');
     },
-   
+    
   }
   ,
   created() {

@@ -1,0 +1,19 @@
+.swal2-styled.swal2-confirm{
+        border: 0!important;
+        background-image: none!important;
+        background-color: #5e72e4!important;
+        padding: 0.625rem 1.25rem!important;
+        font-size: 0.8rem!important;
+        border-radius: 0.5rem!important;
+}
+
+
+.swal2-styled.swal2-cancel {
+    border: 0;
+    border-radius: 0.5rem!important;
+    background: initial;
+    background-color: #6e7d88;
+    color: #fff;
+    font-size: 0.8rem!important;
+    padding: 0.625rem 1.25rem!important;
+}

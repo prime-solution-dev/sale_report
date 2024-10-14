@@ -4,7 +4,7 @@
     <div class="modal-content" @click.stop>
       <button class="close-button" @click="closeModal">×</button>
       <span class="text-center text-head-modal" >Change your password</span>
-      <form @submit.prevent="handleReset" class="p-4">
+      <form @submit.prevent="handleResetPassword" class="p-4">
 
         <div class="form-group mt-2">
           <div class="row">
@@ -63,12 +63,17 @@
   </div>
 </template>
 <script setup>
+import Swal from 'sweetalert2';
 import { defineProps, defineEmits, nextTick , ref } from 'vue';
  // eslint-disable-next-line no-unused-vars
 const props = defineProps({
   isVisible: {
     type: Boolean,
     default: false
+  }, 
+  setDataNewPassword: {
+    type: Function,
+    required: true
   }
 });
 
@@ -92,21 +97,33 @@ const newPassword = ref('');
 const confirmPassword = ref('');
 const currentPassword = ref('');
 
-
-
-const handleReset = () => {
+const handleResetPassword = () => {
   if (newPassword.value !== confirmPassword.value) {
-    alert("Passwords do not match!");
+    Swal.fire({
+      icon: 'error',
+      title: 'An error has occurred. Please try again.',
+      text: "Passwords do not match!!",
+    });
     return;
   }
-    if (currentPassword.value !== currentPassword.value) {
-    alert("currentPassword ");
-    return;
-  }
-  // Handle password reset logic here
-  alert(`Password has been reset to: ${newPassword.value}`);
-  closeModal(); // ปิด modal หลังจากรีเซ็ตรหัสผ่านสำเร็จ
+
+  
+  Swal.fire({
+    title: 'Are you sure ?',
+    text: "Do you really want to reset your password?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, reset it',
+    cancelButtonText: 'No, keep it',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      props.setDataNewPassword(currentPassword.value, newPassword.value); // เรียกใช้ฟังก์ชัน
+      
+     
+    }
+  });
 };
+
 </script>
 
 <style scoped>

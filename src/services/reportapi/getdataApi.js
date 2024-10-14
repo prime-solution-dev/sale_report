@@ -961,3 +961,26 @@ export const fetchGetGroupOms = async () => {
     throw error.response ? error.response.data : 'fetchGetGroupOms Error'; 
   }
 };
+
+
+
+
+
+export const fetchGetCompareCustomerMasterGroup = async () => {
+  const GetCompareCustomerMasterGroup = hostapi+'Customer/GetCompareCustomerMasterGroup'; // แทนที่ด้วย API ที่สอง
+  const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
+  const body = {
+      group_Omss : [],
+  };
+  try {
+    const response = await axios.post(GetCompareCustomerMasterGroup, body,{
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      }
+    });
+    return response.data; // ส่งค่ากลับ
+  } catch (error) {
+    throw error.response ? error.response.data : 'GetCompareCustomerMasterGroup Error'; 
+  }
+};

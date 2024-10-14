@@ -35,7 +35,8 @@ const toggleSubmenu = (menu) => {
           :navText="isRTL ? '' : 'Dashboard'"
         >
           <template v-slot:icon>
-            <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
+            <i class="fas fa-chart-line" style="font-size: 18px; color:#0281cc;"></i> 
+            <!-- <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i> -->
           </template>
         </sidenav-item>
       </li>
@@ -127,10 +128,11 @@ const toggleSubmenu = (menu) => {
         <sidenav-item
           to="/upload"
           :class="getRoute() === '' ? 'active' : ''"
-          :navText="isRTL ? 'الفواتیر' : 'Upload'"
+          :navText="isRTL ? 'ر' : 'Upload'"
         >
           <template v-slot:icon>
-            <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
+            <i class="ni ni-spaceship " style="font-size: 18px; color:#0281cc; " ></i>
+            <!-- <i class="ni ni-credit-card text-success text-sm opacity-10"></i> -->
           </template>
         </sidenav-item>
       </li>
@@ -144,7 +146,7 @@ const toggleSubmenu = (menu) => {
           :navText="isRTL ? '' : 'User'"
         >
           <template v-slot:icon>
-            <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
+            <i class="ni ni-single-02 opacity-10" style="font-size: 18px; color:#0281cc; "></i>
           </template>
         </sidenav-item>
       </li>

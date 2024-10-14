@@ -9,8 +9,7 @@ import ArgonButton from "@/components/ArgonButton.vue";
 import background_login from "@/assets/img/bg-loginpage.png";
 import Modal from '/src/views/components/ModalStatusState';
 
-const router = useRouter(); // Get router instance
-// const isModalVisible = ref(false);
+const router = useRouter(); 
 const isLoading = ref(false); 
 
 const body = document.getElementsByTagName("body")[0];
@@ -51,12 +50,12 @@ onMounted(() => {
   if (savedPassword) {
     password.value = savedPassword;
   }
-  // ตรวจสอบว่ามี token หรือไม่ ถ้ามีให้เปลี่ยนหน้า
-  const token = localStorage.getItem('token');
-  if (token) {
-    // นำทางไปยังหน้าหลัก
-    // this.$router.push('/dashboard'); // ใช้ router 
-  }
+  
+  // const token = localStorage.getItem('token');
+  // if (token) {
+  //   // นำทางไปยังหน้าหลัก
+  //   // this.$router.push('/dashboard'); // ใช้ router 
+  // }
 });
 
 
@@ -64,7 +63,7 @@ const handleLogin = async () => {
   errorMessage.value = ''; // เคลียร์ข้อความผิดพลาดก่อน
   try {
     const userData = await loginUser(username.value, password.value);
-    
+    store.dispatch('login', userData);
     // ตรวจสอบว่าใช้ "Remember Password" หรือไม่
     if (rememberMe.value) {
         localStorage.setItem('username', username.value);
@@ -74,19 +73,6 @@ const handleLogin = async () => {
       localStorage.removeItem('password'); // ลบเมื่อไม่ได้เลือก Remember
     }
 
-   
-    //   await Swal.fire({
-    //   title: 'Login Successful!',
-    //   text: 'You will be redirected shortly.',
-    //   icon: 'success',
-    //   timer: 3000,
-    //   timerProgressBar: true,
-    //   willClose: () => {
-    //     router.push('/Main'); // นำทางหลังจาก 3 วินาที
-    //   }
-    //  });
-
-      // ตั้งค่า modal แทนที่จะแสดง SweetAlert2 ที่นี่
       isModalVisible.value = true;
       message.value = 'Login successful!'; // ตั้งข้อความ
       isLoading.value = false; // ปิดการโหลด
@@ -94,24 +80,15 @@ const handleLogin = async () => {
    
       setTimeout(() => {
         router.push('/Main'); // เปลี่ยนเส้นทางหลังจาก 3 วินาที
-      }, 3000); // 3000 มิลลิวินาที = 3 วินาที
+      }, 5000); // 3000 มิลลิวินาที = 3 วินาที
 
    
-    console.log('Login successful:', userData);
+    console.log('Login successful xx :', userData.token);
   
   } catch (error) {
     errorMessage.value = error.message || 'invalid username or password';
   }
 };
-// const handleCloseModal = () => {
-//   isModalVisible.value = false;
-  
-//   //   setTimeout(() => {
-    
-//   //     router.push('/Main');
-//   // }, 1500); // 3000 มิลลิวินาที = 3 วินาที
-// };
-
 
 
 </script>
@@ -196,6 +173,14 @@ const handleLogin = async () => {
                     :isLoading="isLoading"
                   /> -->
 
+                  <!-- <Modal
+                    v-if="isModalVisible"
+                    title="Status"
+                    :message="message"
+                    :isLoading="isLoading"
+                    @close="isModalVisible = false"
+                  /> -->
+
                   <Modal
                     v-if="isModalVisible"
                     title="Status"
@@ -203,6 +188,8 @@ const handleLogin = async () => {
                     :isLoading="isLoading"
                     @close="isModalVisible = false"
                   />
+
+                 
                   </form>
                 </div>
               

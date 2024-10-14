@@ -57,9 +57,25 @@ export const loginUser = async (username, password) => {
         name: response.data.name,
         permissions: response.data.permissions,
         tokenExpire: response.data.token_expire,
+        token: response.data.token,
         isForceChangePassword: response.data.is_force_change_password,
       };
       localStorage.setItem('userData', JSON.stringify(userData));
+      //
+
+      //  // ตรวจสอบว่า userData มีค่าจริงและเป็นอ็อบเจ็กต์
+      //  if (userData && typeof userData === 'object') {
+      //   localStorage.setItem('userData', JSON.stringify({
+      //     is_force_change_password: userData.is_force_change_password, 
+      //     name: userData.name, 
+      //     permissions: userData.permissions, 
+      //     token: userData.token, 
+      //     token_expire: userData.token_expire 
+      //   }));
+      //   } else {
+      //     console.error('UserData is not valid');
+      //   }
+      
       
       return userData; // คืนค่า userData เพื่อใช้งานต่อ
     } else {
@@ -70,3 +86,51 @@ export const loginUser = async (username, password) => {
     throw error.response ? error.response.data : 'เกิดข้อผิดพลาด';
   }
 };
+
+
+export const setPasswordStateAPI = async (username, password) => {
+  const url = `${hostapi}Authen/ResetPassword`;
+  const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
+
+  const body = {
+    user: username,
+    password: password,
+  };
+
+   
+  try {
+    const response = await axios.post(url, body, {
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      }
+    });
+  
+
+  
+//  console.log(JSON.stringify(customerGroupsWithKeys, null, 2));
+  return response; 
+  
+  } catch (error) {
+   //  throw error.response ? error.response.data : 'เกิดข้อผิดพลาด'; 
+  }
+
+
+};
+
+// export const setPasswordState = async (data) => {
+//   try {
+//       const url = hostapi + '/Authen/ResetPassword';
+
+//       const body = data
+//       const response = await axios.post(url, body, {
+//           headers: {
+//               'Authorization': token,
+//               'Content-Type': 'application/json',
+//           }
+//       });
+//       return response.data;
+//   } catch (error) {
+//       throw error.response ? error.response.data : 'เกิดข้อผิดพลาด';
+//   }
+// };

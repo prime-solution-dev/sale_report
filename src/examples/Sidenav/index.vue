@@ -40,7 +40,7 @@ const darkMode = computed(() => store.state.darkMode);
           alt="main_logo"
         /> <br>
 
-        <span class="ms-2 font-weight-bold me-2">Daily Sales </span>
+        <span class="ms-3 font-weight-bold me-2">Daily Sales </span>
       </router-link>
     </div>
 
