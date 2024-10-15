@@ -8,7 +8,7 @@
 <label for="acgroupSelect">Key account group</label>
 <div class="dropdown_acgroup">
     <button  class="btn btn-dropdown dropdown-toggle"  type="button"  id="dropdownSelectAccountGroup" @click.stop="ToggleSelectAcGroup">
-    {{ selectedAcGroups.length ? truncateText(selectedAcGroups.join(', '), 2) : 'Select AcGroup' }}
+    {{ selectedAcGroups.length ? truncateText(selectedAcGroups.join(', '), 2) : 'Select AccountGroup' }}
     </button>
     <div class="dropdown-menu_acgroup" v-if="isDropdownOpenAcc">
         <!-- ตัวเลือก Select All -->
@@ -33,7 +33,7 @@
 </div>
 </template>
 <script>
- import {  fetchAccountGroup } from '../../services/reportapi/getdataApi';
+ import {  fetchAccountGroup ,fetchAccountNameByGroup  } from '../../services/reportapi/getdataApi';
 export default {
  
  
@@ -71,13 +71,38 @@ export default {
     ToggleSelectAcGroup() {
       this.isDropdownOpenAcc = !this.isDropdownOpenAcc;
     },
-    updateSelectedKeyAccountGroup() {
-      this.$emit('update:accgroups', this.selectedAccountGroupIDs); // ส่งค่า selectedAccountGroupIDs ไปยังคอมโพเนนต์หลัก
-    },
+    // updateSelectedKeyAccountGroup() {
+    //   this.$emit('update:accgroups', this.selectedAccountGroupIDs); // ส่งค่า selectedAccountGroupIDs ไปยังคอมโพเนนต์หลัก
+    // },
     toggleSelectAllGroup(event) {
       this.selectedAccountGroupIDs = event.target.checked ? this.GetAccountGroup.map(acgroup => acgroup.code) : [];
       this.updateSelectedKeyAccountGroup(); // อัปเดตค่าหลังจากเลือกหรือยกเลิกการเลือกทั้งหมด
     },
+
+    updateSelectedKeyAccountGroup() {
+      this.$emit('update:accgroups', this.selectedAccountGroupIDs); // ส่งค่า selectedChannelIDs ไปยังคอมโพเนนต์หลัก
+      if (this.selectedAccountGroupIDs.length) {
+        this.fetchAccountNameByGroup(); // เรียกใช้ฟังก์ชัน fetchAccountNameByGroup ใหม่
+      } else {
+        this.GetAccountName = []; // เคลียร์เมื่อไม่มีการเลือก channel
+      }
+    //  alert(this.selectedAccountGroupIDs);
+    },
+
+    async fetchAccountNameByGroup() {
+        this.loading = true;
+        this.error = null;
+        try {
+         
+          this.GetAccountName = await fetchAccountNameByGroup(this.selectedAccountGroupIDs);
+        } catch (error) {
+          this.error = error; // จัดการข้อผิดพลาด
+          console.error(this.error);
+        } finally {
+          this.loading = false; // ปิดสถานะโหลด
+        }
+      }
+    ,
    
    
     truncateText(text, colCount) {

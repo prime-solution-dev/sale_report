@@ -77,13 +77,92 @@
     border: 1px solid #c5c5c5 /*{borderColorDefault}*/;
     display: none;
 }
+.card .card-body {
+   
+    padding: 1rem!important;
+}
+
+.popover-container {
+  position: relative;
+  display: inline-block;
+  width: 100%!important;
+}
+
+
+.popover-newcustomer {
+  position: absolute;
+  color: black; /* สีข้อความ */
+  padding: 5px;
+  border-radius: 0.2rem;
+  top: 0% !important;
+  left: 100%!important;
+  transform: translateX(-50%);
+  z-index: 100;
+  white-space: nowrap;
+ 
+  transition: opacity 0.3s ease, transform 0.3s ease; /* การเปลี่ยนแปลง */
+}
+
+.popover-content {
+  /* display: flex; */
+  justify-content: space-between;
+  color: rgb(31, 12, 83);
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+  padding: 0px;
+  font-size: 12px!important;
+  text-align: right!important;
+
+}
+
+.close-button-popover {
+  background: none;
+  border: none;
+  color: rgb(31, 12, 83);
+  cursor: pointer;
+  padding: 0;
+  margin-left: 3px;
+  font-weight: bold;
+  font-size: 8px!important;
+}
+.box_customercode{
+  text-align: left!important;
+  margin-left: 8px!important;
+  padding-bottom : 3px!important;
+}
+.text_head_popover{
+  font-size: 12px;
+  color: #b8acac;
+  background-color: #f3f3f3;
+ 
+}
+
+
 </style>
 <script setup>
 
  
   import { formatNumber } from 'chart.js/helpers';
-  import {  fetchSalesSummary } from '../services/reportapi/getdataApi';
+  import {  fetchSalesSummary , fetchGetCompareCustomerMasterGroup} from '../services/reportapi/getdataApi';
+  import { ref } from 'vue';
 
+
+  const showPopover = ref(false);
+// สลับสถานะการแสดง popover
+const togglePopover = () => {
+  showPopover.value = !showPopover.value;
+};
+
+// ปิด popover เมื่อคลิกที่ปุ่ม "ปิด"
+const closePopover = () => {
+  showPopover.value = false;
+};
+
+// ซ่อน popover เมื่อเมาส์ออกจาก popover-container
+const hidePopover = () => {
+  // ไม่ต้องทำอะไรในที่นี้เพื่อให้ popover ค้างอยู่
+};
          
 import "../../src/assets/css/styleGlobal.css";
 
@@ -113,12 +192,12 @@ import FilterAccountName from './components/FilterCustomernames.vue';
       <div class="col-lg-12 col-md-12 col-12">
         <div class="container">
           <div class="row mt-3">
-            <div class="col-md-2">
+            <div class="col-md-2" hidden>
               <label for="storetypesSelect">Month</label>
                 <div>
                   <DatePicker @dateSelected="handleDateSelected"/>
                 </div>
-              </div>
+            </div>
             <div class="col-md-2">
               <FilterBrand @update:brands="updateSelectedBrands"/>
             </div>
@@ -138,25 +217,22 @@ import FilterAccountName from './components/FilterCustomernames.vue';
               <FilterAcGroup @update:accgroups="updateSelectedKeyAccountGroup"/>
             </div>
 
-          
-    
-          </div>
-          <div class="row">
-            <div class="col-md-10"></div>
-              <div class="col-md-1">
+            <div class="col-md-1">
                 <div class="form-group">
                   <label for="exampleSelect"></label>
-                  <button class="btn mb-0  fw-lighter  btn-md null  " style="position: absolute;" @click="resetForm">Reset</button>
+                  <button class="btn mb-0  fw-lighter  btn-md null mt-4" style="position: absolute;" @click="resetForm">Reset</button>
                 
                 </div>
             </div>
               <div class="col-md-1">
                 <div class="form-group">
                   <label for="exampleSelect"></label>
-                  <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary" style="position: absolute;" @click="applySearch">Apply</button>
+                  <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary mt-4" style="position: absolute;" @click="applySearch">Apply</button>
                 </div>
             </div>
+    
           </div>
+        
         </div>
       </div>
     </div>
@@ -168,13 +244,40 @@ import FilterAccountName from './components/FilterCustomernames.vue';
       <div class="col-lg-4 col-md-6 col-6 text-left">
         <h6 class="text-dark font-weight-bolder align-middle" > Total Company : {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}</h6> 
       </div>  
-      <div class="col-lg-4 text-left"> 
+      <!-- <div class="col-lg-4 text-left"> 
         <div class="">
           <button class="btn mb-0 bg-button-orange btn-md w-100 null "><i class="fa fa-exclamation-circle"></i> New Customer Group</button>
         </div>
+      </div> -->
+      <div class="col-lg-4 text-left"> 
+
+        <div class="popover-container" @mouseleave="hidePopover">
+          <button @click="togglePopover" class="btn mb-0 bg-button-orange btn-md w-100 null ">
+            <i class="fa fa-exclamation-circle"></i> New Customer Group
+          </button>
+          <transition name="fade">
+            <div v-if="showPopover" class="popover-newcustomer">
+              <!-- <button class="close-button-popover" @click.stop="closePopover">x</button> -->
+              <div class="popover-content ">
+               
+                <div class="contents"> 
+                  <div class="text_head_popover"> &nbsp; &nbsp;Customer Code  <span @click.stop="closePopover" class="close-button-popover"> x &nbsp;&nbsp;</span></div>
+                  <div v-if="GetCompareCustomerMasterGroup.flag_new_customer == true" class="box_customercode"> 
+                    <span v-for="(newcustomer, index) in GetCompareCustomerMasterGroup" :key="index" >&nbsp; code {{ index++ }}<br>  </span>
+                  </div>
+                  <div v-else class="box_customercode "> 
+                    <span class="text-left ">&nbsp; &nbsp; no data <br> </span>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </transition>
+        </div>
+       
       </div>
       <div class="col-lg-4 text-end  ">
-        <span class="text-date"> Ass Of <i class="fa fa-calendar" aria-hidden="true"></i> {{month_txt_current }} {{ day_now }}
+        <span class="text-date"> As Of <i class="fa fa-calendar" aria-hidden="true"></i> {{month_txt_current }} {{ day_now }}
         </span>
 
 
@@ -219,7 +322,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     </div>
                     <p class="font-weight-bolder mb-0 mr-5 fz-14 mt-1">&nbsp;Actual MTD  </p>
                     <div class='mt-4  text-md  font-weight-bolder '>
-                      <h4 class="mb-6 text-white"><b>{{ formatNumber(overallSummary.saleData.display_current_actual) }}</b></h4>
+                      <h4 class="mb-6 text-white"><b>{{ formatNumber(sum_detail[0].saleData.display_current_actual) }}</b></h4>
                     </div>
                 </div>
               </div>
@@ -237,7 +340,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     </div>
                     <p class="font-weight-bolder mb-0 mr-5 fz-12 mt-1 text-white"> % toTarget {{ SalesTargetsSummary[0].current_year }}  </p>
                     <div class='mt-4  text-md  font-weight-bolder '>
-                      <h4 class="mb-6 text-white"><b>{{ formatNumber(overallSummary.saleData.display_current_to_target_percent) }}%</b></h4>
+                      <h4 class="mb-6 text-white"><b>{{ formatNumber(sum_detail[0].saleData.display_current_to_target_percent ) }}%</b></h4>
                      
                     </div>
                 </div>
@@ -274,7 +377,12 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     <p class="text-sm mb-0">Return</p>
                   </div>
                   <div class=' text-md text-dark font-weight-bolder '>
-                    <h5 class="mb-0"><b>{{ formatNumber(overallSummary.saleData.current_return) }}</b></h5>
+                    <h5 class="mb-0"><b>
+                      <a v-if="sum_detail[0].saleData.display_current_balance < 0 && sum_detail[0].saleData.current_return !==0 || sum_detail[0].saleData.current_return < sum_detail[0].saleData.display_current_actual && sum_detail[0].saleData.sale_data_groub.current_return !== 0"  style="color:red;">  - {{ formatNumber(sum_detail[0].saleData.current_return) }}   </a>
+                      <a v-else >  {{ formatNumber(sum_detail[0].saleData.current_return) }}  </a>
+
+                     <!-- {{ formatN umber(overallSummary.saleData.current_return) }} -->
+                    </b></h5>
                   </div>
                 </div>
               </div>
@@ -303,7 +411,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     </div>
                     <p class="font-weight-bolder mb-0 mr-5 fz-12 mt-1">&nbsp;&nbsp;&nbsp; Balance to go  </p>
                     <div class='mt-4  text-md  font-weight-bolder '>
-                      <h4 class="mb-6 text-white"><b>{{ formatNumber(overallSummary.saleData.display_current_balance) }}</b></h4>
+                      <h5 class="mb-6 text-white"><b>{{ formatNumber(sum_detail[0].saleData.display_current_balance ) }}</b></h5>
                     </div>
                 </div>
               </div>
@@ -465,9 +573,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
     </div>
   </div>
 
-
-
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary" >
+  <div class="py-3 mt-2 container-fluid" v-if="SalesTargetsSummary" >
     <div class="row">
       <div class="col-12">
         
@@ -504,8 +610,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     </th>
                   
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" style="position: relative; height: 100%;">
-                        Estimate {{ SalesTargetsSummary[0].month_txt_last}}
-                      
+                        Estimate {{ SalesTargetsSummary[0].month_txt}}
                     </th>
 
                     <th
@@ -523,13 +628,13 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].current_last }}
+                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }}
 
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    {{ SalesTargetsSummary[0].month_txt_last}} Return
+                    {{ SalesTargetsSummary[0].month_txt}} Return
 
                     </th>
                     <th
@@ -545,34 +650,83 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                       <p class="text-xs font-weight-bold mb-0">{{ item.name}}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_last_actual) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_last_actual) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_target_percent) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_target_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_actual) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_actual) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_to_target_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_actual_percent) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_actual_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.last_return) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">
+                        <a v-if="item.saleData.display_current_balance < 0 && item.saleData.current_return !==0 " style="color:red;">  - {{ formatNumber(item.saleData.current_return) }} </a>
+                        <a v-else >  {{ formatNumber(item.saleData.current_return) }} </a>
+                      </p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_return) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">
+                        <a v-if="item.saleData.display_current_balance < 0" style="color:red;">  {{ formatNumber(item.saleData.display_current_balance) }} </a>
+                        <a v-else >  {{ formatNumber(item.saleData.display_current_balance) }} </a>
+                      </p>
+                   
                     </td>
                     
                   </tr>
+
+                  <tr v-for="(sum_detail, index) in sum_detail" :key="index" class="bg_summary" >
+                    <td style="text-align: left !important;">
+                      <p class="text-xs font-weight-bold mb-0">TOTAL </p>
+                    </td>
+                    <td>
+                      <p class=" text-center text-xs font-weight-bold mb-0">{{ formatNumber(sum_detail.saleData.display_last_actual) }}</p>
+                    </td>
+                    <td>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(sum_detail.saleData.current_target) }}</p>
+                    </td>
+                    <td>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(sum_detail.saleData.display_current_last_target_percent) }} %</p>
+                    </td>
+                    <td>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(sum_detail.saleData.current_estimate) }}</p>
+                    </td>
+                    <td>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(sum_detail.saleData.display_current_actual) }}</p>
+                    </td>
+                    <td>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(sum_detail.saleData.display_current_to_target_percent) }} %</p>
+                    </td>
+                    <td>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(sum_detail.saleData.display_current_last_actual_percent) }} %</p>
+                    </td>
+                    <td>
+                      <p class="text-center text-xs font-weight-bold mb-0">
+                        <a v-if="sum_detail.saleData.display_current_balance < 0 && sum_detail.saleData.current_return !==0 " style="color:red;">  - {{ formatNumber(sum_detail.saleData.current_return) }} </a>
+                        <a v-else >  {{ formatNumber(sum_detail.saleData.current_return) }} </a>
+                      </p>
+                    </td>
+                    <td>
+                      <p class="text-center text-xs font-weight-bold mb-0">
+                        <a v-if="sum_detail.saleData.display_current_balance < 0" style="color:red;">  {{ formatNumber(sum_detail.saleData.display_current_balance) }} </a>
+                        <a v-else >  {{ formatNumber(sum_detail.saleData.display_current_balance) }} </a>
+                      </p>
+                    </td>
+                  </tr>
+
+
+                  
                 
                 </tbody>
               </table>
@@ -592,7 +746,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
   </div>
 
 
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary">
+  <div class="py-3 mt-2 container-fluid" v-if="SalesTargetsSummary">
     <div class="row">
       <div class="col-12">
         
@@ -606,7 +760,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                   <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    Channel
+                    Channel   
                     </th>
 
                     <th
@@ -624,11 +778,11 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    %T {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }}
+                    %T {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }} 
 
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" style="position: relative; height: 100%;" >
-                    Estimate {{ SalesTargetsSummary[0].month_txt_last}} 
+                    Estimate {{ SalesTargetsSummary[0].month_txt}}  
                       <span @click="toggleColumnChannel"  class="span_toggle">
                         <i class="fa" :class="isColumnVisible ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
                       </span>
@@ -654,13 +808,13 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].current_last }}
-
+                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }}
+                 
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    {{ SalesTargetsSummary[0].month_txt_last}} Return
+                    {{ SalesTargetsSummary[0].month_txt}} Return 
 
                     </th>
                     <th
@@ -687,12 +841,25 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                         <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w3) }} </td>
                         <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w4) }} </td>
                         <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w5) }} </td>
-                        <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.last_return) }}</td>
+                        <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.current_sale) }}</td>
                         <td class="text-center">   {{ formatNumber(customerItem.item.sale_data_item.display_current_actual) }} </td>
-                        <td class="text-center" > {{ formatNumber(customerItem.item.sale_data_item.current_target) }} % </td>
+                        <td class="text-center" > {{ formatNumber(customerItem.item.sale_data_item.display_current_to_target_percent) }} % </td>
                         <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.display_current_last_actual_percent) }} % </td>
-                        <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.last_return) }}   </td>
-                        <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.current_return) }} </td>    
+                        <td class="text-center"> 
+
+                          
+                        <a v-if="customerItem.item.sale_data_item.display_current_balance < 0 && customerItem.item.sale_data_item.current_return !== 0 || customerItem.item.sale_data_item.current_return < customerItem.item.sale_data_item.display_current_actual && customerItem.item.sale_data_item.current_return !== 0"  style="color:red;">  - {{ formatNumber(customerItem.item.sale_data_item.current_return) }} </a>
+                        <a v-else >  {{ formatNumber(customerItem.item.sale_data_item.current_return) }} </a>
+                          <!-- {{ formatNumber(customerItem.item.sale_data_item.current_return) }}  -->
+                        
+                        
+                        </td>
+                        <td class="text-center">
+                          <a v-if="customerItem.item.sale_data_item.display_current_balance < 0  " style="color:red;"> {{ formatNumber(customerItem.item.sale_data_item.display_current_balance) }} </a>
+                          <a v-else >  {{ formatNumber(customerItem.item.sale_data_item.display_current_balance) }} </a>
+                          <!-- {{ formatNumber(customerItem.item.sale_data_item.display_current_balance) }} -->
+                        
+                        </td>    
                       </tr>
                     </template>
                     <!-- Subgroup -->
@@ -707,12 +874,23 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                       <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w3) }} </td>
                       <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w4) }} </td>
                       <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w5) }} </td>
-                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.last_return) }}</td>
+                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_sale) }}</td>
                       <td class="text-center">   {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_actual) }} </td>
-                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_target) }} % </td>
+                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_to_target_percent) }} % </td>
                       <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_actual_percent) }} % </td>
-                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.last_return) }}   </td>
-                      <td class="text-center rounded-right">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </td>   
+                      <td class="text-center">
+                        
+                        <!-- {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }}  -->
+                        <a v-if="subgroup.subgroup.sale_data_subg.display_current_balance < 0 && subgroup.subgroup.sale_data_subg.current_return !==0 " style="color:red;">  - {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </a>
+                        <a v-else >  {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </a>
+                      
+                      </td>
+                      <td class="text-center rounded-right">
+                        <a v-if="subgroup.subgroup.sale_data_subg.display_current_balance < 0 " style="color:red;">  {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }}  </a>
+                        <a v-else >  {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }}  </a>
+                        <!-- {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }}  -->
+                      
+                      </td>   
                     </tr>
                   </template>
                     <!--  Group -->
@@ -727,18 +905,29 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                       <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w3) }} </td>
                       <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w4) }} </td>
                       <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w5) }} </td>
-                      <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.last_return) }}</td>
+                      <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_sale) }}</td>
                       <td class="text-center">   {{ formatNumber(customerGroup.group.sale_data_groub.display_current_actual) }} </td>
-                      <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_target) }} % </td>
+                      <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.display_current_to_target_percent) }} % </td>
                       <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.display_current_last_actual_percent) }} % </td>
-                      <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.last_return) }}   </td>
-                      <td class="text-center rounded-right">{{ formatNumber(customerGroup.group.sale_data_groub.current_return) }} </td>   
+                      <td class="text-center"> 
+                        <a v-if="customerGroup.group.sale_data_groub.display_current_balance < 0 && customerGroup.group.sale_data_groub.current_return !==0 || customerGroup.group.sale_data_groub.current_return < customerGroup.group.sale_data_groub.display_current_actual && customerGroup.group.sale_data_groub.current_return !== 0"  style="color:red;">  - {{ formatNumber(customerGroup.group.sale_data_groub.current_return) }}   </a>
+                        <a v-else >  {{ formatNumber(customerGroup.group.sale_data_groub.current_return) }}  </a>
+                        <!-- {{ formatNumber(customerGroup.group.sale_data_groub.current_return) }}  -->
+                      </td>
+                      <td class="text-center rounded-right">
+
+                        <a v-if="customerGroup.group.sale_data_groub.display_current_balance < 0  "  style="color:red;">  {{ formatNumber(customerGroup.group.sale_data_groub.display_current_balance) }}   </a>
+                        <a v-else >  {{ formatNumber(customerGroup.group.sale_data_groub.display_current_balance) }}  </a>
+                        
+                        <!-- {{ formatNumber(customerGroup.group.sale_data_groub.display_current_balance) }}  -->
+                      
+                      </td>   
                     </tr>
                   </template>
                 </template>
                     <tr v-for="(customer, index) in customers" :key="index" class="bg_grandtotal">
                       <td class="rounded-left">
-                        <p class="text-xs font-weight-bold mb-0 pd-5 ">GRAND TOTAL {{ customer.name}}</p>
+                        <p class="text-xs font-weight-bold mb-0 pd-5 ">GRAND TOTAL </p>
                       </td>
                       <td  class="text-center">
                         <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_last_actual) }}</p>
@@ -768,22 +957,36 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                         <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_estimate_w5) }}</p>
                       </td>
                       <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.last_return) }}</p>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_sale) }}</p>
                       </td>
                       <td class="text-center">
                         <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_current_actual) }}</p>
                       </td>
                       <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.current_target) }} %</p>
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_current_to_target_percent) }} %</p>
                       </td>
                       <td class="text-center">
                         <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.display_current_last_actual_percent) }} %</p>
                       </td>
                       <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(customer.saleData.last_return) }}</p>
+                        <p class="text-xs font-weight-bold mb-0">
+                          <a v-if="customer.saleData.display_current_balance < 0 && customer.saleData.current_return !==0  || customer.saleData.current_return < customer.saleData.display_current_actual && customer.saleData.current_return !== 0 "  style="color:red;"> - {{ formatNumber(customer.saleData.current_return) }}   </a>
+                          <a v-else >   {{ formatNumber(customer.saleData.current_return) }}  </a>
+                          
+                          <!-- {{ formatNumber(customer.saleData.current_return) }} -->
+                        
+                        
+                        </p>
+
+                        
                       </td>
                       <td class="text-center rounded-right">
-                        <p class="text-xs font-weight-bold mb-0 ">{{ formatNumber(customer.saleData.current_return) }}</p>
+                        <p class="text-xs font-weight-bold mb-0 ">
+                          <a v-if="customer.saleData.display_current_balance < 0 "  style="color:red;">  {{ formatNumber(customer.saleData.display_current_balance) }}   </a>
+                          <a v-else >  {{ formatNumber(customer.saleData.display_current_balance) }}  </a>
+                          <!-- {{ formatNumber(customer.saleData.display_current_balance) }} -->
+                        
+                        </p>
                       </td>    
                     </tr>
               </tbody>
@@ -798,7 +1001,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
     
   </div>
 
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary" >
+  <div class="py-3 mt-2 container-fluid" v-if="SalesTargetsSummary" >
     <div class="row">
       <div class="col-12">
         <div class="card">
@@ -829,10 +1032,10 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
                     %T {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }}
-
+                   
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" style="position: relative; height: 100%;">
-                      Estimate {{ SalesTargetsSummary[0].month_txt_last}}
+                      Estimate {{ SalesTargetsSummary[0].month_txt}} 
                       <span @click="toggleColumnCusName"  class="span_toggle">
                         <i class="fa" :class="isColumnVisibleCusName ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
                       </span>
@@ -858,14 +1061,13 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].current_last }}
-
+                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }}
+             
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    {{ SalesTargetsSummary[0].month_txt_last}} Return
-
+                    {{ SalesTargetsSummary[0].month_txt}} Return
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
@@ -877,56 +1079,118 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                 <tbody>
                   <tr class="text-center" v-for="(item, data_acc) in accountName" :key="data_acc">
                     <td style="text-align: left !important;">
-                      <p class="text-xs font-weight-bold mb-0">{{ item.name}}</p>
+                      <p class=" text-xs font-weight-bold mb-0">{{ item.name}}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_last_actual) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_last_actual) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_target_percent) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_target_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate) }}</p>
                     </td>
                     <td v-if="isColumnVisibleCusName">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w1) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w1) }}</p>
                   </td>
                   <td v-if="isColumnVisibleCusName">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w2) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w2) }}</p>
                   </td>
                   <td v-if="isColumnVisibleCusName">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w3) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w3) }}</p>
                   </td>
                   <td v-if="isColumnVisibleCusName">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w4) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w4) }}</p>
                   </td>
                   <td v-if="isColumnVisibleCusName" >
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w5) }}</p>
+                    <p class=" text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w5) }}</p>
                   </td>
                   <td>
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.last_return) }}</p>
+                    <p class=" text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_sale) }}</p>
                   </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_actual) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_actual) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_to_target_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_actual_percent) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_actual_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.last_return) }}</p>
+                      <p class=" text-center text-xs font-weight-bold mb-0">
+                        <a v-if="item.saleData.display_current_balance < 0 && item.saleData.current_return !==0 || item.saleData.current_return < item.saleData.display_current_actual && item.saleData.current_return !== 0 "  style="color:red;">  - {{ formatNumber(item.saleData.current_return) }}   </a>
+                        <a v-else >  {{ formatNumber(item.saleData.current_return) }}  </a>
+                        <!-- {{ formatNumber(item.saleData.current_return) }} -->
+                      </p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_return) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">
+                        <a v-if="item.saleData.display_current_balance < 0  "  style="color:red;">   {{ formatNumber(item.saleData.display_current_balance) }}   </a>
+                        <a v-else >  {{ formatNumber(item.saleData.display_current_balance) }}  </a>
+                        <!-- {{ formatNumber(item.saleData.display_current_balance) }} -->
+                      </p>
                     </td>
-                    
                   </tr>
-                
+                  <tr v-for="(sum_keyaccountName, index) in sum_keyaccountName" :key="index" class="bg_summary">
+                      <td class="rounded-left">
+                        <p class="text-xs font-weight-bold mb-0 pd-5 "> TOTAL </p>
+                      </td>
+                      <td  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.display_last_actual) }}</p>
+                      </td>
+                      <td  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.current_target) }}</p>
+                      </td>
+                      <td  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.display_current_last_target_percent) }} %</p>
+                      </td>
+                      <td  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.current_estimate) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusName"  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.current_estimate_w1) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusName" class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.current_estimate_w2) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusName" class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.current_estimate_w3) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusName" class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.current_estimate_w4) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusName" class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.current_estimate_w5) }}</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.current_sale) }}</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.display_current_actual) }}</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.display_current_to_target_percent) }} %</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountName.saleData.display_current_last_actual_percent) }} %</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">
+                          <a v-if="sum_keyaccountName.saleData.display_current_balance < 0 && sum_keyaccountName.saleData.current_return !==0  || sum_keyaccountName.saleData.current_return < sum_keyaccountName.saleData.display_current_actual && sum_keyaccountName.saleData.current_return !== 0  "  style="color:red;"> - {{ formatNumber(sum_keyaccountName.saleData.current_return) }}   </a>
+                          <a v-else >   {{ formatNumber(sum_keyaccountName.saleData.current_return) }}  </a>
+                        </p>
+                      </td>
+                      <td class="text-center rounded-right">
+                        <p class="text-xs font-weight-bold mb-0 ">
+                          <a v-if="sum_keyaccountName.saleData.display_current_balance < 0 "  style="color:red;">  {{ formatNumber(sum_keyaccountName.saleData.display_current_balance) }}   </a>
+                          <a v-else >  {{ formatNumber(sum_keyaccountName.saleData.display_current_balance) }}  </a>
+                        </p>
+                      </td>    
+                  </tr>
                 </tbody>
               </table>
 
@@ -944,7 +1208,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
     
   </div>
 
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary" >
+  <div class="py-3 mt-2 container-fluid" v-if="SalesTargetsSummary" >
     <div class="row">
       <div class="col-12">
         
@@ -980,7 +1244,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
 
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" style="position: relative; height: 100%;" >
-                      Estimate {{ SalesTargetsSummary[0].month_txt_last}}
+                      Estimate {{ SalesTargetsSummary[0].month_txt}} 
                       <span @click="toggleColumnCusGroup"  class="span_toggle">
                         <i class="fa" :class="isColumnVisibleCusGroup ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
                       </span>
@@ -1006,13 +1270,12 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].current_last }}
-
+                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }}
                     </th>
                     <th
                       class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
                     >
-                    {{ SalesTargetsSummary[0].month_txt_last}} Return
+                    {{ SalesTargetsSummary[0].month_txt}} Return
 
                     </th>
                     <th
@@ -1028,53 +1291,119 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                       <p class="text-xs font-weight-bold mb-0">{{ item.name}}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_last_actual) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_last_actual) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_target_percent) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_target_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate) }}</p>
                     </td>
                     <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w1) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w1) }}</p>
                   </td>
                   <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w2) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w2) }}</p>
                   </td>
                   <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w3) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w3) }}</p>
                   </td>
                   <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w4) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w4) }}</p>
                   </td>
                   <td v-if="isColumnVisibleCusGroup">
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w5) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_estimate_w5) }}</p>
                   </td>
                   <td>
-                    <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.last_return) }}</p>
+                    <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_sale) }}</p>
                   </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_actual) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_actual) }}</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_target) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_to_target_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_actual_percent) }} %</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.display_current_last_actual_percent) }} %</p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.last_return) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">
+
+                        <a v-if="item.saleData.display_current_balance < 0 && item.saleData.current_return != 0 || item.saleData.current_return < item.saleData.display_current_actual && item.saleData.current_return !== 0   "  style="color:red;">  - {{ formatNumber(item.saleData.current_return) }}   </a>
+                        <a v-else >  {{ formatNumber(item.saleData.current_return) }}  </a>
+
+                        <!-- {{ formatNumber(item.saleData.current_return) }} -->
+                      </p>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ formatNumber(item.saleData.current_return) }}</p>
+                      <p class="text-center text-xs font-weight-bold mb-0">
+
+                        <a v-if="item.saleData.display_current_balance < 0 "  style="color:red;">   {{ formatNumber(item.saleData.display_current_balance) }}   </a>
+                        <a v-else >  {{ formatNumber(item.saleData.display_current_balance) }}  </a>
+                        <!-- {{ formatNumber(item.saleData.display_current_balance) }}  -->
+                      
+                      </p>
                     </td>
-                    
                   </tr>
-                
+                  <tr v-for="(sum_keyaccountGroup, index) in sum_keyaccountGroup" :key="index" class="bg_summary">
+                      <td class="rounded-left">
+                        <p class="text-xs font-weight-bold mb-0 pd-5 "> TOTAL </p>
+                      </td>
+                      <td  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.display_last_actual) }}</p>
+                      </td>
+                      <td  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.current_target) }}</p>
+                      </td>
+                      <td  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.display_current_last_target_percent) }} %</p>
+                      </td>
+                      <td  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.current_estimate) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusGroup"  class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.current_estimate_w1) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusGroup" class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.current_estimate_w2) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusGroup" class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.current_estimate_w3) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusGroup" class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.current_estimate_w4) }}</p>
+                      </td>
+                      <td v-if="isColumnVisibleCusGroup" class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.current_estimate_w5) }}</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.current_sale) }}</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.display_current_actual) }}</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.display_current_to_target_percent) }} %</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ formatNumber(sum_keyaccountGroup.saleData.display_current_last_actual_percent) }} %</p>
+                      </td>
+                      <td class="text-center">
+                        <p class="text-xs font-weight-bold mb-0">
+                          <a v-if="sum_keyaccountGroup.saleData.display_current_balance < 0 && sum_keyaccountGroup.saleData.current_return !==0  || sum_keyaccountGroup.saleData.current_return < sum_keyaccountGroup.saleData.display_current_actual && sum_keyaccountGroup.saleData.current_return !== 0  "  style="color:red;"> - {{ formatNumber(sum_keyaccountGroup.saleData.current_return) }}   </a>
+                          <a v-else >   {{ formatNumber(sum_keyaccountGroup.saleData.current_return) }}  </a>
+                        </p>
+                      </td>
+                      <td class="text-center rounded-right">
+                        <p class="text-xs font-weight-bold mb-0 ">
+                          <a v-if="sum_keyaccountGroup.saleData.display_current_balance < 0 "  style="color:red;">  {{ formatNumber(sum_keyaccountGroup.saleData.display_current_balance) }}   </a>
+                          <a v-else >  {{ formatNumber(sum_keyaccountGroup.saleData.display_current_balance) }}  </a>
+                        </p>
+                      </td>    
+                  </tr>
                 </tbody>
               </table>
 
@@ -1140,8 +1469,9 @@ export default {
       selectedChannel: null, 
       selectedStoreType: null, 
       SalesTargetsSummary: null,
+      GetCompareCustomerMasterGroup:null,
       //
-
+  
       customersItem:null,
       error: null,
       loading: false,
@@ -1180,7 +1510,7 @@ export default {
         this.selectedAccountNameIDs,
         this.selectedAccountGroupIDs,
         this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
-      
+        this.GetCompareCustomerMasterGroup = await fetchGetCompareCustomerMasterGroup();
         // console.log('Selected Brands:', this.selectedBrandIDs); 
         // console.log('Selected Channels:', this.selectedChannelIDs); 
       } 
@@ -1237,7 +1567,11 @@ export default {
       console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
     },
     async resetForm() {
-      window.location.reload();
+      this.$router.go(0);
+      await this.$router.push({ name: 'Dashboard' });
+   //   window.location.reload();
+    //  console.log(this.$router.go(0));
+     // this.$router.go(0); // this.$router.push(this.$router.currentRoute.fullPath);
     },
   
     
@@ -1259,10 +1593,23 @@ export default {
     customers() {
       return this.SalesTargetsSummary.filter(item => item.type === 'customer' );
     },
+    sum_keyaccountName() {
+      return this.SalesTargetsSummary.filter(item => item.type === 'summary_names' );
+    },
+
+    sum_keyaccountGroup() {
+      return this.SalesTargetsSummary.filter(item => item.type === 'summary_account' );
+    },
+
+    sum_detail() {
+      return this.SalesTargetsSummary.filter(item => item.type === 'summary_brands' );
+    },
+
+
     getCustomersItem() {
       return (this.SalesTargetsSummary || []).filter(item => item.type === 'customerItem');
     },
-   
+    
   }
   ,
   created() {

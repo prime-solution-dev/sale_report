@@ -172,7 +172,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
         </div>
       </div>
       <div class="col-lg-4 text-end  ">
-        <span class="text-date"> Ass Of <i class="fa fa-calendar" aria-hidden="true"></i> {{month_txt_current }} {{ day_now }}
+        <span class="text-date"> As Of <i class="fa fa-calendar" aria-hidden="true"></i> {{month_txt_current }} {{ day_now }}
         </span>
 
 

@@ -55,7 +55,7 @@ import 'jquery-ui/themes/base/theme.css';
 export default {
   mounted() {
     const today = new Date();
-    const currentMonth = today.getMonth()-1;
+    const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
 
     $(this.$refs.datepicker).datepicker({

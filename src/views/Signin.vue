@@ -1,13 +1,24 @@
 <script setup>
-import { onBeforeUnmount, onBeforeMount } from "vue";
+ 
+import {  loginUser } from '../services/reportapi/state.userApi';
+import { onBeforeUnmount, onBeforeMount , ref , onMounted} from "vue";
 import { useStore } from "vuex";
-import Navbar from "@/examples/PageLayout/Navbar.vue";
+import { useRouter } from "vue-router";
 import ArgonInput from "@/components/ArgonInput.vue";
-import ArgonSwitch from "@/components/ArgonSwitch.vue";
 import ArgonButton from "@/components/ArgonButton.vue";
+import background_login from "@/assets/img/bg-loginpage.png";
+import Modal from '/src/views/components/ModalStatusState';
+
+const router = useRouter(); 
+const isLoading = ref(false); 
+
 const body = document.getElementsByTagName("body")[0];
 
 const store = useStore();
+
+const isModalVisible = ref(false);
+const message = ref(''); // ประกาศ message
+
 onBeforeMount(() => {
   store.state.hideConfigButton = true;
   store.state.showNavbar = false;
@@ -22,105 +33,182 @@ onBeforeUnmount(() => {
   store.state.showFooter = true;
   body.classList.add("bg-gray-100");
 });
+
+const username = ref('');
+const password = ref('');
+const rememberMe = ref(false);
+const errorMessage = ref('');
+
+// Local Storage When Component > loading
+onMounted(() => {
+  const savedUsername = localStorage.getItem('username');
+  const savedPassword = localStorage.getItem('password');
+  
+  if (savedUsername) {
+    username.value = savedUsername;
+  }
+  if (savedPassword) {
+    password.value = savedPassword;
+  }
+  
+  // const token = localStorage.getItem('token');
+  // if (token) {
+  //   // นำทางไปยังหน้าหลัก
+  //   // this.$router.push('/dashboard'); // ใช้ router 
+  // }
+});
+
+
+const handleLogin = async () => {
+  errorMessage.value = ''; // เคลียร์ข้อความผิดพลาดก่อน
+  try {
+    const userData = await loginUser(username.value, password.value);
+    store.dispatch('login', userData);
+    // ตรวจสอบว่าใช้ "Remember Password" หรือไม่
+    if (rememberMe.value) {
+        localStorage.setItem('username', username.value);
+        localStorage.setItem('password', password.value); // เพิ่มการบันทึกรหัสผ่านถ้าต้องการ
+    } else {
+      localStorage.removeItem('username');
+      localStorage.removeItem('password'); // ลบเมื่อไม่ได้เลือก Remember
+    }
+
+      isModalVisible.value = true;
+      message.value = 'Login successful!'; // ตั้งข้อความ
+      isLoading.value = false; // ปิดการโหลด
+          
+   
+      setTimeout(() => {
+        router.push('/Main'); // เปลี่ยนเส้นทางหลังจาก 3 วินาที
+      }, 5000); // 3000 มิลลิวินาที = 3 วินาที
+
+   
+    console.log('Login successful xx :', userData.token);
+  
+  } catch (error) {
+    errorMessage.value = error.message || 'invalid username or password';
+  }
+};
+
+
 </script>
 <template>
-  <div class="container top-0 position-sticky z-index-sticky">
-    <div class="row">
-      <div class="col-12">
-        <navbar
-          isBlur="blur  border-radius-lg my-3 py-2 start-0 end-0 mx-4 shadow"
-          v-bind:darkMode="true"
-          isBtn="bg-gradient-success"
-        />
-      </div>
-    </div>
-  </div>
-  <main class="mt-0 main-content">
+ 
+ <main class="mt-0 main-content" :style="{ backgroundImage: 'url(' + background_login + ')', backgroundSize: 'cover' }">
+
     <section>
       <div class="page-header min-vh-100">
         <div class="container">
           <div class="row">
             <div
-              class="mx-auto col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0"
+              class="mx-auto col-xl-5 col-lg-5 col-md-6 d-flex  justify-content-center bg-white rounded-3"
             >
-              <div class="card card-plain">
-                <div class="pb-0 card-header text-start">
-                  <h4 class="font-weight-bolder">Sign In</h4>
-                  <p class="mb-0">Enter your email and password to sign in</p>
+              <div class="card card-plain mt-4 mb-4">
+                <div class="pb-0 card-header text-center">
+                  <h4 class="font-weight-bolder">  Login to Account </h4>
+                  <p class="mb-0">Please enter your email and password to continue</p>
                 </div>
                 <div class="card-body">
-                  <form role="form">
-                    <div class="mb-3">
+                  <form role="form" @submit.prevent="handleLogin">
+                    <div class="mb-4">
+                      <label class="fs-6 fw-normal"> Email address: </label>
                       <argon-input
+                        v-model="username" 
                         id="email"
                         type="email"
                         placeholder="Email"
                         name="email"
                         size="lg"
+                        autocomplete="username"
+                        aria-label="Email address"
+                         :error="!!errorMessage"
                       />
                     </div>
-                    <div class="mb-3">
+                    <div class="">
+                      <label class="fs-6 fw-normal"> Password : </label>
                       <argon-input
                         id="password"
+                        v-model="password"
                         type="password"
                         placeholder="Password"
                         name="password"
                         size="lg"
+                        autocomplete="current-password" 
+                         :error="!!errorMessage"
                       />
-                    </div>
-                    <argon-switch id="rememberMe" name="remember-me"
-                      >Remember me</argon-switch
-                    >
 
-                    <div class="text-center">
+                      
+                      <span v-if="errorMessage" style="color: red;">
+                        {{ errorMessage }}</span>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" v-model="rememberMe" type="checkbox" value="" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">
+                        Remember Password
+                      </label>
+                    </div>
+
+                    <div class="text-center mb-5">
                       <argon-button
                         class="mt-4"
-                        variant="gradient"
-                        color="success"
+                        style="background-color:#4880FF;
+                        color:white;"
                         fullWidth
                         size="lg"
-                        >Sign in</argon-button
+                        type="submit">Sign in</argon-button
                       >
+                      
                     </div>
+
+                    <!-- <Modal
+                    :isVisible="isModalVisible"
+                    title="Success"
+                    message="Login successful!"
+                    @close="handleCloseModal"
+                  /> -->
+
+                  <!-- <Modal
+                    title="Status"
+                    :message="message"
+                    :isLoading="isLoading"
+                  /> -->
+
+                  <!-- <Modal
+                    v-if="isModalVisible"
+                    title="Status"
+                    :message="message"
+                    :isLoading="isLoading"
+                    @close="isModalVisible = false"
+                  /> -->
+
+                  <Modal
+                    v-if="isModalVisible"
+                    title="Status"
+                    :message="message"
+                    :isLoading="isLoading"
+                    @close="isModalVisible = false"
+                  />
+
+                 
                   </form>
                 </div>
-                <div class="px-1 pt-0 text-center card-footer px-lg-2">
-                  <p class="mx-auto mb-4 text-sm">
-                    Don't have an account?
-                    <a
-                      href="javascript:;"
-                      class="text-success text-gradient font-weight-bold"
-                      >Sign up</a
-                    >
-                  </p>
-                </div>
+              
               </div>
             </div>
-            <div
-              class="top-0 my-auto text-center col-6 d-lg-flex d-none h-100 pe-0 position-absolute end-0 justify-content-center flex-column"
-            >
-              <div
-                class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
-                style="
-                  background-image: url(&quot;https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg&quot;);
-                  background-size: cover;
-                "
-              >
-                <span class="mask bg-gradient-success opacity-6"></span>
-                <h4
-                  class="mt-5 text-white font-weight-bolder position-relative"
-                >
-                  "Attention is the new currency"
-                </h4>
-                <p class="text-white position-relative">
-                  The more effortless the writing looks, the more effort the
-                  writer actually put into the process.
-                </p>
-              </div>
-            </div>
+       
           </div>
         </div>
       </div>
     </section>
   </main>
 </template>
+<script>
+  //import ArgonAlert from "@/components/ArgonAlert.vue";
+
+  export default {
+    components: {
+     // ArgonAlert , 
+      ArgonInput
+    },
+  }
+</script>

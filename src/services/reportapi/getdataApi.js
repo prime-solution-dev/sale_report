@@ -24,8 +24,9 @@ const hostapi = 'http://61.91.5.227:8099/';
      
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
-      const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
-      console.log(currentYear,previousMonth);
+      const MonthCurrent = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; // เดือนที่แล้ว (1-12)
+   //   const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
+    //  console.log(currentYear,previousMonth);
 
 
       const v_year= yearid;
@@ -61,7 +62,7 @@ const hostapi = 'http://61.91.5.227:8099/';
         if (v_month) { 
           body.month = v_month;
         } else {
-          body.month = previousMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
+          body.month = MonthCurrent; // ค่าเดือนที่แล้วเป็นตัวเลข
         }
    
     
@@ -142,12 +143,29 @@ const hostapi = 'http://61.91.5.227:8099/';
           });
         });
 
-      
+      // SUM TOTAL 
         salesDataArray.push({
           type: 'customer',
           name: response.data.customers.topic_name,
           saleData: response.data.customers.sale_data
         });
+
+        salesDataArray.push({
+          type: 'summary_names',
+          saleData: response.data.summary_names
+        });
+
+
+        salesDataArray.push({
+          type: 'summary_account',
+          saleData: response.data.summary_account
+        });
+
+        salesDataArray.push({
+          type: 'summary_brands',
+          saleData: response.data.summary_brands
+        });
+        ///////
 
         response.data.accounts.forEach(account => {
           salesDataArray.push({
@@ -337,6 +355,39 @@ const hostapi = 'http://61.91.5.227:8099/';
   };
 
 
+  export const fetchAccountNameByGroup= async (groupcode) => {
+    const GetAccountNameApiUrl = hostapi+'Customer/GetAccountName'; 
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
+    const v_code= groupcode;
+    if(v_code!==null){
+      //
+    }else{
+      //
+    }
+    const body = {
+      account_groups: [],
+    };
+
+
+    if (v_code && Array.isArray(v_code)) {
+      body.account_groups.push(...v_code);
+    }else {
+      //console.warn('Channel code is empty or null.'); // แสดงคำเตือนถ้าไม่มีค่า
+    }
+
+    try {
+      const response = await axios.post(GetAccountNameApiUrl, body,{
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        }
+      });
+      return response.data; // ส่งค่ากลับ
+    } catch (error) {
+      throw error.response ? error.response.data : ' fetchAccountName Error.'; 
+    }
+  };
+
   export const fetchGetCustomer= async () => {
     const GetCustomeApiUrl = hostapi+'Customer/GetCustomers'; 
     const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
@@ -370,51 +421,56 @@ const hostapi = 'http://61.91.5.227:8099/';
    
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
-    const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
-    console.log(currentYear,previousMonth);
+    const currentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1;
+   // const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
+   // console.log(currentYear,previousMonth);
 
 
-    const v_year= yearid;
-    const v_month= monthid;
-    const v_brandid= brandid;
-    const v_group_omss= group_omss;
-    const v_skutype= skutype;
+    // const v_year= yearid;
+    // const v_month= monthid;
+    // const v_brandid= brandid;
+    // const v_group_omss= group_omss;
+    // const v_skutype= skutype;
    
-     //console.log('fetch_='+v_brandid+' 2:'+v_channelid +' 3:'+v_storetypeid + ' 4:'+v_keynameid+' 5:'+v_keygroup);
+   //  console.log('v_skutype = '+v_skutype);
    
 
     const body = {
-      year: 0,
-      month: 0,
-      brands: [],
-      group_omss: [],
-      products: [],
+      year: yearid || currentYear, // ใช้ปีที่ระบุหรือตั้งเป็นปีปัจจุบัน
+      month: monthid || currentMonth, // ใช้เดือนที่ระบุหรือตั้งเป็นเดือนปัจจุบัน
+      brands: Array.isArray(brandid) ? [...brandid] : [], // กระจายค่าใน brandid
+      group_omss: Array.isArray(group_omss) ? [...group_omss] : [], // กระจายค่าใน group_omss
+      products: Array.isArray(skutype) ? [...skutype] : [] // ส่งเป็นอาเรย์
     };
+    //console.log('Sending body:', body); 
 
+  //     if (v_year) { 
+  //       body.year = v_year;
+  //     } else {
+  //       body.year = currentYear; // ค่าปีปัจจุบันเป็นตัวเลข
+  //     }
 
-      if (v_year) { 
-        body.year = v_year;
-      } else {
-        body.year = currentYear; // ค่าปีปัจจุบันเป็นตัวเลข
-      }
-
-      if (v_month) { 
-        body.month = v_month;
-      } else {
-        body.month = previousMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
-      }
+  //     if (v_month) { 
+  //       body.month = v_month;
+  //     } else {
+  //       body.month = currentMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
+  //     }
    
-    if (v_brandid && Array.isArray(v_brandid)) {
-      // กระจายค่าใน v_brandid เข้าไปใน brands
-      body.brands.push(...v_brandid);
-    }
-    if (v_group_omss && Array.isArray(v_group_omss)) {
-      body.group_omss.push(...v_group_omss);
-   }
-    if (v_skutype && Array.isArray(v_skutype)) {
-       body.products.push(...v_skutype);
-    }
-  
+  //   if (v_brandid && Array.isArray(v_brandid)) {
+  //     // กระจายค่าใน v_brandid เข้าไปใน brands
+  //     body.brands.push(...v_brandid);
+  //   }
+  //   if (v_group_omss && Array.isArray(v_group_omss)) {
+  //     body.group_omss.push(...v_group_omss);
+  //  }
+  //   // if (v_skutype && Array.isArray(v_skutype)) {
+  //   //    body.products.push(...v_skutype);
+  //   // }
+  //   if (v_skutype) { 
+  //     body.products = JSON.stringify(v_skutype);
+  //   } else {
+  //     body.products = JSON.stringify([]);
+  //   }
     try {
       const response = await axios.post(url, body, {
         headers: {
@@ -465,13 +521,12 @@ export const fetchReportCustomerGroups = async (yearid,monthid,brandid,channelid
  
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
-  const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
-  console.log(currentYear,previousMonth);
+  const CurrentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; 
 
 
   const v_year= yearid;
   const v_month= monthid;
-
+  //console.log(v_year,v_month,currentDate);
 
   const v_brandid= brandid;
   const v_channelid= channelid;
@@ -495,13 +550,13 @@ export const fetchReportCustomerGroups = async (yearid,monthid,brandid,channelid
     if (v_year) { 
       body.year = v_year;
     } else {
-      body.year = currentYear; // ค่าปีปัจจุบันเป็นตัวเลข
+      body.year = currentYear; 
     }
 
     if (v_month) { 
       body.month = v_month;
     } else {
-      body.month = previousMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
+      body.month = CurrentMonth; 
     }
 
 
@@ -579,12 +634,27 @@ export const fetchReportCustomerGroups = async (yearid,monthid,brandid,channelid
         saleData: brand.sale_data
       });
     });
+   
+    let monthselectd;
+    let yearselectd; 
 
-  
+    if (v_year) { 
+      yearselectd = v_year;
+    } else {
+      yearselectd = currentYear; 
+    }
+    if (v_month) { 
+      monthselectd = getMonthAbbreviation(v_month);
+      
+    } else {
+      monthselectd = getMonthAbbreviation(CurrentMonth);
+    }
+
+
     salesDataArray.push({
       type: 'customer',
       name: response.data.customers.topic_name,
-      saleData: response.data.customers.sale_data
+      saleData: response.data.customers.sale_data ,
     });
 
     response.data.accounts.forEach(account => {
@@ -640,7 +710,9 @@ export const fetchReportCustomerGroups = async (yearid,monthid,brandid,channelid
   
     salesDataArray.push({
       type: 'customerItem',
-      customerItem: customerGroupsWithKeys
+      customerItem: customerGroupsWithKeys,
+      monthtxt:monthselectd,
+      yeartxt:yearselectd,
     });
 //  console.log(JSON.stringify(customerGroupsWithKeys, null, 2));
   return salesDataArray; 
@@ -660,8 +732,9 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
  
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear(); // ปีปัจจุบัน
-  const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
-  console.log(currentYear,previousMonth);
+  const currentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; // 
+  //const previousMonth = new Date(currentDate.setMonth(currentDate.getMonth() - 1)).getMonth() + 1; // เดือนที่แล้ว (1-12)
+  //console.log(currentYear,currentMonth);
 
 
   const v_year= yearid;
@@ -698,31 +771,30 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
     if (v_month) { 
       body.month = v_month;
     } else {
-      body.month = previousMonth; // ค่าเดือนที่แล้วเป็นตัวเลข
+      body.month = currentMonth; 
     }
 
 
-  // กำหนดค่า brands
-  if (v_brandid && Array.isArray(v_brandid)) {
-    // กระจายค่าใน v_brandid เข้าไปใน brands
-    body.brands.push(...v_brandid);
-  }
-  if (v_channelid && Array.isArray(v_channelid)) {
-    body.channels.push(...v_channelid);
- }
-  if (v_storetypeid && Array.isArray(v_storetypeid)) {
-     body.store_types.push(...v_storetypeid);
-  }
 
-  if (v_keynameid && Array.isArray(v_keynameid)) {
-    body.account_names.push(...v_keynameid);
- }
-  if (v_keygroup && Array.isArray(v_keygroup)) {
-    body.account_groups.push(...v_keygroup);
- }
- if (v_customer && Array.isArray(v_customer)) {
-  body.customers.push(...v_customer);
-}
+    if (v_brandid && Array.isArray(v_brandid)) {
+      body.brands.push(...v_brandid);
+    }
+    if (v_channelid && Array.isArray(v_channelid)) {
+      body.channels.push(...v_channelid);
+  }
+    if (v_storetypeid && Array.isArray(v_storetypeid)) {
+      body.store_types.push(...v_storetypeid);
+    }
+
+    if (v_keynameid && Array.isArray(v_keynameid)) {
+      body.account_names.push(...v_keynameid);
+  }
+    if (v_keygroup && Array.isArray(v_keygroup)) {
+      body.account_groups.push(...v_keygroup);
+  }
+  if (v_customer && Array.isArray(v_customer)) {
+    body.customers.push(...v_customer);
+    } 
 
  
   try {
@@ -733,10 +805,10 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
       }
     });
    // console.log(''+body);
-  const monthNumber = response.data.current_month; 
-  const monthAbbr = getMonthAbbreviation(monthNumber); 
-  const monthAbbr_last = getMonthAbbreviation(monthNumber-1); 
-//  console.log(monthAbbr);
+    const monthNumber = response.data.current_month; 
+    const monthAbbr = getMonthAbbreviation(monthNumber); 
+    const monthAbbr_last = getMonthAbbreviation(monthNumber-1); 
+  //  console.log(monthAbbr);
     //
     const salesDataArray = [];
     salesDataArray.push({
@@ -775,26 +847,42 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
     });
 
 
-    response.data.brands.forEach(brand => {
-      salesDataArray.push({
-        type: 'brand',
-        name: brand.topic_name,
-        saleData: brand.sale_data
-      });
-    });
+    // response.data.brands.forEach(brand => {
+    //   salesDataArray.push({
+    //     type: 'brand',
+    //     name: brand.topic_name,
+    //     saleData: brand.sale_data
+    //   });
+    // });
 
   
-    salesDataArray.push({
-      type: 'customer',
-      name: response.data.customers.topic_name,
-      saleData: response.data.customers.sale_data
-    });
+    // salesDataArray.push({
+    //   type: 'customer',
+    //   name: response.data.customers.topic_name,
+    //   saleData: response.data.customers.sale_data
+    // });
+
+    let monthselectd;
+    let yearselectd; 
+
+    if (v_year) { 
+      yearselectd = v_year;
+    } else {
+      yearselectd = currentYear; 
+    }
+    if(v_month) { 
+      monthselectd = getMonthAbbreviation(v_month);
+    }else{
+      monthselectd = getMonthAbbreviation(currentMonth);
+    }
 
     response.data.accounts.forEach(account => {
       salesDataArray.push({
         type: 'account',
         name: account.topic_name,
-        saleData: account.sale_data
+        saleData: account.sale_data,
+        monthtxt:monthselectd,
+        yeartxt:yearselectd
       });
     });
 
@@ -803,48 +891,50 @@ export const fetchReportKeyAccountGroup = async (yearid,monthid,brandid,channeli
       salesDataArray.push({
         type: 'name',
         name: name.topic_name,
-        saleData: name.sale_data
+        saleData: name.sale_data,
+        monthtxt:monthselectd,
+        yeartxt:yearselectd
       });
     });
 
 
     
-    const customerGroupsWithKeys = response.data.customers.customers_groups.map((group, groupIndex) => {
-      const customers_subgroups = group.customers_subgroups.map((subgroup, subgroupIndex) => {
-        const items = subgroup.customers_items.map((item, itemIndex) => {
-          return {
-            item: {
-              item_key: itemIndex,
-              topic_name: item.topic_name,
-              sale_data_item: item.sale_data,
-            }
-          };
-        });
+    // const customerGroupsWithKeys = response.data.customers.customers_groups.map((group, groupIndex) => {
+    //   const customers_subgroups = group.customers_subgroups.map((subgroup, subgroupIndex) => {
+    //     const items = subgroup.customers_items.map((item, itemIndex) => {
+    //       return {
+    //         item: {
+    //           item_key: itemIndex,
+    //           topic_name: item.topic_name,
+    //           sale_data_item: item.sale_data,
+    //         }
+    //       };
+    //     });
     
-        return {
-          subgroup: {
-            subgroup_key: subgroupIndex,
-            subgroup: subgroup.topic_name,
-            sale_data_subg: subgroup.sale_data, 
-            customers_items: items
-          }
-        };
-      });
+    //     return {
+    //       subgroup: {
+    //         subgroup_key: subgroupIndex,
+    //         subgroup: subgroup.topic_name,
+    //         sale_data_subg: subgroup.sale_data, 
+    //         customers_items: items
+    //       }
+    //     };
+    //   });
     
-      return {
-        group: {
-          groub_key: groupIndex,
-          topic_name: group.topic_name,
-          sale_data_groub: group.sale_data, 
-          customers_subgroups
-        }
-      };
-    });
+    //   return {
+    //     group: {
+    //       groub_key: groupIndex,
+    //       topic_name: group.topic_name,
+    //       sale_data_groub: group.sale_data, 
+    //       customers_subgroups
+    //     }
+    //   };
+    // });
   
-    salesDataArray.push({
-      type: 'customerItem',
-      customerItem: customerGroupsWithKeys
-    });
+    // salesDataArray.push({
+    //   type: 'customerItem',
+    //   customerItem: customerGroupsWithKeys
+    // });
 //  console.log(JSON.stringify(customerGroupsWithKeys, null, 2));
   return salesDataArray; 
   
@@ -869,5 +959,28 @@ export const fetchGetGroupOms = async () => {
     return response.data; // ส่งค่ากลับ
   } catch (error) {
     throw error.response ? error.response.data : 'fetchGetGroupOms Error'; 
+  }
+};
+
+
+
+
+
+export const fetchGetCompareCustomerMasterGroup = async () => {
+  const GetCompareCustomerMasterGroup = hostapi+'Customer/GetCompareCustomerMasterGroup'; // แทนที่ด้วย API ที่สอง
+  const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
+  const body = {
+      group_Omss : [],
+  };
+  try {
+    const response = await axios.post(GetCompareCustomerMasterGroup, body,{
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      }
+    });
+    return response.data; // ส่งค่ากลับ
+  } catch (error) {
+    throw error.response ? error.response.data : 'GetCompareCustomerMasterGroup Error'; 
   }
 };

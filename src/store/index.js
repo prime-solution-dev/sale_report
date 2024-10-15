@@ -17,10 +17,26 @@ export default createStore({
     showFooter: true,
     showMain: true,
     layout: "default",
+    user: null,
+    isAuthenticated: false,
   },
   mutations: {
+    
     toggleConfigurator(state) {
       state.showConfig = !state.showConfig;
+    },
+    SET_USER(state, user) {
+      state.user = user; // เก็บข้อมูลผู้ใช้
+      state.isAuthenticated = true; // เปลี่ยนสถานะเป็นล็อกอิน
+    },
+    RESET_STATE(state) {
+      // รีเซ็ตสถานะของ store กลับไปเป็นค่าดีฟอลต์
+      Object.assign(state, {
+        // กำหนดค่าที่คุณต้องการรีเซ็ต เช่น:
+        user: null,
+        isAuthenticated: false,
+        // คุณสามารถเพิ่มข้อมูลอื่น ๆ ที่ต้องการรีเซ็ตที่นี่
+      });
     },
     sidebarMinimize(state) {
       let sidenav_show = document.querySelector("#app");
@@ -48,6 +64,12 @@ export default createStore({
   actions: {
     toggleSidebarColor({ commit }, payload) {
       commit("sidebarType", payload);
+    },
+    login({ commit }, userData) {
+      commit('SET_USER', userData); // เรียกใช้ mutation เพื่อบันทึกข้อมูลผู้ใช้
+    },
+    logout({ commit }) {
+      commit('LOGOUT'); // เรียกใช้ mutation เพื่อล็อกเอาต์
     },
   },
   getters: {},

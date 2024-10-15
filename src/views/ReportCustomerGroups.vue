@@ -150,7 +150,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
   </div>
 
    
-
+  <!-- <p>Selected Month: {{ monthName }} / Selected Year: {{ selectedYear }}</p> -->
 
 
 
@@ -174,137 +174,92 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
               <table class="table align-items-center mb-0">
               <thead class="bg-light">
                 <tr>
-                  <th
-                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
-                    >
-                    Customer
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" > Customer  </th>
+
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" >
+                    Actual  {{ getCustomersItem[0].monthtxt }} {{ SalesTargetsSummary[0].last_year }}
                     </th>
-
-                    <th
-                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
-                    >
-                    Actual {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].last_year }}
-
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">
+                    Target {{ getCustomersItem[0].monthtxt }} {{ SalesTargetsSummary[0].current_year }}
                     </th>
                     <th
-                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
-                    >
-                    Target {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}
-
-                    </th>
-                    <th
-                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
-                    >
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">
                     %T {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }}
 
                     </th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" style="position: relative; height: 100%;" >
-                    Estimate {{ SalesTargetsSummary[0].month_txt_last}} 
-                      <span @click="toggleColumnChannel"  class="span_toggle">
-                        <i class="fa" :class="isColumnVisible ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
-                      </span>
+                    Estimate {{ getCustomersItem[0].monthtxt }} 
                     </th>
-                    <th v-if="isColumnVisible" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Week 1</th>
-                    <th v-if="isColumnVisible" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Week 2</th>
-                    <th v-if="isColumnVisible" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Week 3</th>
-                    <th v-if="isColumnVisible" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Week 4</th>
-                    <th v-if="isColumnVisible" class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" >Week 5</th>
+                 
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">Sales before Return</th>
-                    <th
-                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
-                    >
-                    Actual Sales {{ SalesTargetsSummary[0].month_txt}} {{ SalesTargetsSummary[0].current_year }}
-
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"  >
+                    Actual Sales {{ getCustomersItem[0].monthtxt }} {{ SalesTargetsSummary[0].current_year }}
                     </th>
                     <th
-                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
-                    >
-                    %To Target 24
+                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">
+                      %To Target 24
 
                     </th>
-                    <th
-                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
-                    >
-                    %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].current_last }}
-
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" >
+                      %A {{ SalesTargetsSummary[0].current_year }} /A {{ SalesTargetsSummary[0].last_year }} </th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark" >
+                      {{ getCustomersItem[0].monthtxt }} Return
                     </th>
-                    <th
-                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
-                    >
-                    {{ SalesTargetsSummary[0].month_txt_last}} Return
-
-                    </th>
-                    <th
-                      class="text-uppercase text-secondary text-sm font-weight-bolder text-dark"
-                    >
-                    Balance to go
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder text-dark">
+                      Balance to go
                     </th>
                 </tr>
               </thead>
               <tbody class="">
                 <template v-for="(item, index) in getCustomersItem" :key="index">
-                <template v-for="(customerGroup, groupIndex) in item.customerItem" :key="groupIndex">
-                  <template v-for="(subgroup, subgroupIndex) in customerGroup.group.customers_subgroups" :key="subgroupIndex">
-                    <!-- Item -->
-                    <!-- <template v-for="(customerItem, itemIndex) in subgroup.subgroup.customers_items" :key="itemIndex">
-                      <tr class="text-xs font-weight-bold mb-0">
-                        <td class="text-left">{{ customerItem.item.topic_name }}</td>
-                        <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.display_last_actual) }}</td>
-                        <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.current_target) }}  </td>
+                  <template v-for="(customerGroup, groupIndex) in item.customerItem" :key="groupIndex">
+                    <template v-for="(subgroup, subgroupIndex) in customerGroup.group.customers_subgroups" :key="subgroupIndex">
+                       
+                      <template v-for="(customerItem, itemIndex) in subgroup.subgroup.customers_items" :key="itemIndex">
+                        <tr class="text-xs font-weight-bold mb-0">
+                          <td class="text-left">{{ customerItem.item.topic_name }}</td>
+                          <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.display_last_actual) }}</td>    <!-- //Actual -->
+                        <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.current_target) }}  </td>   
                         <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.display_current_last_target_percent) }} % </td>
                         <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.current_estimate) }}</td>
-                        <td v-if="isColumnVisible" class="text-center">{{ formatNumber(customerItem.item.sale_data_item.current_estimate_w1) }} </td>
-                        <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w2) }} </td>
-                        <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w3) }} </td>
-                        <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w4) }} </td>
-                        <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.current_estimate_w5) }} </td>
-                        <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.last_return) }}</td>
+                        <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.current_sale) }}</td>  <!-- //Before Return -->
                         <td class="text-center">   {{ formatNumber(customerItem.item.sale_data_item.display_current_actual) }} </td>
-                        <td class="text-center" > {{ formatNumber(customerItem.item.sale_data_item.current_target) }} % </td>
+                        <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.display_current_to_target_percent) }} % </td> <!-- //Target Return -->
                         <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.display_current_last_actual_percent) }} % </td>
-                        <td class="text-center"> {{ formatNumber(customerItem.item.sale_data_item.last_return) }}   </td>
-                        <td class="text-center">{{ formatNumber(customerItem.item.sale_data_item.current_return) }} </td>    
-                      </tr>
-                    </template> -->
-                    <!-- Subgroup -->
-                    <tr class="text-xs font-weight-bold mb-0 ">
-                      <td class="text-left rounded-left">  {{ subgroup.subgroup.subgroup }}</td>
-                      <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_last_actual) }}</td>
-                      <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_target) }}  </td>
-                      <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_target_percent) }} % </td>
-                      <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate) }}</td>
-                      <td v-if="isColumnVisible" class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w1) }} </td>
-                      <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w2) }} </td>
-                      <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w3) }} </td>
-                      <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w4) }} </td>
-                      <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate_w5) }} </td>
-                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.last_return) }}</td>
-                      <td class="text-center">   {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_actual) }} </td>
-                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_target) }} % </td>
-                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_actual_percent) }} % </td>
-                      <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.last_return) }}   </td>
-                      <td class="text-center rounded-right">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </td>   
-                    </tr>
-                  </template>
-                    <!--  Group -->
-                    <!-- <tr class="text-xs font-weight-bold mb-0 bg_groub ">
-                      <td class="text-left rounded-left">TOTAL {{ customerGroup.group.topic_name }}</td>
-                      <td class="text-center">{{ formatNumber(customerGroup.group.sale_data_groub.display_last_actual) }}</td>
-                      <td class="text-center">{{ formatNumber(customerGroup.group.sale_data_groub.current_target) }}  </td>
-                      <td class="text-center">{{ formatNumber(customerGroup.group.sale_data_groub.display_current_last_target_percent) }} % </td>
-                      <td class="text-center">{{ formatNumber(customerGroup.group.sale_data_groub.current_estimate) }}</td>
-                      <td v-if="isColumnVisible" class="text-center">{{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w1) }} </td>
-                      <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w2) }} </td>
-                      <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w3) }} </td>
-                      <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w4) }} </td>
-                      <td v-if="isColumnVisible" class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_estimate_w5) }} </td>
-                      <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.last_return) }}</td>
-                      <td class="text-center">   {{ formatNumber(customerGroup.group.sale_data_groub.display_current_actual) }} </td>
-                      <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.current_target) }} % </td>
-                      <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.display_current_last_actual_percent) }} % </td>
-                      <td class="text-center"> {{ formatNumber(customerGroup.group.sale_data_groub.last_return) }}   </td>
-                      <td class="text-center rounded-right">{{ formatNumber(customerGroup.group.sale_data_groub.current_return) }} </td>   
-                    </tr> -->
+                        <td class="text-center"> 
+                          <a v-if="customerItem.item.sale_data_item.display_current_balance < 0 && customerItem.item.sale_data_item.current_return !== 0 || customerItem.item.sale_data_item.current_return < customerItem.item.sale_data_item.display_current_actual && customerItem.item.sale_data_item.current_return !== 0"  style="color:red;">  - {{ formatNumber(customerItem.item.sale_data_item.current_return) }} </a>
+                          <a v-else >  {{ formatNumber(customerItem.item.sale_data_item.current_return) }} </a>
+                          <!-- {{ formatNumber(customerItem.item.sale_data_item.current_return) }}   -->
+                        </td> <!-- //Return -->
+                        <td class="text-center rounded-right">
+                          <a v-if="customerItem.item.sale_data_item.display_current_balance < 0  " style="color:red;"> {{ formatNumber(customerItem.item.sale_data_item.display_current_balance) }} </a>
+                          <a v-else >  {{ formatNumber(customerItem.item.sale_data_item.display_current_balance) }} </a>
+                        
+                        </td>   
+                        </tr>
+                      </template>
+                      <!-- Subgroup -->
+                      <!-- <tr class="text-xs font-weight-bold mb-0 ">
+                        <td class="text-left rounded-left">  {{ subgroup.subgroup.subgroup }}</td>    
+                        <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_last_actual) }}</td>   
+                        <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_target) }}  </td>   
+                        <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_target_percent) }} % </td>
+                        <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate) }}</td>
+                        <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_sale) }}</td> 
+                        <td class="text-center">   {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_actual) }} </td>
+                        <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_to_target_percent) }} % </td> 
+                        <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_actual_percent) }} % </td>
+                        <td class="text-center"> 
+                          <a v-if="subgroup.subgroup.sale_data_subg.display_current_balance < 0 && subgroup.subgroup.sale_data_subg.current_return !== 0 || subgroup.subgroup.sale_data_subg.current_return < subgroup.subgroup.sale_data_subg.display_current_actual && subgroup.subgroup.sale_data_subg.current_return !== 0"  style="color:red;">  - {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </a>
+                          <a v-else >  {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </a>
+                        </td> 
+                        <td class="text-center rounded-right">
+                          <a v-if="subgroup.subgroup.sale_data_subg.display_current_balance < 0  " style="color:red;"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }} </a>
+                          <a v-else >  {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }} </a>
+                        </td>  
+                      </tr> -->
+                    </template>
+                   
                   </template>
                 </template>
                    
@@ -328,7 +283,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 </template>
 
 <script>
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 export default {
  
   components: {
@@ -354,6 +309,8 @@ export default {
       }
 
       return monthAbbreviations[monthNumber - 1];
+
+   
     };
       const currentDate = new Date();
       const daynow = currentDate.getDate();
@@ -386,69 +343,163 @@ export default {
       month_txt_current:monthAbbr,
       month_txt_last:monthAbbr_last,
       day_now:daynow,
-      isColumnVisible: false,
-      isColumnVisibleDetail: false,
-      isColumnVisibleCusName: false,
-      isColumnVisibleCusGroup: false,
+
       selectedMonth: null,
       selectedYear: null,
     };
   },
   methods: {
 
-    exportToExcel() {
-      const table = document.querySelector(".table tbody");
-      const rows = table.querySelectorAll("tr");
-        if (rows.length === 0) {
-          alert("ไม่มีข้อมูลให้ส่งออก");
-          return;
+    getMonthAbbreviation(monthNumber) {
+      const monthAbbreviations = [
+        "Jan", "Feb", "Mar", "Apr",
+        "May", "Jun", "Jul", "Aug",
+        "Sep", "Oct", "Nov", "Dec"
+      ];
+      if (monthNumber < 1 || monthNumber > 12) {
+        throw new Error("Month must be between 1 and 12");
+      }
+      return monthAbbreviations[monthNumber - 1];
+    },
+
+  
+
+exportToExcel() {
+  const currentDate = new Date();
+  const currentMonth = new Date(currentDate.setMonth(currentDate.getMonth())).getMonth() + 1; 
+  const currentYear = currentDate.getFullYear(); 
+
+  const monthdefult = this.selectedMonth || currentMonth;
+  const yeardefault = this.selectedYear || currentYear;
+
+  const monthAbbr = this.getMonthAbbreviation(monthdefult);
+  const table = document.querySelector(".table");
+  const headerRow = table.querySelector("thead tr");
+  const rows = table.querySelectorAll("tbody tr");
+
+  if (rows.length === 0) {
+    alert("No Data");
+    return;
+  }
+
+  const data = [];
+  const month = `${monthAbbr}${yeardefault}`;
+  data.push([`Month: ${month}`]);
+  data.push([`Brand: ${this.selectedBrandIDs || "ALL"}`]);
+  data.push([`Channel: ${this.selectedChannelID || "ALL"}`]);
+  data.push([` `]);
+
+  const headers = [];
+  const headerCells = headerRow.querySelectorAll("th");
+  headerCells.forEach(header => {
+    headers.push(header.innerText.trim());
+  });
+
+  data.push(headers);
+
+  rows.forEach(row => {
+    const cells = row.querySelectorAll("td");
+    if (cells.length) {
+      const rowData = [];
+      cells.forEach(cell => {
+        rowData.push(cell.innerText.trim());
+      });
+      data.push(rowData);
+    }
+  });
+
+  // สร้าง workbook และ worksheet
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("ds_customergroup");
+
+  // เพิ่มข้อมูล
+  data.forEach((row, rowIndex) => {
+    const excelRow = worksheet.addRow(row);
+    // ตั้งค่าสไตล์สำหรับ header
+    if (rowIndex === 4) {
+      excelRow.eachCell((cell) => {
+        cell.style.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFADD8E6' } 
+        };
+        cell.style.font = {
+          bold: true,
+          color: { argb: 'FF000000' } 
+        };
+        cell.style.border = {
+          top: { style: 'thin', color: { argb: 'FF000000' } },
+          left: { style: 'thin', color: { argb: 'FF000000' } },
+          bottom: { style: 'thin', color: { argb: 'FF000000' } },
+          right: { style: 'thin', color: { argb: 'FF000000' } }
+        };
+        cell.alignment = {
+          horizontal: 'center',
+          vertical: 'middle'
+        };
+      });
+    }else{
+     
+      excelRow.eachCell((cell, colIndex) => {
+    // กำหนดให้คอลัมน์ A 
+      if (colIndex === 1 ) {
+        cell.alignment = {
+          horizontal: 'left', 
+          vertical: 'middle'
+        };
+      } else {
+          cell.alignment = {
+            horizontal: 'right', // ชิดขวาสำหรับคอลัมน์อื่น
+            vertical: 'middle'
+          };
         }
+      });
+      
+    }
+  });
+  worksheet.columns.forEach(column => {
+    const maxLength = column.values.reduce((max, value) => {
+      return Math.max(max, value ? value.toString().length : 0);
+    }, 0);
+    column.width = maxLength < 18 ? 30 : maxLength; 
+  });
 
-        const data = [];
-
-        rows.forEach(row => {
-          const cells = row.querySelectorAll("td");
-          if (cells.length) {
-            const rowData = {
-              "Customer": cells[0].innerText.trim(),
-              "Actual Sales Last Year": this.formatNumber(cells[1].innerText),
-              "Target Current Year": this.formatNumber(cells[2].innerText),
-              "%T Current Year / A Last Year": this.formatNumber(cells[3].innerText),
-              "Estimate": this.formatNumber(cells[4].innerText),
-              "Sales before Return": this.formatNumber(cells[cells.length - 3].innerText),
-              "Actual Sales Current Year": this.formatNumber(cells[cells.length - 2].innerText),
-              "%To Target": this.formatNumber(cells[cells.length - 1].innerText),
-              "Return": this.formatNumber(cells[cells.length - 2].innerText), // Adjust according to your column structure
-              "Balance to go": this.formatNumber(cells[cells.length - 1].innerText) // Adjust according to your column structure
-            };
-
-            // Add weekly estimates if the column is visible
-            if (this.isColumnVisible) {
-              for (let i = 5; i <= 9; i++) { // Assuming week columns are from 5 to 9
-                rowData[`Week ${i - 4}`] = this.formatNumber(cells[i].innerText);
-              }
-            }
-
-            data.push(rowData);
-          }
-        });
-
-        const worksheet = XLSX.utils.json_to_sheet(data);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "DAILYSALESREPORT-ByCustomerGroup");
-        XLSX.writeFile(workbook, "DAILYSALESREPORT_ByCustomerGroup.xlsx");
-      },
+  const fileName = `Daily_Sales_ByCustomerGroup_Report-${month}.xlsx`;
+    workbook.xlsx.writeBuffer()
+    .then((buffer) => {
+      const blob = new Blob([buffer], { type: 'application/octet-stream' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    })
+    .catch((error) => {
+      console.error("Error creating Excel file:", error);
+    });
+}
+,
 
 // Helper function to format numbers if needed
-formatNumber(value) {
-  return parseFloat(value.replace(/,/g, '').trim()) || 0;
+    formatNumber(value) {
+    return parseFloat(value.replace(/,/g, '').trim()) || 0;
 },
     
 
     async handleDateSelected({ year, month }) {
       this.selectedYear = year;
       this.selectedMonth = month + 1;  // month เริ่มจาก 0
-      console.log('selected : ', this.selectedMonth, ' year: ', this.selectedYear);
+
+      let monthdefult;
+      if(this.selectedMonth){
+        monthdefult = this.selectedMonth;
+      }else{
+        monthdefult = this.monthNumber;
+      }
+      this.monthName = this.getMonthAbbreviation(this.selectedMonth); // ใช้ฟังก์ชันแปลงเดือน
+      console.log('Selected Month:', this.monthName, 'Year:', this.selectedYear);
+      console.log('console : ', this.selectedMonth, ' year: ', this.selectedYear ,monthdefult);
+      
     },
 
   
@@ -480,7 +531,7 @@ formatNumber(value) {
     updateSelectedChannels(channels) {
      
       this.selectedChannelIDs = channels;
-    this.$refs.storeTypeComponent.fetchStoreType(channels); // เรียกใช้ฟังก์ชัน fetchStoreType ใน StoreType
+      this.$refs.storeTypeComponent.fetchStoreType(channels); // เรียกใช้ฟังก์ชัน fetchStoreType ใน StoreType
      // this.handleChannelsSelected(channels);
     },
  
@@ -493,18 +544,7 @@ formatNumber(value) {
     },
    
 
-    toggleColumnDetail() {
-      this.isColumnVisibleDetail = !this.isColumnVisibleDetail; 
-    },
-    toggleColumnChannel() {
-      this.isColumnVisible = !this.isColumnVisible; 
-    },
-    toggleColumnCusName() {
-      this.isColumnVisibleCusName = !this.isColumnVisibleCusName; 
-    },
-    toggleColumnCusGroup() {
-      this.isColumnVisibleCusGroup = !this.isColumnVisibleCusGroup; 
-    },
+ 
     async applySearch() {
       this.SalesTargetsSummary = await fetchReportCustomerGroups(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedCustomerGroupsIDs);
       // console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
@@ -513,7 +553,8 @@ formatNumber(value) {
       // console.log('Select  selectedCustomerGroupsIDs', this.selectedCustomerGroupsIDs);
     },
     async resetForm() {
-      window.location.reload();
+     // this.$router.go(0);
+     window.location.reload();
     },
   
     
