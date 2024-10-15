@@ -55,6 +55,9 @@ export const loginUser = async (username, password) => {
       // ถ้าต้องการจัดเก็บข้อมูลผู้ใช้
       const userData = {
         name: response.data.name,
+        username: username,
+        active: response.data.active,
+        
         permissions: response.data.permissions,
         tokenExpire: response.data.token_expire,
         token: response.data.token,
@@ -88,13 +91,14 @@ export const loginUser = async (username, password) => {
 };
 
 
-export const setPasswordStateAPI = async (username, password) => {
-  const url = `${hostapi}Authen/ResetPassword`;
+export const setPasswordStateAPI = async (username, old_password ,password) => {
+  const url = `${hostapi}Authen/ChangePassword`;
   const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
 
   const body = {
     user: username,
-    password: password,
+    old_password:old_password,
+    new_password: password,
   };
 
    
@@ -107,16 +111,69 @@ export const setPasswordStateAPI = async (username, password) => {
     });
   
 
-  
-//  console.log(JSON.stringify(customerGroupsWithKeys, null, 2));
   return response; 
   
   } catch (error) {
-   //  throw error.response ? error.response.data : 'เกิดข้อผิดพลาด'; 
+     
+    console.error('API Error:', error);
+    throw new Error('Failed to set password.'); // ให้ error ขึ้นมาเพื่อจัดการใน catch 
   }
 
 
 };
+
+
+export const fetchGetDataUser= async (users) => {
+  const GetDataUserApiUrl = hostapi+'Authen/GetUsers'; 
+  const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
+  const body = {
+    "users" : [users],
+  };
+  try {
+    const response = await axios.post(GetDataUserApiUrl, body,{
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      }
+    });
+    return response.data; // ส่งค่ากลับ
+  } catch (error) {
+    throw error.response ? error.response.data : ' fetchGetDataUser Error.'; 
+  }
+};
+
+export const AuthenLogoutUser = async (username) => {
+  const url = `${hostapi}Authen/Logout`;
+  const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjY1Nzg4MzY0MDUsInVzZXJuYW1lIjoic3VwYWNoYWkifQ.mxBs7cDNGcfdz6eCRTd3dOfxIMtLTMwwdfObYWmyeV4'; 
+
+  const body = {
+    user: username,
+  
+  };
+
+   
+  try {
+    const response = await axios.post(url, body, {
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      }
+    });
+  
+
+  return response; 
+  
+  } catch (error) {
+     
+    console.error('API Error:', error);
+    throw new Error('Failed to AuthenLogoutUser.'); 
+  }
+
+
+};
+
+
+
 
 // export const setPasswordState = async (data) => {
 //   try {

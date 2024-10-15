@@ -19,9 +19,12 @@ export default createStore({
     layout: "default",
     user: null,
     isAuthenticated: false,
+    activeModules: [],
   },
   mutations: {
-    
+    SET_ACTIVE_MODULES(state, modules) {
+      state.activeModules = modules;
+    },
     toggleConfigurator(state) {
       state.showConfig = !state.showConfig;
     },
@@ -30,12 +33,12 @@ export default createStore({
       state.isAuthenticated = true; // เปลี่ยนสถานะเป็นล็อกอิน
     },
     RESET_STATE(state) {
-      // รีเซ็ตสถานะของ store กลับไปเป็นค่าดีฟอลต์
+      
       Object.assign(state, {
-        // กำหนดค่าที่คุณต้องการรีเซ็ต เช่น:
+        // กำหนดค่าreset
         user: null,
         isAuthenticated: false,
-        // คุณสามารถเพิ่มข้อมูลอื่น ๆ ที่ต้องการรีเซ็ตที่นี่
+        // addother
       });
     },
     sidebarMinimize(state) {

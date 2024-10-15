@@ -2,8 +2,18 @@
 <template>
   <div v-if="isVisible" class="modal-overlay" @click="closeModal">
     <div class="modal-content" @click.stop>
-      <button class="close-button" @click="closeModal">×</button>
-      <span class="text-center text-head-modal" >Change your password</span>
+      <!-- <button class="close-button" @click="closeModal">×</button>
+      <span class="text-center text-head-modal" >Change your password</span> -->
+
+      <div class="form-group mt-2">
+          <div class="row">
+            <div class="col-12 text-center"> 
+              <button class="close-button" @click="closeModal">×</button>
+              <span class="text-center text-head-modal" >Change your password</span>
+            </div>
+           
+          </div>
+        </div>
       <form @submit.prevent="handleResetPassword" class="p-4">
 
         <div class="form-group mt-2">
@@ -13,6 +23,7 @@
             </div>
             <div class="col-7">
                 <input
+                :error="!!errorMessage"
                 type="password"
                 id="current-password"
                 v-model="currentPassword"
@@ -30,6 +41,7 @@
             </div>
             <div class="col-7">
               <input
+              :error="!!errorMessage"
                 type="password"
                 id="new-password"
                 v-model="newPassword"
@@ -48,6 +60,7 @@
             </div>
             <div class="col-7">
               <input
+              :error="!!errorMessage"
                 type="password"
                 id="confirm-password"
                 v-model="confirmPassword"
@@ -57,6 +70,8 @@
             </div>
           </div>
         </div>
+        <span v-if="errorMessage" style="color: red;">
+          {{ errorMessage }}</span>
         <button type="submit" class="btn btn-primary btn-block text-white btn-submitform mb-3 mt-3">Set Password</button>
       </form>
     </div>
@@ -65,6 +80,7 @@
 <script setup>
 import Swal from 'sweetalert2';
 import { defineProps, defineEmits, nextTick , ref } from 'vue';
+const errorMessage = ref('');
  // eslint-disable-next-line no-unused-vars
 const props = defineProps({
   isVisible: {
@@ -165,12 +181,14 @@ const handleResetPassword = () => {
     border: none;
     font-size: 20px;
     cursor: pointer;
+    float:right!important;
   }
 
   .text-head-modal{
     color:#0081CC;
     font-weight: bold;
     font-size: 18px;
+    text-align: center!important;
   }
 
   .text-lable-modal{

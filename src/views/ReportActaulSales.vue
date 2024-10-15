@@ -142,10 +142,10 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
                       </tr>
                       <template v-if="item.components && item.components.length">
                         <tr v-for="(component, compIndex) in item.components" :key="compIndex">
-                          <td class=" text-xs font-weight-bold mb-0">{{ component.product_code }}</td>
+                          <td class=" text-xs font-weight-bold mb-0">{{ item.customer_group_oms }}</td>
                           <td class=" text-xs font-weight-bold mb-0">{{ item.brand }}</td>
                           <td class="text-xs font-weight-bold mb-0">Child</td>
-                          <td class=" text-xs font-weight-bold mb-0">{{ component.product_hierarchy }}</td>
+                          <td class=" text-xs font-weight-bold mb-0">{{ item.product_code }}</td>
                           <td class=" text-xs font-weight-bold mb-0">{{ component.product_code }}</td>
                           <td class=" text-xs font-weight-bold mb-0">{{ component.product_name }}</td>
                           <td class="text-center text-xs font-weight-bold mb-0">{{ component.qty }}</td>

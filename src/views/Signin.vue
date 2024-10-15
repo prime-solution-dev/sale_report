@@ -58,9 +58,10 @@ onMounted(() => {
   // }
 });
 
-
+const isButtonDisabled = ref(false);
 const handleLogin = async () => {
   errorMessage.value = ''; // เคลียร์ข้อความผิดพลาดก่อน
+  isButtonDisabled.value = true; 
   try {
     const userData = await loginUser(username.value, password.value);
     store.dispatch('login', userData);
@@ -70,23 +71,24 @@ const handleLogin = async () => {
         localStorage.setItem('password', password.value); // เพิ่มการบันทึกรหัสผ่านถ้าต้องการ
     } else {
       localStorage.removeItem('username');
-      localStorage.removeItem('password'); // ลบเมื่อไม่ได้เลือก Remember
+      localStorage.removeItem('password'); 
     }
 
       isModalVisible.value = true;
-      message.value = 'Login successful!'; // ตั้งข้อความ
-      isLoading.value = false; // ปิดการโหลด
-          
-   
+      message.value = 'Login successful!'; 
+      isLoading.value = false; 
       setTimeout(() => {
-        router.push('/Main'); // เปลี่ยนเส้นทางหลังจาก 3 วินาที
-      }, 5000); // 3000 มิลลิวินาที = 3 วินาที
+        router.push('/Main'); 
+      }, 3000); 
 
    
-    console.log('Login successful xx :', userData.token);
+    console.log('Login successful  :', userData.token);
   
   } catch (error) {
     errorMessage.value = error.message || 'invalid username or password';
+  }
+  finally {
+    isButtonDisabled.value = false;
   }
 };
 
@@ -155,7 +157,7 @@ const handleLogin = async () => {
                         color:white;"
                         fullWidth
                         size="lg"
-                        type="submit">Sign in</argon-button
+                        type="submit" :class="{ Disabled: isButtonDisabled }" :disabled="isButtonDisabled">Sign in</argon-button
                       >
                       
                     </div>

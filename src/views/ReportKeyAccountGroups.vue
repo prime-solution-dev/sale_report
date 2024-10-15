@@ -92,7 +92,7 @@ import FilterBrand from './components/FilterBrands.vue';
 import FilterChannel from './components/FilterChannels.vue';
 import FilterStoreType from './components/FilterStoreTypes.vue';
 import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
-import FilterKeyAccountNameByGroupvue from './components/FilterKeyAccountNameByGroup.vue';
+import FilterKeyAccountNameByGroup from './components/FilterKeyAccountNameByGroup.vue';
 import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 </script>
 
@@ -127,7 +127,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
             </div>
 
             <div class="col-md-2">
-              <FilterKeyAccountNameByGroupvue @update:accountnames="updateSelectedKeyAccountName"/>
+              <FilterKeyAccountNameByGroup ref="KeyAccountNameComponent"  :selectedAccountGroupIDs="selectedAccountGroupIDs" @update:accountnames="updateSelectedKeyAccountName"/>
             </div>
 
             <div class="col-md-2" >
@@ -317,7 +317,7 @@ export default {
     FilterBrand,
     FilterChannel,
     FilterAcGroup,
-    FilterKeyAccountNameByGroupvue,
+    FilterKeyAccountNameByGroup,
     FilterGetCustomerGroup,
     
     //FilterStoreType
@@ -356,6 +356,7 @@ export default {
       selectedChannel: null, 
       selectedStoreType: null, 
       ReportKeyAccountGroup: null,
+      selectedAccountGroupIDs:[],
       //
 
       customersItem:null,
@@ -551,7 +552,7 @@ export default {
     updateSelectedChannels(channels) {
      
       this.selectedChannelIDs = channels;
-    this.$refs.storeTypeComponent.fetchStoreType(channels); // เรียกใช้ฟังก์ชัน fetchStoreType ใน StoreType
+      this.$refs.storeTypeComponent.fetchStoreType(channels); // เรียกใช้ฟังก์ชัน fetchStoreType ใน StoreType
      // this.handleChannelsSelected(channels);
     },
  
@@ -561,9 +562,11 @@ export default {
     
     updateSelectedKeyAccountGroup(accgroups) {
       this.selectedAccountGroupIDs = accgroups; 
+      this.$refs.KeyAccountNameComponent.fetchAccountNameByGroup(accgroups); // เรียกใช้ฟังก์ชัน fetchStoreType ใน StoreType
     },
     updateSelectedKeyAccountName(accountname) {
       this.selectedAccountNameIDs = accountname; 
+      
     },
 
     updateSelectedGetCustomerGroups(customergroups) {

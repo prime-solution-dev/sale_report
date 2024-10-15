@@ -17,3 +17,16 @@
     font-size: 0.8rem!important;
     padding: 0.625rem 1.25rem!important;
 }
+
+.swal2-title {
+    position: relative;
+    max-width: 100%;
+    margin: 0;
+    padding: 0.8em 1em 0;
+    color: #595959;
+    font-size: 1.5rem!important;
+    font-weight: 600;
+    text-align: center;
+    text-transform: none;
+    word-wrap: break-word;
+}

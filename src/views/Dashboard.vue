@@ -263,12 +263,13 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                 <div class="contents"> 
                   <div class="text_head_popover"> &nbsp; &nbsp;Customer Code  <span @click.stop="closePopover" class="close-button-popover"> x &nbsp;&nbsp;</span></div>
                   <div v-if="GetCompareCustomerMasterGroup.flag_new_customer == true" class="box_customercode"> 
-                    <span v-for="(newcustomer, index) in GetCompareCustomerMasterGroup" :key="index" >&nbsp; code {{ index++ }}<br>  </span>
+                    <span v-for="(newcustomer, index) in GetCompareCustomerMasterGroup" :key="index" >&nbsp;  {{ newcustomer.customer_code }}<br>  </span>
                   </div>
                   <div v-else class="box_customercode "> 
                     <span class="text-left ">&nbsp; &nbsp; no data <br> </span>
                   </div>
                 </div>
+                <!-- <pre>{{}}</pre> -->
                 
               </div>
             </div>
@@ -1560,15 +1561,16 @@ export default {
     },
     async applySearch() {
       this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
-      console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
-      console.log('Select  selectedChannelIDs', this.selectedChannelIDs);
-      console.log('Select  selectedAccountNameIDs', this.selectedAccountNameIDs);
-      console.log('Select  selectedAccountGroupIDs', this.selectedAccountGroupIDs);
-      console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
+      // console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
+      // console.log('Select  selectedChannelIDs', this.selectedChannelIDs);
+      // console.log('Select  selectedAccountNameIDs', this.selectedAccountNameIDs);
+      // console.log('Select  selectedAccountGroupIDs', this.selectedAccountGroupIDs);
+      // console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
     },
     async resetForm() {
-      this.$router.go(0);
+      
       await this.$router.push({ name: 'Dashboard' });
+      this.$router.go(0);
    //   window.location.reload();
     //  console.log(this.$router.go(0));
      // this.$router.go(0); // this.$router.push(this.$router.currentRoute.fullPath);

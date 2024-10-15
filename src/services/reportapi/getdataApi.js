@@ -365,12 +365,12 @@ const hostapi = 'http://61.91.5.227:8099/';
       //
     }
     const body = {
-      account_groups: [],
+      names: [],
     };
 
 
     if (v_code && Array.isArray(v_code)) {
-      body.account_groups.push(...v_code);
+      body.names.push(...v_code);
     }else {
       //console.warn('Channel code is empty or null.'); // แสดงคำเตือนถ้าไม่มีค่า
     }

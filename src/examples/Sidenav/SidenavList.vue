@@ -1,13 +1,14 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref ,onMounted ,onBeforeMount } from "vue";
+
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
-
+import { fetchGetDataUser } from '../../services/reportapi/state.userApi';
 import SidenavItem from "./SidenavItem.vue";
 
 const store = useStore();
 const isRTL = computed(() => store.state.isRTL);
-
+const userData = ref(null);
 const getRoute = () => {
   const route = useRoute();
   const routeArr = route.path.split("/");
@@ -21,6 +22,91 @@ const submenuOpen = ref({
 const toggleSubmenu = (menu) => {
   submenuOpen.value[menu] = !submenuOpen.value[menu];
 };
+
+///// STATE USER
+const fetchedDataGetUser = ref(null);
+const isLoading = ref(false);
+const errorMessage = ref('');
+const activeModules = ref([]);
+
+const CalUserDataApi = async () => {
+  if (!userData.value || !userData.value.username) {
+    errorMessage.value = 'Username is missing.';
+    return; 
+  }
+  
+  const usernamelog = userData.value.username;
+  isLoading.value = true;
+  
+  try {
+    fetchedDataGetUser.value = await fetchGetDataUser(usernamelog);
+    //console.log('Fetched data:', fetchedDataGetUser.value); 
+
+   if (fetchedDataGetUser.value && fetchedDataGetUser.value.length > 0) {
+      const user = fetchedDataGetUser.value[0]; // เข้าถึงอ็อบเจ็กต์แรก
+      if (user.permission_groups) {
+        activeModules.value = user.permission_groups.flatMap(group => 
+          group.permission_items.map(item => ({
+            module_item_code: item.module_item_code,
+            module_item_name: item.module_item_name
+          }))
+        );
+         // Commit activeModules ไปยัง Vuex store
+        store.commit('SET_ACTIVE_MODULES', activeModules.value);
+        console.log('Updated Active Modules:', activeModules.value);
+      }
+    }
+
+   
+
+  } catch (err) {
+    errorMessage.value = err.response ? err.response.data : 'Error fetching user data.';
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  const token = localStorage.getItem('userData');
+  if (token) {
+    CalUserDataApi();
+  }
+});
+
+
+onBeforeMount(() => {
+ 
+  fetchUserDataFromLocalStorage();
+});
+
+
+const fetchUserDataFromLocalStorage = () => {
+  const storedData = localStorage.getItem('userData');
+  if (storedData) {
+    userData.value = JSON.parse(storedData);
+   // console.log('Local Storage  : ', userData.value); //
+  } else {
+    userData.value = null; 
+  }
+};
+
+//////////
+
+
+// const activeModules = ref([
+//   { module_item_code: 'HOME', module_item_name: 'Home' },
+//   { module_item_code: 'REPORT01', module_item_name: 'Report 01' },
+//   { module_item_code: 'REPORT02', module_item_name: 'Report 02' },
+// 
+// ]);
+
+const hasModule = (moduleCode) => {
+  console.log('Side nav Checking module:', moduleCode);
+  return activeModules.value.some(module => module.module_item_code === moduleCode);
+  
+};
+
+
 </script>
 <template>
   <div
@@ -28,14 +114,14 @@ const toggleSubmenu = (menu) => {
     id="sidenav-collapse-main"
   >
     <ul class="navbar-nav">
-      <li class="nav-item">
+      <li class="nav-item" v-if="hasModule('HOME')">
         <sidenav-item
           to="/dashboard-default"
           :class="getRoute() === 'dashboard-default' ? 'active' : ''"
           :navText="isRTL ? '' : 'Dashboard'"
         >
           <template v-slot:icon>
-            <i class="fas fa-chart-line" style="font-size: 18px; color:#0281cc;"></i> 
+            <i class="fas fa-chart-line" style="font-size: 18px; color:#0281cc;bottom: auto;top: auto;"></i> 
             <!-- <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i> -->
           </template>
         </sidenav-item>
@@ -61,7 +147,7 @@ const toggleSubmenu = (menu) => {
       </li>
 
       <ul class="navbar-nav" v-if="submenuOpen.report">
-        <li class="nav-item submenu" >
+        <li class="nav-item submenu" v-if="hasModule('REPORT01')">
           <sidenav-item
             to="/report-customer.groups"
             :class="getRoute() === 'report-customer.groups' ? 'active' : ''"
@@ -83,20 +169,6 @@ const toggleSubmenu = (menu) => {
               <i class="ni ni-chart-bar-32  text-info text-sm opacity-10"></i>
             </template>
           </sidenav-item>
-        
-          <!-- <ul class="navbar-nav ms-3" v-if="getRoute() === 'tables'">
-            <li class="nav-item">
-              <sidenav-item
-                to="/tables/template"
-                :class="getRoute() === 'template' ? 'active' : ''"
-                :navText="isRTL ? 'تقرير 1' : 'Template'"
-              >
-                <template v-slot:icon>
-                  <i class="ni ni-chart-bar-32 text-sm"></i>
-                </template>
-              </sidenav-item>
-            </li>
-          </ul> -->
         </li>
 
         <li class="nav-item submenu">
@@ -131,7 +203,7 @@ const toggleSubmenu = (menu) => {
           :navText="isRTL ? 'ر' : 'Upload'"
         >
           <template v-slot:icon>
-            <i class="ni ni-spaceship " style="font-size: 18px; color:#0281cc; " ></i>
+            <i class="ni ni-spaceship " style="font-size: 18px; color:#0281cc; bottom: auto;top: auto;" ></i>
             <!-- <i class="ni ni-credit-card text-success text-sm opacity-10"></i> -->
           </template>
         </sidenav-item>
@@ -146,19 +218,20 @@ const toggleSubmenu = (menu) => {
           :navText="isRTL ? '' : 'User'"
         >
           <template v-slot:icon>
-            <i class="ni ni-single-02 opacity-10" style="font-size: 18px; color:#0281cc; "></i>
+            <i class="ni ni-single-02 opacity-10" style="font-size: 18px; color:#0281cc; bottom: auto;top: auto;"></i>
           </template>
         </sidenav-item>
       </li>
 
-      <li class="nav-item ">
+      <li class="nav-item " >
         <sidenav-item
-          to="/signin"
-          :class="getRoute() === 'signin' ? 'active' : ''"
-          :navText="isRTL ? '' : 'Sign In'"
+         to="/logout"
+          :class="getRoute() === 'logout' ? 'active' : ''"
+          :navText="isRTL ? '' : 'Logout'"
         >
           <template v-slot:icon>
-            <i class="ni ni-single-copy-04 text-danger text-sm opacity-10"></i>
+            <i class="fa fa-sign-out opacity-10" style="font-size: 16px;color: red; bottom: auto;top: auto;" aria-hidden="true"></i>
+            
           </template>
         </sidenav-item>
       </li>
@@ -166,6 +239,14 @@ const toggleSubmenu = (menu) => {
     
     </ul>
   </div>
+
+  <div hidden style="font-size: 9px!important;"> 
+    <pre> {{ fetchedDataGetUser  }}</pre> 
+  </div>
+ 
+
+ 
+
 
   
 </template>
