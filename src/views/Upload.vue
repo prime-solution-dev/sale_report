@@ -190,6 +190,34 @@ const columnsTableTab1 = [
     width: 150,
     // align: "center",
   },
+  {
+    title: "Ship To Address Code <br /> (From OMS)",
+    dataIndex: "shipToAddressCode",
+    key: "shipToAddressCode",
+    width: 180,
+    // align: "center",
+  },
+  {
+    title: "Ship To Address <br /> (From OMS)",
+    dataIndex: "shipToAddress",
+    key: "shipToAddress",
+    width: 150,
+    // align: "center",
+  },
+  {
+    title: "Bill To Code <br /> (From OMS)",
+    dataIndex: "billToCode",
+    key: "billToCode",
+    width: 150,
+    // align: "center",
+  },
+  {
+    title: "Billing Address <br /> (From OMS)",
+    dataIndex: "billToAddress",
+    key: "billToAddress",
+    width: 150,
+    // align: "center",
+  },
 ];
 
 let dataTableTab1 = ref([
@@ -434,6 +462,10 @@ const fetchDataCustomer = async () => {
         customerGroup5: data.udf5,
         customerName: data.customer_name,
         customerGroup6: data.udf6,
+        shipToAddressCode: data.ship_to_address_code,
+        shipToAddress: data.ship_to_address,
+        billToCode: data.bill_to_code,
+        billToAddress: data.bill_address,
       };
     });
     dataTableTab1.value = mapData;
