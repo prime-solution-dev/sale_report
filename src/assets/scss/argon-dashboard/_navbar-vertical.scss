@@ -1,12 +1,15 @@
 //
 // Vertical navbar + Sidenav
 //
+.font-18{
+  font-size: 1.02rem;
+}
 
 .navbar-vertical {
   .navbar-brand > img,
   .navbar-brand-img {
     max-width: 100%;
-    max-height: 2rem;
+    max-height: 2.4rem;
   }
   // Navbar navigaton
   .navbar-nav {
@@ -215,11 +218,11 @@
     }
 
     &.fixed-start + .main-content {
-      margin-left: $navbar-vertical-open-width + 1.5;
+      margin-left: $navbar-vertical-open-width;
     }
 
     &.fixed-end + .main-content {
-      margin-right: $navbar-vertical-open-width + 1.5;
+      margin-right: $navbar-vertical-open-width;
     }
   }
 
@@ -513,7 +516,7 @@
     &.rtl {
       .sidenav:hover {
         & + .main-content {
-          margin-right: $navbar-vertical-open-width + 1.5 !important;
+          margin-right: $navbar-vertical-open-width !important;
         }
       }
     }
@@ -522,7 +525,7 @@
       max-width: $navbar-vertical-hidden-width !important;
 
       &.fixed-start + .main-content {
-        margin-left: $navbar-vertical-hidden-width + 1.5;
+        margin-left: $navbar-vertical-hidden-width;
       }
 
       .navbar-brand {
@@ -596,7 +599,7 @@
         max-width: $navbar-vertical-open-width !important;
 
         &.fixed-start + .main-content {
-          margin-left: $navbar-vertical-open-width + 1.5;
+          margin-left: $navbar-vertical-open-width;
         }
 
         .navbar-brand {

@@ -137,7 +137,29 @@
   background-color: #f3f3f3;
  
 }
+.scrollable_popover {
+  max-height: 200px; /* Adjust this value as needed */
+  overflow-y: auto; /* Enable vertical scrollbar */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+ 
+}
 
+.scrollable_popover::-webkit-scrollbar {
+  width: 8px; 
+}
+
+.scrollable_popover::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Track color */
+}
+
+.scrollable_popover::-webkit-scrollbar-thumb {
+  background: #888; /* Scrollbar color */
+  border-radius: 10px; /* Round edges */
+}
+
+.scrollable_popover::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color on hover */
+}
 
 </style>
 <script setup>
@@ -260,10 +282,10 @@ import FilterAccountName from './components/FilterCustomernames.vue';
               <!-- <button class="close-button-popover" @click.stop="closePopover">x</button> -->
               <div class="popover-content ">
                
-                <div class="contents"> 
-                  <div class="text_head_popover"> &nbsp; &nbsp;Customer Code  <span @click.stop="closePopover" class="close-button-popover"> x &nbsp;&nbsp;</span></div>
-                  <div v-if="GetCompareCustomerMasterGroup.flag_new_customer == true" class="box_customercode"> 
-                    <span v-for="(newcustomer, index) in GetCompareCustomerMasterGroup" :key="index" >&nbsp;  {{ newcustomer.customer_code }}<br>  </span>
+                <div class="contents " > 
+                  <div class="text_head_popover"> &nbsp; &nbsp;Customer Code  <span @click.stop="closePopover" class="close-button-popover"> x &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+                  <div v-if="GetCompareCustomerMasterGroup.flag_new_customer == true" class="box_customercode scrollable_popover"> 
+                    <span v-for="(newcustomer, index) in GetCompareCustomerMasterGroup.NewCustomers" :key="index" >&nbsp;  {{ newcustomer.customer_code }}<br>  </span>
                   </div>
                   <div v-else class="box_customercode "> 
                     <span class="text-left ">&nbsp; &nbsp; no data <br> </span>

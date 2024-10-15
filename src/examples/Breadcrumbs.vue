@@ -46,7 +46,7 @@ defineProps({
         :class="isNavFixed ? 'text-dark' : 'text-white'"
         aria-current="page"
       >
-        {{ currentPage }}
+      
       </li>
     </ol>
     <h6
