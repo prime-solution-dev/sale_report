@@ -1,7 +1,7 @@
 
 <template>
   <div>
-    <input type="text" ref="datepicker" />
+    <input type="text" ref="datepicker" class="fs-12 pd0" style="font-weight: 600;" />
   </div>
 
  

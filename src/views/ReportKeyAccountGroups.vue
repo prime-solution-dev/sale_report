@@ -100,12 +100,12 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 <template>
   
 
-  <div class="py-4 container-fluid bg-white shadow-md">
+  <div class="py-1 container-fluid bg-white shadow-md bx-filterData">
     <div class="row mb-3">
       <div class="col-lg-12 col-md-12 col-12">
         <div class="container">
           <div class="row mt-3">
-            <div class="col-md-2">
+            <div class="col-md-1">
               <label for="storetypesSelect">Month</label>
                 <div>
                   <DatePicker @dateSelected="handleDateSelected"/>
@@ -134,7 +134,19 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
               <FilterGetCustomerGroup @update:customergroups="updateSelectedGetCustomerGroups"/>
             </div>
 
-            <div class="col-md-1">
+            <div class="col-md-3 box_btn_action">
+                <div class="form-group">
+                  <label for="cus_groupSelect" style="color:white!important;">x</label>
+                  <div>
+                  <button class="btn mb-0 mr5 ml5 fw-lighter  btn-md null fs-12 "  @click="resetForm">Reset</button>
+                  <button class="btn mb-0 mr5 ml5  btn-md text-white fw-lighter null bg-primary fs-12"  @click="applySearch">Apply</button>
+                  <button class="btn mb-0 ml0 btn-md  fw-lighter export-button export-button float-right fs-12" @click="exportToExcel">
+                    <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="col-md-1">
                 <div class="form-group">
                   <label for="exampleSelect"></label>
                   <button class="btn mb-0  fw-lighter  btn-md null  "  @click="resetForm">Reset</button>
@@ -146,7 +158,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                   <label for="exampleSelect"></label>
                   <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary"  @click="applySearch">Apply</button>
                 </div>
-            </div>
+            </div> -->
           </div>
        
         </div>
@@ -155,26 +167,18 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
   </div>
 
    
-
-
-
-
-
-
-
-
-
-  <div class="py-4 mt-4 container-fluid" v-if="ReportKeyAccountGroup" >
+  <div class="py-3 mt-1 container-fluid" v-if="ReportKeyAccountGroup" >
     <div class="row">
       <div class="col-12">
         
         <div class="card">
           <div class="card-header pb-0">
-            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Key Account Group  
-              <button class="btn mb-0 btn-md  fw-lighter export-button export-button float-right" @click="exportToExcel">
-              <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button></h4>
+            <h4 class="font-weight-bolder mb-0"  style="font-size: 20px;">DAILY SALES REPORT - By Key Account Group  
+              <!-- <button class="btn mb-0 btn-md  fw-lighter export-button export-button float-right" @click="exportToExcel">
+              <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button> -->
+            </h4>
           </div>
-          <div class="card-body px-0 pt-0 pb-2">
+          <div class="px-0 pt-0 pb-2">
             <div class="table-responsive p-3">
               <table class="table align-items-center mb-0" v-if="ReportKeyAccountGroup.length > 0">
                 <thead >

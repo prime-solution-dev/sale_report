@@ -345,7 +345,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     </div>
                     <p class="font-weight-bolder mb-0 mr-5 fz-14 mt-1">&nbsp;Actual MTD  </p>
                     <div class='mt-4  text-md  font-weight-bolder '>
-                      <h4 class="mb-6 text-white"><b>{{ formatNumber(sum_detail[0].saleData.display_current_actual) }}</b></h4>
+                      <h4 class="mb-5 text-white"><b>{{ formatNumber(sum_detail[0].saleData.display_current_actual) }}</b></h4>
                     </div>
                 </div>
               </div>
@@ -363,7 +363,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     </div>
                     <p class="font-weight-bolder mb-0 mr-5 fz-12 mt-1 text-white"> % toTarget {{ SalesTargetsSummary[0].current_year }}  </p>
                     <div class='mt-4  text-md  font-weight-bolder '>
-                      <h4 class="mb-6 text-white"><b>{{ formatNumber(sum_detail[0].saleData.display_current_to_target_percent ) }}%</b></h4>
+                      <h4 class="mb-5 text-white"><b>{{ formatNumber(sum_detail[0].saleData.display_current_to_target_percent ) }}%</b></h4>
                      
                     </div>
                 </div>
@@ -434,7 +434,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
                     </div>
                     <p class="font-weight-bolder mb-0 mr-5 fz-12 mt-1">&nbsp;&nbsp;&nbsp; Balance to go  </p>
                     <div class='mt-4  text-md  font-weight-bolder '>
-                      <h5 class="mb-6 text-white"><b>{{ formatNumber(sum_detail[0].saleData.display_current_balance ) }}</b></h5>
+                      <h5 class="mb-5 text-white"><b>{{ formatNumber(sum_detail[0].saleData.display_current_balance ) }}</b></h5>
                     </div>
                 </div>
               </div>

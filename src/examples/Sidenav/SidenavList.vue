@@ -114,7 +114,7 @@ const hasModule = (moduleCode) => {
     id="sidenav-collapse-main"
   >
     <ul class="navbar-nav">
-      <li class="nav-item" v-if="hasModule('HOME')">
+      <li class="nav-item" v-if="hasModule('Dashbord')">
         <sidenav-item
           to="/dashboard-default"
           :class="getRoute() === 'dashboard-default' ? 'active' : ''"
@@ -126,7 +126,7 @@ const hasModule = (moduleCode) => {
           </template>
         </sidenav-item>
       </li>
-      <li class="nav-item" @click="toggleSubmenu('report')">
+      <li class="nav-item"  @click="toggleSubmenu('report')">
       <sidenav-item
   to="/report"
   :navText="isRTL ? '' : ''"
@@ -147,7 +147,7 @@ const hasModule = (moduleCode) => {
       </li>
 
       <ul class="navbar-nav" v-if="submenuOpen.report">
-        <li class="nav-item submenu" v-if="hasModule('REPORT01')">
+        <li class="nav-item submenu" v-if="hasModule('Report_CustomerName')">
           <sidenav-item
             to="/report-customer.groups"
             :class="getRoute() === 'report-customer.groups' ? 'active' : ''"
@@ -159,7 +159,7 @@ const hasModule = (moduleCode) => {
             </template>
           </sidenav-item>
         </li>
-        <li class="nav-item submenu">
+        <li class="nav-item submenu" v-if="hasModule('Report_KeyaccountGroup')">
           <sidenav-item
             to="/report-keyaccount.groups"
             :class="getRoute() === 'report-keyaccount.groups' ? 'active' : ''"
@@ -171,7 +171,7 @@ const hasModule = (moduleCode) => {
           </sidenav-item>
         </li>
 
-        <li class="nav-item submenu">
+        <li class="nav-item submenu" v-if="hasModule('Report_ActualSales')">
           <sidenav-item
             to="/report-actaulsales"
             :class="getRoute() === 'report-actaulsales' ? 'active' : ''"
@@ -183,7 +183,7 @@ const hasModule = (moduleCode) => {
           </sidenav-item>
         </li>
 
-        <li class="nav-item submenu">
+        <li class="nav-item submenu" v-if="hasModule('Report_Template')">
           <sidenav-item
             to="/report-template"
             :class="getRoute() === 'report-template' ? 'active' : ''"
@@ -196,7 +196,7 @@ const hasModule = (moduleCode) => {
         </li>
       </ul> 
       
-      <li class="nav-item">
+      <li class="nav-item" v-if="hasModule('Upload')">
         <sidenav-item
           to="/upload"
           :class="getRoute() === '' ? 'active' : ''"
@@ -211,7 +211,7 @@ const hasModule = (moduleCode) => {
 
     
 
-      <li class="nav-item">
+      <li class="nav-item" v-if="hasModule('User')">
         <sidenav-item
           to="/profile"
           :class="getRoute() === 'profile' ? 'active' : ''"
@@ -240,7 +240,7 @@ const hasModule = (moduleCode) => {
     </ul>
   </div>
 
-  <div hidden style="font-size: 9px!important;"> 
+  <div hidden style="font-size: 9px;"> 
     <pre> {{ fetchedDataGetUser  }}</pre> 
   </div>
  

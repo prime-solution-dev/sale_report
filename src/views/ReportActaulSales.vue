@@ -52,12 +52,12 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
 
 </script>
 <template>
-  <div class="py-4 container-fluid bg-white shadow-md">
-    <div class="row mb-3">
+ 
+    <div class="py-1 container-fluid bg-white shadow-md">
       <div class="col-lg-12 col-md-12 col-12">
         <div class="container">
           <div class="row mt-3">
-            <div class="col-md-2">
+            <div class="col-md-1">
               <label for="storetypesSelect">Month</label>
               <DatePicker @dateSelected="handleDateSelected" />
             </div>
@@ -67,13 +67,25 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
             <div class="col-md-2 text-nowrap">
               <FilterGetGroupOm @update:group_omss="updateSelectedGroupOms" />
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <div class="form-group">
                 <label for="exampleSelect">SKU</label>
                 <input type="text" class="form-control" v-model="selectedSKU" />
               </div>
             </div>
-            <div class="col-md-1">
+
+            <div class="col-md-4 box_btn_action" style="text-align: end;">
+                <div class="form-group">
+                  <label for="cus_groupSelect" style="color:white!important;">x</label>
+                  <div>
+                  <button class="btn mb-0 mr5 ml5 fw-lighter  btn-md null fs-12 "  @click="resetForm">Reset</button>
+                  <button class="btn mb-0 mr5 ml5  btn-md text-white fw-lighter null bg-primary fs-12"  @click="applySearch">Apply</button>
+                  <button class="btn mb-0 ml0 btn-md  fw-lighter export-button export-button float-right fs-12" @click="exportToExcel">
+                    <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="col-md-1">
               <label for="exampleSelect"></label>
               <button class="btn mb-0 fw-lighter btn-md" @click="resetForm">Reset</button>
             </div>
@@ -89,20 +101,20 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
                 <i class="fa fa-cloud-download" aria-hidden="true"></i>
 
                  Download</button>
-            </div>
+            </div> -->
             
           </div>
         </div>
       </div>
     </div>
-    <div class="py-4 mt-4 container-fluid" v-if="GetActaulSales && GetActaulSales.length > 0">
+    <div class="py-3 mt-1 container-fluid" v-if="GetActaulSales && GetActaulSales.length > 0">
       <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-header pb-0">
-              <h4 class="font-weight-bolder">ActualSales QTY Report</h4>
+              <h4 class="font-weight-bolder mb-0" style="font-size: 20px;">ActualSales QTY Report</h4>
             </div>
-            <div class="card-body px-0 pt-0 pb-2">
+            <div class="px-0 pt-0 pb-2">
               <div class="table-responsive p-3">
                 <table class="table align-items-center mb-0">
                   <thead class="bg-light">
@@ -162,7 +174,7 @@ import FilterGetGroupOm from './components/FilterGetGroupOms.vue';
         </div>
       </div>
     </div>
-  </div>
+
 </template>
 
 <script>

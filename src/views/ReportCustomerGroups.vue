@@ -54,7 +54,7 @@
     appearance: none;
     border-radius: 0.3rem;
     transition: box-shadow 0.15s ease;
-    font-size: 12px!important;
+    font-size: 10px!important;
 }
 .hasDatepicker{
     text-align: center;
@@ -98,48 +98,55 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
 <template>
   
 
-  <div class="py-4 container-fluid bg-white shadow-md">
+  <div class="py-2 container-fluid bg-white  bx-filterData">
     <div class="row mb-3">
       <div class="col-lg-12 col-md-12 col-12">
         <div class="container">
           <div class="row mt-3">
-            <div class="col-md-2">
+            <div class="col-md-1 pd0">
               <label for="storetypesSelect">Month</label>
-                <div>
-                  <DatePicker @dateSelected="handleDateSelected"/>
+                <div >
+                  <DatePicker @dateSelected="handleDateSelected" />
                 </div>
               </div>
-            <div class="col-md-2">
+            <div class="col-md-2 ">
               <FilterBrand @update:brands="updateSelectedBrands"/>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-2 ">
               <FilterChannel @update:channels="updateSelectedChannels"/>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-2 ">
               <FilterStoreType ref="storeTypeComponent"  :selectedChannelIDs="selectedChannelIDs" @update:storetypes="updateSelectedStoreType"   />
             </div>
       
 
-            <div class="col-md-2" >
+            <div class="col-md-2 " >
               <FilterGetCustomerGroup @update:customergroups="updateSelectedGetCustomerGroups"/>
             </div>
 
           
-            <div class="col-md-1">
+            <div class="col-md-3 box_btn_action">
+                <div class="form-group">
+                  <label for="cus_groupSelect" style="color:white!important;">x</label>
+                  <div>
+                  <button class="btn mb-0 mr5 ml5 fw-lighter  btn-md null fs-12 "  @click="resetForm">Reset</button>
+                  <button class="btn mb-0 mr5 ml5  btn-md text-white fw-lighter null bg-primary fs-12"  @click="applySearch">Apply</button>
+                  <button class="btn mb-0 ml0 btn-md  fw-lighter export-button export-button float-right fs-12" @click="exportToExcel">
+                    <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button>
+                </div>
+              </div>
+            </div>
+             
+
+              <!-- <div class="col-md-1">
                 <div class="form-group">
                   <label for="exampleSelect"></label>
-                  <button class="btn mb-0  fw-lighter  btn-md null  "  @click="resetForm">Reset</button>
-                
+                  <button class="btn mb-0 btn-md  fw-lighter export-button export-button float-right fs-12" @click="exportToExcel">
+                    <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button>
                 </div>
-            </div>
-              <div class="col-md-1">
-                <div class="form-group">
-                  <label for="exampleSelect"></label>
-                  <button class="btn mb-0 btn-md text-white fw-lighter null bg-primary"  @click="applySearch">Apply</button>
-                </div>
-            </div>
+              </div> -->
 
             
           </div>
@@ -149,27 +156,15 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
     </div>
   </div>
 
-   
-  <!-- <p>Selected Month: {{ monthName }} / Selected Year: {{ selectedYear }}</p> -->
-
-
-
-
-
-  <div class="py-4 mt-4 container-fluid" v-if="SalesTargetsSummary">
+  <div class="py-3 mt-1 container-fluid" v-if="SalesTargetsSummary">
     <div class="row">
       <div class="col-12">
         
         <div class="card">
           <div class="card-header pb-0">
-            <h4 class="font-weight-bolder">DAILY SALES REPORT - By Customer Group
-              <button class="btn mb-0 btn-md  fw-lighter export-button export-button float-right" @click="exportToExcel">
-                <i class="fa fa-cloud-download" aria-hidden="true"></i> Download</button>
-            </h4>
-           
-             
+            <h4 class="font-weight-bolder mb-0" style="font-size: 20px;">DAILY SALES REPORT - By Customer Group </h4>
           </div>
-          <div class="card-body px-0 pt-0 pb-2">
+          <div class=" px-0 pt-0 pb-2">
             <div class="table-responsive p-3">
               <table class="table align-items-center mb-0">
               <thead class="bg-light">
@@ -238,26 +233,7 @@ import FilterGetCustomerGroup from './components/FilterGetCustomerGroups.vue';
                         </td>   
                         </tr>
                       </template>
-                      <!-- Subgroup -->
-                      <!-- <tr class="text-xs font-weight-bold mb-0 ">
-                        <td class="text-left rounded-left">  {{ subgroup.subgroup.subgroup }}</td>    
-                        <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_last_actual) }}</td>   
-                        <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_target) }}  </td>   
-                        <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_target_percent) }} % </td>
-                        <td class="text-center">{{ formatNumber(subgroup.subgroup.sale_data_subg.current_estimate) }}</td>
-                        <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.current_sale) }}</td> 
-                        <td class="text-center">   {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_actual) }} </td>
-                        <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_to_target_percent) }} % </td> 
-                        <td class="text-center"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_last_actual_percent) }} % </td>
-                        <td class="text-center"> 
-                          <a v-if="subgroup.subgroup.sale_data_subg.display_current_balance < 0 && subgroup.subgroup.sale_data_subg.current_return !== 0 || subgroup.subgroup.sale_data_subg.current_return < subgroup.subgroup.sale_data_subg.display_current_actual && subgroup.subgroup.sale_data_subg.current_return !== 0"  style="color:red;">  - {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </a>
-                          <a v-else >  {{ formatNumber(subgroup.subgroup.sale_data_subg.current_return) }} </a>
-                        </td> 
-                        <td class="text-center rounded-right">
-                          <a v-if="subgroup.subgroup.sale_data_subg.display_current_balance < 0  " style="color:red;"> {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }} </a>
-                          <a v-else >  {{ formatNumber(subgroup.subgroup.sale_data_subg.display_current_balance) }} </a>
-                        </td>  
-                      </tr> -->
+                   
                     </template>
                    
                   </template>

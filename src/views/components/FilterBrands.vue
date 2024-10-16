@@ -9,7 +9,7 @@
 <label for="brandSelect">Brand</label>
 <div class="dropdown_brand">
     <button 
-    class="btn btn-dropdown dropdown-toggle" 
+    class="btn btn-dropdown dropdown-toggle fs-12" 
     type="button" 
     id="dropdownMenuButton" 
     @click.stop="toggleDropdown"
