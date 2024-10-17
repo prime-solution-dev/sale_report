@@ -3,15 +3,14 @@
   <a-table
     :columns="column"
     :data-source="dataTable"
-    :scroll="{
-      x: 'max-content',
-      y: 500,
-    }"
+    :scroll="{ x: 1500, y: 300 }"
     bordered
     :pagination="false"
     class="custom-table mt-2 white-header-table"
   >
-    <!-- <template #headerCell="{ column }"> </template> -->
+    <template #headerCell="{ column }"> 
+      <span v-html="column.title"></span>
+    </template>
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'tag'">
         <a-tag
