@@ -51,7 +51,7 @@ export const loginUser = async (username, password) => {
     if (response.data.token) {
       //  token  Local Storage / Vuex 
       localStorage.setItem('token', response.data.token);
-      
+      sessionStorage.setItem('isLoggedIn', 'true'); // เก็บสถานะล็อกอิน
       // ถ้าต้องการจัดเก็บข้อมูลผู้ใช้
       const userData = {
         name: response.data.name,
@@ -86,6 +86,7 @@ export const loginUser = async (username, password) => {
     }
   } catch (error) {
     console.error('Login error:', error.response ? error.response.data : error.message);
+    sessionStorage.removeItem('isLoggedIn');
     throw error.response ? error.response.data : 'เกิดข้อผิดพลาด';
   }
 };

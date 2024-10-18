@@ -39,9 +39,9 @@
   z-index: 1000;
 }
 
-footer{
+/* footer{
   display: none;
-}
+} */
 </style>
 <script setup>
 

@@ -192,7 +192,7 @@ import DatePicker from './components/Datepicker.vue';
 import FilterBrand from './components/FilterBrands.vue';
 import FilterChannel from './components/FilterChannels.vue';
 import FilterStoreType from './components/FilterStoreTypes.vue';
-import FilterAcGroup from './components/FilterKeyAccountGroups.vue';
+import FilterAcGroup from './components/FilterKeyAccountGroupsDashbord.vue';
 import FilterAccountName from './components/FilterCustomernames.vue';
 
 </script>
@@ -209,7 +209,7 @@ import FilterAccountName from './components/FilterCustomernames.vue';
     </div>
   </div>
 
-  <div class="py-4 container-fluid bg-white shadow-md">
+  <div  class="py-4 container-fluid bg-white shadow-md">
     <div class="row mb-3">
       <div class="col-lg-12 col-md-12 col-12">
         <div class="container">
@@ -1490,6 +1490,7 @@ export default {
     
       selectedChannelIDs:[],
       selectedChannel: null, 
+      selectedAccountGroupIDs:[],
       selectedStoreType: null, 
       SalesTargetsSummary: null,
       GetCompareCustomerMasterGroup:null,
@@ -1582,12 +1583,20 @@ export default {
       this.isColumnVisibleCusGroup = !this.isColumnVisibleCusGroup; 
     },
     async applySearch() {
+      // console.log('Applying search with parameters:');
+      // console.log('Year:', this.selectedYear);
+      // console.log('Month:', this.selectedMonth);
+      // console.log('Brand IDs:', this.selectedBrandIDs);
+      // console.log('Channel IDs:', this.selectedChannelIDs);
+      // console.log('Store Type IDs:', this.selectedStortTypeIDs);
+      // console.log('Account Name IDs:', this.selectedAccountNameIDs);
+      // console.log('Account Group IDs:', this.selectedAccountGroupIDs);
       this.SalesTargetsSummary = await fetchSalesSummary(this.selectedYear,this.selectedMonth,this.selectedBrandIDs,this.selectedChannelIDs,this.selectedStortTypeIDs,this.selectedAccountNameIDs,this.selectedAccountGroupIDs);
-      // console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
-      // console.log('Select  selectedChannelIDs', this.selectedChannelIDs);
-      // console.log('Select  selectedAccountNameIDs', this.selectedAccountNameIDs);
+      // // console.log('Select  selectedBrandIDs', this.selectedBrandIDs);
+      // // console.log('Select  selectedChannelIDs', this.selectedChannelIDs);
+      // // console.log('Select  selectedAccountNameIDs', this.selectedAccountNameIDs);
       // console.log('Select  selectedAccountGroupIDs', this.selectedAccountGroupIDs);
-      // console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
+      // //console.log('Select  selectedStortTypeIDs', this.selectedStortTypeIDs);
     },
     async resetForm() {
       

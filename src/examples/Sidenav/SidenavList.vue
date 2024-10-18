@@ -53,7 +53,7 @@ const CalUserDataApi = async () => {
         );
          // Commit activeModules ไปยัง Vuex store
         store.commit('SET_ACTIVE_MODULES', activeModules.value);
-        console.log('Updated Active Modules:', activeModules.value);
+        //console.log('Updated Active Modules:', activeModules.value);
       }
     }
 
@@ -89,9 +89,6 @@ const fetchUserDataFromLocalStorage = () => {
     userData.value = null; 
   }
 };
-
-//////////
-
 
 // const activeModules = ref([
 //   { module_item_code: 'HOME', module_item_name: 'Home' },

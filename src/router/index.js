@@ -152,11 +152,11 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('userData'); // ตรวจสอบ token
   const activeModules = store.state.activeModules || []; // เริ่มต้นเป็น array ถ้าไม่มี
-  console.log('index.js User authenticated:', isAuthenticated);
-  console.log('index.js Active Modules:', activeModules);
+  // console.log('index.js User authenticated:', isAuthenticated);
+  // console.log('index.js Active Modules:', activeModules);
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    return next({ path: '/signin' }); // เปลี่ยนเส้นทางไปยังหน้า Signin
+    return next({ path: '/signin' }); 
   }
 
   // if (to.meta.requiredModules) {

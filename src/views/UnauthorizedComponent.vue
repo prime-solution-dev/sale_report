@@ -24,7 +24,7 @@
 <style>
 
 .alert-warning {
-    background-image: linear-gradient(310deg, #00000000 0%, #00000000 100%);
+    background-image: linear-gradient(310deg, #00000000 0%, #00000000 100%)!important;
 }
 
 /* .alert-info {
