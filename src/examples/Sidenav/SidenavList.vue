@@ -98,7 +98,7 @@ const fetchUserDataFromLocalStorage = () => {
 // ]);
 
 const hasModule = (moduleCode) => {
-  console.log('Side nav Checking module:', moduleCode);
+ // console.log('Side nav Checking module:', moduleCode);
   return activeModules.value.some(module => module.module_item_code === moduleCode);
   
 };
